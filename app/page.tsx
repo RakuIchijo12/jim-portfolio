@@ -56,19 +56,19 @@ const contactDetails = [
 ] as const;
 
 const coreStack = [
-  "Laravel",
-  "FilamentPHP",
-  "Livewire",
-  "Tailwind CSS",
-  "Alpine.js",
-  "MySQL",
-  "Angular",
-  "NestJS",
-  "PostgreSQL",
-  "PestPHP",
-  "Queues",
-  "RESTful APIs",
-];
+  { name: "Laravel", icon: "laravel", color: "#ff2d20" },
+  { name: "FilamentPHP", icon: "filament", color: "#f59e0b" },
+  { name: "Livewire", icon: "livewire", color: "#ec4899" },
+  { name: "Tailwind CSS", icon: "tailwind", color: "#38bdf8" },
+  { name: "Alpine.js", icon: "alpine", color: "#0f766e" },
+  { name: "MySQL", icon: "mysql", color: "#00758f" },
+  { name: "Angular", icon: "angular", color: "#dd0031" },
+  { name: "NestJS", icon: "nestjs", color: "#e0234e" },
+  { name: "PostgreSQL", icon: "postgresql", color: "#336791" },
+  { name: "PestPHP", icon: "pest", color: "#65a30d" },
+  { name: "Queues", icon: "queues", color: "#8b5cf6" },
+  { name: "RESTful APIs", icon: "api", color: "#0891b2" },
+] as const;
 
 const aboutCards = [
   {
@@ -133,6 +133,10 @@ function cardDelay(index: number): CSSProperties {
   return { "--delay": `${index * 90}ms` } as CSSProperties;
 }
 
+function stackAccent(color: string): CSSProperties {
+  return { "--stack-accent": color } as CSSProperties;
+}
+
 function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
   if (icon === "linkedin") {
     return (
@@ -186,6 +190,224 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
     >
       <path d="M4 6h16v12H4z" />
       <path d="m4 7 8 6 8-6" />
+    </svg>
+  );
+}
+
+function StackIcon({ icon }: { icon: (typeof coreStack)[number]["icon"] }) {
+  if (icon === "laravel") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="M4 6.5 10 3l6 3.5v7L10 17 4 13.5Z" />
+        <path d="M10 3v7l6 3.5M10 10 4 13.5" />
+        <path d="M16 6.5 20 9v7l-6 3.5-4-2.5" />
+      </svg>
+    );
+  }
+
+  if (icon === "filament") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <rect height="6" rx="1.5" width="14" x="5" y="4" />
+        <path d="M7 13h10M7 17h7" />
+        <path d="M5 20h14" />
+      </svg>
+    );
+  }
+
+  if (icon === "livewire") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="M3 12c2.2-4 4.4-4 6.6 0s4.4 4 6.6 0 4.4-4 6.6 0" />
+        <path d="M3 16c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.6 0" />
+      </svg>
+    );
+  }
+
+  if (icon === "tailwind") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M6 10.5c1.6-3.2 4-4.2 7.2-3 1.8.7 2.9 2 4.8.9 1-.6 1.5-1.4 1.8-2.2-1.6 3.2-4 4.2-7.2 3-1.8-.7-2.9-2-4.8-.9-1 .6-1.5 1.4-1.8 2.2Z" />
+        <path d="M3 16.5c1.6-3.2 4-4.2 7.2-3 1.8.7 2.9 2 4.8.9 1-.6 1.5-1.4 1.8-2.2-1.6 3.2-4 4.2-7.2 3-1.8-.7-2.9-2-4.8-.9-1 .6-1.5 1.4-1.8 2.2Z" />
+      </svg>
+    );
+  }
+
+  if (icon === "alpine") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="m3 18 6.5-11 4 6 2-3L21 18Z" />
+        <path d="m9.5 7 3.1 11M15.5 10l1.7 8" />
+      </svg>
+    );
+  }
+
+  if (icon === "mysql") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <ellipse cx="12" cy="6" rx="7" ry="3" />
+        <path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6" />
+        <path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />
+      </svg>
+    );
+  }
+
+  if (icon === "angular") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="m12 3 8 3-1.3 11.1L12 21l-6.7-3.9L4 6Z" />
+        <path d="m8.5 16 3.5-9 3.5 9M10 12.5h4" />
+      </svg>
+    );
+  }
+
+  if (icon === "nestjs") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 3 20 8v8l-8 5-8-5V8Z" />
+        <path d="M8 16V8l8 8V8" />
+      </svg>
+    );
+  }
+
+  if (icon === "postgresql") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <ellipse cx="10" cy="6" rx="6" ry="3" />
+        <path d="M4 6v7c0 1.7 2.7 3 6 3s6-1.3 6-3V6" />
+        <path d="M14.5 14.5 20 20M18.8 14.8l1.7 5.5-5.5-1.7" />
+      </svg>
+    );
+  }
+
+  if (icon === "pest") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="12" cy="12" r="8" />
+        <path d="m8.5 12 2.3 2.4L15.8 9" />
+      </svg>
+    );
+  }
+
+  if (icon === "queues") {
+    return (
+      <svg
+        aria-hidden="true"
+        className="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+        viewBox="0 0 24 24"
+      >
+        <path d="M5 7h11M5 12h11M5 17h11" />
+        <path d="m16 5 3 2-3 2M16 10l3 2-3 2M16 15l3 2-3 2" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-6 w-6"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="6" cy="12" r="2.5" />
+      <circle cx="18" cy="7" r="2.5" />
+      <circle cx="18" cy="17" r="2.5" />
+      <path d="M8.3 11 15.8 8M8.3 13l7.5 3" />
     </svg>
   );
 }
@@ -438,16 +660,31 @@ export default function Home() {
               <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
                 Stack
               </p>
-              <div className="mt-4 flex flex-wrap gap-2">
+              <ul
+                aria-label="Core technology stack"
+                className="mt-4 flex flex-wrap gap-3"
+              >
                 {coreStack.map((item) => (
-                  <span
-                    className="rounded-md border border-zinc-200 bg-[#fbfaf7] px-3 py-2 text-sm font-medium text-zinc-750 transition hover:-translate-y-0.5 hover:border-teal-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200"
-                    key={item}
-                  >
-                    {item}
-                  </span>
+                  <li key={item.name}>
+                    <span
+                      aria-label={item.name}
+                      className="group relative grid h-12 w-12 place-items-center rounded-md border border-zinc-200 bg-[#fbfaf7] text-[var(--stack-accent)] shadow-sm transition hover:-translate-y-1 hover:border-[var(--stack-accent)] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[color-mix(in_srgb,var(--stack-accent)_28%,transparent)] dark:border-zinc-700 dark:bg-zinc-950 dark:hover:bg-zinc-900"
+                      role="img"
+                      style={stackAccent(item.color)}
+                      tabIndex={0}
+                      title={item.name}
+                    >
+                      <StackIcon icon={item.icon} />
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-zinc-900 bg-zinc-950 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100 dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-950"
+                      >
+                        {item.name}
+                      </span>
+                    </span>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </div>
         </section>
