@@ -54,7 +54,7 @@ export default function ContactForm() {
 
   return (
     <form
-      className="animated-card rounded-lg border-2 border-zinc-950 bg-white p-5 shadow-[8px_8px_0_#14b8a6] transition duration-300 hover:-translate-y-1 dark:border-zinc-100 dark:bg-zinc-900 dark:shadow-[8px_8px_0_#f9735b] sm:p-6"
+      className="animated-card scroll-reveal motion-card accent-contact rounded-lg border-2 border-zinc-950 bg-white p-5 shadow-[8px_8px_0_#14b8a6] dark:border-zinc-100 dark:bg-zinc-900 dark:shadow-[8px_8px_0_#f9735b] sm:p-6"
       onSubmit={handleSubmit}
     >
       <div className="grid gap-5">

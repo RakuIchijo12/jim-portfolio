@@ -472,7 +472,8 @@ function ContactDetailIcon({
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#fbfaf7] text-zinc-950 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-50">
-      <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(24,24,27,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(24,24,27,0.045)_1px,transparent_1px)] bg-[size:44px_44px] dark:bg-[linear-gradient(rgba(250,250,250,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(250,250,250,0.055)_1px,transparent_1px)]" />
+      <div className="scroll-progress fixed left-0 top-0 z-50 h-1 w-full bg-teal-700 dark:bg-teal-300" />
+      <div className="ambient-grid pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(24,24,27,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(24,24,27,0.045)_1px,transparent_1px)] bg-[size:44px_44px] dark:bg-[linear-gradient(rgba(250,250,250,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(250,250,250,0.055)_1px,transparent_1px)]" />
 
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-3 border-b border-zinc-200 bg-[#fbfaf7]/90 py-3 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/88">
@@ -520,12 +521,12 @@ export default function Home() {
         </header>
 
         <section
-          className="grid min-h-[calc(100svh-64px)] scroll-mt-24 items-center gap-6 overflow-hidden py-3 sm:gap-8 md:grid-cols-[1fr_0.86fr] lg:py-4"
+          className="grid scroll-mt-24 items-center gap-6 overflow-hidden py-8 sm:gap-8 sm:py-10 md:min-h-[calc(100svh-64px)] md:grid-cols-[1fr_0.86fr] lg:py-6"
           id="home"
         >
           <div className="max-w-2xl space-y-4">
             <div
-              className="animated-card inline-flex items-center gap-3 rounded-md border border-zinc-200 bg-white px-3 py-2 text-xs font-normal text-zinc-650 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
+              className="animated-card motion-card accent-teal inline-flex items-center gap-3 rounded-md border border-zinc-200 bg-white px-3 py-2 text-xs font-normal text-zinc-650 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
               style={cardDelay(0)}
             >
               <span className="h-2 w-2 bg-emerald-500" />
@@ -546,10 +547,10 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid max-w-xl grid-cols-3 gap-2">
+            <div className="grid max-w-sm grid-cols-2 gap-2">
               {["Healthcare", "ERP/CRM"].map((item, index) => (
                 <div
-                  className="animated-card rounded-md border border-zinc-200 bg-white px-3 py-3 text-center text-xs font-normal text-zinc-650 shadow-sm transition hover:-translate-y-1 hover:border-teal-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
+                  className="animated-card motion-card accent-teal rounded-md border border-zinc-200 bg-white px-3 py-3 text-center text-xs font-normal text-zinc-650 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                   key={item}
                   style={cardDelay(index + 1)}
                 >
@@ -562,7 +563,7 @@ export default function Home() {
               {socialLinks.map((link) => (
                 <a
                   aria-label={link.label}
-                  className="animated-card grid h-10 w-10 place-items-center rounded-md border border-zinc-200 bg-white text-zinc-650 shadow-sm transition hover:-translate-y-1 hover:border-teal-600 hover:bg-teal-50 hover:text-teal-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-teal-400 dark:hover:bg-zinc-800 dark:hover:text-teal-300"
+                  className="animated-card motion-card accent-teal grid h-10 w-10 place-items-center rounded-md border border-zinc-200 bg-white text-zinc-650 shadow-sm hover:text-teal-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:text-teal-300"
                   href={link.href}
                   key={link.label}
                   rel={link.icon === "mail" ? undefined : "noreferrer"}
@@ -577,13 +578,13 @@ export default function Home() {
 
             <div className="flex flex-wrap gap-3">
               <a
-                className="rounded-md bg-teal-700 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-teal-800 dark:bg-teal-500 dark:text-zinc-950 dark:hover:bg-teal-400"
+                className="motion-card accent-teal rounded-md bg-teal-700 px-4 py-3 text-sm font-semibold text-white transition dark:bg-teal-500 dark:text-zinc-950"
                 href="#contact"
               >
                 Start a conversation
               </a>
               <a
-                className="rounded-md border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold transition hover:-translate-y-0.5 hover:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-200"
+                className="motion-card accent-about rounded-md border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold transition dark:border-zinc-700 dark:bg-zinc-900"
                 href="#experience"
               >
                 View experience
@@ -592,16 +593,16 @@ export default function Home() {
           </div>
 
           <div className="relative mx-auto w-full max-w-[22rem] md:ml-auto lg:max-w-[24rem]">
-            <div className="absolute -left-3 top-8 hidden h-20 w-20 rounded-md border border-zinc-950 bg-yellow-300 dark:border-zinc-100 sm:block" />
-            <div className="absolute -right-3 -top-3 hidden h-14 w-14 rounded-md border border-zinc-950 bg-coral dark:border-zinc-100 sm:block" />
-            <div className="absolute -bottom-4 left-10 hidden h-12 w-28 rounded-md border border-zinc-950 bg-teal-500 dark:border-zinc-100 sm:block" />
+            <div className="floating-accent absolute -left-3 top-8 hidden h-20 w-20 rounded-md border border-zinc-950 bg-yellow-300 dark:border-zinc-100 sm:block" />
+            <div className="floating-accent floating-accent-two absolute -right-3 -top-3 hidden h-14 w-14 rounded-md border border-zinc-950 bg-coral dark:border-zinc-100 sm:block" />
+            <div className="floating-accent floating-accent-three absolute -bottom-4 left-10 hidden h-12 w-28 rounded-md border border-zinc-950 bg-teal-500 dark:border-zinc-100 sm:block" />
             <div
-              className="animated-card relative overflow-hidden rounded-lg border border-zinc-200 bg-white p-2 shadow-[0_24px_70px_-45px_rgba(24,24,27,0.45)] transition duration-300 hover:-translate-y-1 hover:border-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-[0_24px_70px_-45px_rgba(20,184,166,0.42)] dark:hover:border-zinc-100"
+              className="animated-card motion-card accent-teal relative overflow-hidden rounded-lg border border-zinc-200 bg-white p-2 shadow-[0_24px_70px_-45px_rgba(24,24,27,0.45)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-[0_24px_70px_-45px_rgba(20,184,166,0.42)]"
               style={cardDelay(2)}
             >
               <Image
                 alt="Portrait of Jimuel Dave Rodado."
-                className="h-[38svh] min-h-72 w-full rounded-md object-cover object-[center_34%] sm:h-[46svh] md:h-[62svh]"
+                className="h-[34svh] min-h-56 max-h-[26rem] w-full rounded-md object-cover object-[center_34%] sm:h-[46svh] md:h-[62svh] md:max-h-none"
                 height={1536}
                 priority
                 src="/jim-cafe-portrait.png"
@@ -612,7 +613,7 @@ export default function Home() {
         </section>
 
         <section
-          className="grid scroll-mt-24 gap-8 border-y border-zinc-200 py-14 dark:border-zinc-800 lg:grid-cols-[0.72fr_1.28fr] lg:items-start"
+          className="scroll-reveal grid scroll-mt-24 gap-8 border-y border-zinc-200 py-12 dark:border-zinc-800 sm:py-14 lg:grid-cols-[0.72fr_1.28fr] lg:items-start"
           id="about"
         >
           <div>
@@ -641,7 +642,7 @@ export default function Home() {
             <div className="grid gap-3 md:grid-cols-3">
               {aboutCards.map((card, index) => (
                 <article
-                  className="animated-card rounded-lg border border-zinc-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-zinc-950 hover:shadow-[8px_8px_0_#facc15] dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-100 dark:hover:shadow-[8px_8px_0_#14b8a6]"
+                  className="animated-card scroll-reveal motion-card accent-about rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5"
                   key={card.title}
                   style={cardDelay(index)}
                 >
@@ -656,19 +657,19 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="animated-card rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="animated-card scroll-reveal motion-card accent-teal rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5">
               <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
                 Stack
               </p>
               <ul
                 aria-label="Core technology stack"
-                className="mt-4 flex flex-wrap gap-3"
+                className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-6 lg:flex lg:flex-wrap"
               >
                 {coreStack.map((item) => (
                   <li key={item.name}>
                     <span
                       aria-label={item.name}
-                      className="group relative grid h-12 w-12 place-items-center rounded-md border border-zinc-200 bg-[#fbfaf7] text-[var(--stack-accent)] shadow-sm transition hover:-translate-y-1 hover:border-[var(--stack-accent)] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[color-mix(in_srgb,var(--stack-accent)_28%,transparent)] dark:border-zinc-700 dark:bg-zinc-950 dark:hover:bg-zinc-900"
+                      className="stack-icon-tile group relative grid h-11 w-11 place-items-center rounded-md border border-zinc-200 bg-[#fbfaf7] text-[var(--stack-accent)] shadow-sm transition hover:-translate-y-1 hover:border-[var(--stack-accent)] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[color-mix(in_srgb,var(--stack-accent)_28%,transparent)] dark:border-zinc-700 dark:bg-zinc-950 dark:hover:bg-zinc-900 sm:h-12 sm:w-12"
                       role="img"
                       style={stackAccent(item.color)}
                       tabIndex={0}
@@ -690,7 +691,7 @@ export default function Home() {
         </section>
 
         <section
-          className="grid scroll-mt-24 gap-8 py-14 lg:grid-cols-[0.65fr_1.35fr]"
+          className="scroll-reveal grid scroll-mt-24 gap-8 py-12 sm:py-14 lg:grid-cols-[0.65fr_1.35fr]"
           id="experience"
         >
           <div className="space-y-5">
@@ -712,11 +713,11 @@ export default function Home() {
           <div className="space-y-4">
             {experience.map((job, index) => (
               <article
-                className="animated-card rounded-lg border border-zinc-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-zinc-950 hover:shadow-[8px_8px_0_#f9735b] dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-100 dark:hover:shadow-[8px_8px_0_#14b8a6]"
+                className="animated-card scroll-reveal motion-card accent-experience rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5"
                 key={`${job.company}-${job.role}`}
                 style={cardDelay(index)}
               >
-                <div className="flex gap-4">
+                <div className="flex flex-col gap-4 sm:flex-row">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-zinc-900 bg-[#fbfaf7] font-mono text-sm font-bold dark:border-zinc-100 dark:bg-zinc-950">
                     {String(index + 1).padStart(2, "0")}
                   </div>
@@ -744,7 +745,7 @@ export default function Home() {
         </section>
 
         <section
-          className="grid scroll-mt-24 gap-8 border-t border-zinc-200 py-14 dark:border-zinc-800 lg:grid-cols-[0.85fr_1.15fr]"
+          className="scroll-reveal grid scroll-mt-24 gap-8 border-t border-zinc-200 py-12 dark:border-zinc-800 sm:py-14 lg:grid-cols-[0.85fr_1.15fr]"
           id="contact"
         >
           <div className="space-y-5">
@@ -760,17 +761,20 @@ export default function Home() {
               step.
             </p>
             <div className="grid gap-3 pt-2">
-              {contactDetails.map((detail) => (
+              {contactDetails.map((detail, index) => (
                 <div
-                  className="flex items-center gap-3 rounded-md border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-650 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
+                  className="animated-card scroll-reveal motion-card accent-teal flex items-center gap-3 rounded-md border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-650 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                   key={detail.label}
+                  style={cardDelay(index)}
                 >
                   <ContactDetailIcon icon={detail.icon} />
-                  <span>
+                  <span className="min-w-0">
                     <span className="block text-xs uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
                       {detail.label}
                     </span>
-                    <span className="mt-1 block">{detail.value}</span>
+                    <span className="mt-1 block break-words">
+                      {detail.value}
+                    </span>
                   </span>
                 </div>
               ))}
@@ -779,7 +783,7 @@ export default function Home() {
           <ContactForm />
         </section>
 
-        <footer className="border-t border-zinc-200 py-12 text-zinc-650 dark:border-zinc-800 dark:text-zinc-300">
+        <footer className="scroll-reveal border-t border-zinc-200 py-12 text-zinc-650 dark:border-zinc-800 dark:text-zinc-300">
           <div className="grid gap-10 md:grid-cols-[1.25fr_0.75fr_1fr]">
             <div className="max-w-md">
               <h2 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">
