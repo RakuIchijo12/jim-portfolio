@@ -37,7 +37,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full bg-slate-50 text-slate-950 antialiased selection:bg-sky-300 selection:text-slate-950 dark:bg-zinc-950 dark:text-zinc-100">
+      <body className="min-h-full bg-[#dff7ff] text-[#101827] antialiased selection:bg-[#ffd60a] selection:text-zinc-950 dark:bg-[#050713] dark:text-zinc-100">
         {children}
       </body>
     </html>

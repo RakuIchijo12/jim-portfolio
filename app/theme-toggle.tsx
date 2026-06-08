@@ -36,7 +36,7 @@ export default function ThemeToggle() {
   return (
     <button
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="grid h-10 w-10 place-items-center rounded-md text-zinc-650 transition hover:-translate-y-0.5 hover:bg-yellow-100 hover:text-zinc-950 focus:outline-none focus:ring-4 focus:ring-yellow-200 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 dark:focus:ring-teal-500/25"
+      className="quirk-icon-button grid h-10 w-10 place-items-center rounded-md border-2 border-transparent text-[#101827] transition hover:border-zinc-950 hover:bg-[#ffd60a] hover:text-zinc-950 focus:outline-none focus:ring-4 focus:ring-[#0284c7]/35 dark:text-zinc-50 dark:hover:border-zinc-50 dark:hover:bg-[#232044] dark:hover:text-zinc-50 dark:focus:ring-[#00d5ff]/35"
       onClick={toggleTheme}
       suppressHydrationWarning
       title={isDark ? "Light mode" : "Dark mode"}

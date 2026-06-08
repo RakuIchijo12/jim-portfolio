@@ -56,17 +56,17 @@ const contactDetails = [
 ] as const;
 
 const coreStack = [
-  { name: "Laravel", icon: "laravel", color: "#ff2d20" },
-  { name: "FilamentPHP", icon: "filament", color: "#f59e0b" },
-  { name: "Livewire", icon: "livewire", color: "#ec4899" },
-  { name: "Tailwind CSS", icon: "tailwind", color: "#38bdf8" },
-  { name: "Alpine.js", icon: "alpine", color: "#0f766e" },
+  { name: "Laravel", icon: "laravel", color: "#ff3d2e" },
+  { name: "FilamentPHP", icon: "filament", color: "#f6a800" },
+  { name: "Livewire", icon: "livewire", color: "#ff4d9d" },
+  { name: "Tailwind CSS", icon: "tailwind", color: "#16b8f3" },
+  { name: "Alpine.js", icon: "alpine", color: "#0f9f89" },
   { name: "MySQL", icon: "mysql", color: "#00758f" },
   { name: "Angular", icon: "angular", color: "#dd0031" },
   { name: "NestJS", icon: "nestjs", color: "#e0234e" },
   { name: "PostgreSQL", icon: "postgresql", color: "#336791" },
-  { name: "PestPHP", icon: "pest", color: "#65a30d" },
-  { name: "Queues", icon: "queues", color: "#8b5cf6" },
+  { name: "PestPHP", icon: "pest", color: "#72b01d" },
+  { name: "Queues", icon: "queues", color: "#7c3aed" },
   { name: "RESTful APIs", icon: "api", color: "#0891b2" },
 ] as const;
 
@@ -129,23 +129,114 @@ const experience = [
   },
 ];
 
+const heroStats = [
+  { value: "4", label: "lanes", accent: "#ff3d6e" },
+  { value: "12", label: "tools", accent: "#39ff14" },
+  { value: "99%", label: "focus", accent: "#ffd60a" },
+];
+
+const rhythmStrips = [
+  "Laravel",
+  "hospital workflows",
+  "queues",
+  "dashboards",
+  "APIs",
+  "role access",
+  "tests",
+  "automation",
+];
+
+const orbitNotes = [
+  { label: "API gate", x: "3%", y: "8%", color: "#00d5ff" },
+  { label: "CRUD jump", x: "66%", y: "3%", color: "#ff3d6e" },
+  { label: "Ops shield", x: "64%", y: "70%", color: "#39ff14" },
+  { label: "UI coin", x: "1%", y: "66%", color: "#ffd60a" },
+];
+
+const labNotes = [
+  { label: "Reliability", value: "97%", color: "#24c6a8" },
+  { label: "Workflow clarity", value: "91%", color: "#ff5f57" },
+  { label: "Debug patience", value: "99%", color: "#7c3aed" },
+];
+
+const confetti = [
+  "#ff5f57",
+  "#ffd166",
+  "#24c6a8",
+  "#7c3aed",
+  "#1d4ed8",
+  "#ff4d9d",
+  "#111827",
+  "#f6a800",
+  "#0891b2",
+  "#84cc16",
+  "#f97316",
+  "#6366f1",
+];
+
+function customStyle(properties: Record<string, string>): CSSProperties {
+  return properties as CSSProperties;
+}
+
 function cardDelay(index: number): CSSProperties {
-  return { "--delay": `${index * 90}ms` } as CSSProperties;
+  return customStyle({ "--delay": `${index * 90}ms` });
 }
 
 function stackAccent(color: string): CSSProperties {
-  return { "--stack-accent": color } as CSSProperties;
+  return customStyle({ "--stack-accent": color });
+}
+
+function meterStyle(color: string, width: string, index: number): CSSProperties {
+  return customStyle({
+    "--meter-accent": color,
+    "--meter-width": width,
+    "--delay": `${index * 120}ms`,
+  });
+}
+
+function confettiStyle(color: string, index: number): CSSProperties {
+  return customStyle({
+    "--confetti-color": color,
+    "--confetti-left": `${(index * 9 + 7) % 96}%`,
+    "--confetti-delay": `${index * -0.85}s`,
+    "--confetti-duration": `${8 + (index % 5)}s`,
+  });
+}
+
+function orbitStyle(
+  note: (typeof orbitNotes)[number],
+  index: number,
+): CSSProperties {
+  return customStyle({
+    "--orbit-accent": note.color,
+    "--orbit-x": note.x,
+    "--orbit-y": note.y,
+    "--delay": `${index * -0.65}s`,
+  });
+}
+
+function ArrowIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
 }
 
 function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
   if (icon === "linkedin") {
     return (
-      <svg
-        aria-hidden="true"
-        className="h-4 w-4"
-        fill="currentColor"
-        viewBox="0 0 24 24"
-      >
+      <svg aria-hidden="true" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
         <path d="M6.94 8.98H3.56V20h3.38V8.98ZM7.17 5.58A1.95 1.95 0 1 0 3.28 5.6a1.95 1.95 0 0 0 3.89-.02ZM20.72 13.7c0-3.18-1.7-4.97-4.28-4.97a3.69 3.69 0 0 0-3.33 1.83h-.05V8.98H9.82V20h3.37v-5.45c0-1.44.27-2.84 2.06-2.84 1.76 0 1.78 1.65 1.78 2.93V20h3.38l.31-6.3Z" />
       </svg>
     );
@@ -153,12 +244,7 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
 
   if (icon === "github") {
     return (
-      <svg
-        aria-hidden="true"
-        className="h-4 w-4"
-        fill="currentColor"
-        viewBox="0 0 24 24"
-      >
+      <svg aria-hidden="true" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
         <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.21.68-.48v-1.69c-2.77.6-3.36-1.18-3.36-1.18-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.21-.25-4.54-1.1-4.54-4.92 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.05c.85 0 1.7.11 2.5.33 1.9-1.29 2.74-1.02 2.74-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.83-2.33 4.66-4.55 4.91.36.31.68.92.68 1.86v2.76c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" />
       </svg>
     );
@@ -166,12 +252,7 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
 
   if (icon === "facebook") {
     return (
-      <svg
-        aria-hidden="true"
-        className="h-4 w-4"
-        fill="currentColor"
-        viewBox="0 0 24 24"
-      >
+      <svg aria-hidden="true" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
         <path d="M14.35 8.84V6.98c0-.8.53-.99.91-.99h2.31V2.13L14.39 2.1c-3.53 0-4.33 2.64-4.33 4.33v2.41H7.28v3.98h2.78V23h4.29V12.82h3.58l.16-3.98h-3.74Z" />
       </svg>
     );
@@ -195,95 +276,16 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
 }
 
 function StackIcon({ icon }: { icon: (typeof coreStack)[number]["icon"] }) {
-  if (icon === "laravel") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M4 6.5 10 3l6 3.5v7L10 17 4 13.5Z" />
-        <path d="M10 3v7l6 3.5M10 10 4 13.5" />
-        <path d="M16 6.5 20 9v7l-6 3.5-4-2.5" />
-      </svg>
-    );
-  }
-
-  if (icon === "filament") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <rect height="6" rx="1.5" width="14" x="5" y="4" />
-        <path d="M7 13h10M7 17h7" />
-        <path d="M5 20h14" />
-      </svg>
-    );
-  }
-
-  if (icon === "livewire") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M3 12c2.2-4 4.4-4 6.6 0s4.4 4 6.6 0 4.4-4 6.6 0" />
-        <path d="M3 16c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.6 0" />
-      </svg>
-    );
-  }
-
   if (icon === "tailwind") {
     return (
-      <svg
-        aria-hidden="true"
-        className="h-6 w-6"
-        fill="currentColor"
-        viewBox="0 0 24 24"
-      >
+      <svg aria-hidden="true" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
         <path d="M6 10.5c1.6-3.2 4-4.2 7.2-3 1.8.7 2.9 2 4.8.9 1-.6 1.5-1.4 1.8-2.2-1.6 3.2-4 4.2-7.2 3-1.8-.7-2.9-2-4.8-.9-1 .6-1.5 1.4-1.8 2.2Z" />
         <path d="M3 16.5c1.6-3.2 4-4.2 7.2-3 1.8.7 2.9 2 4.8.9 1-.6 1.5-1.4 1.8-2.2-1.6 3.2-4 4.2-7.2 3-1.8-.7-2.9-2-4.8-.9-1 .6-1.5 1.4-1.8 2.2Z" />
       </svg>
     );
   }
 
-  if (icon === "alpine") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="m3 18 6.5-11 4 6 2-3L21 18Z" />
-        <path d="m9.5 7 3.1 11M15.5 10l1.7 8" />
-      </svg>
-    );
-  }
-
-  if (icon === "mysql") {
+  if (icon === "mysql" || icon === "postgresql") {
     return (
       <svg
         aria-hidden="true"
@@ -302,7 +304,7 @@ function StackIcon({ icon }: { icon: (typeof coreStack)[number]["icon"] }) {
     );
   }
 
-  if (icon === "angular") {
+  if (icon === "queues" || icon === "api") {
     return (
       <svg
         aria-hidden="true"
@@ -314,45 +316,10 @@ function StackIcon({ icon }: { icon: (typeof coreStack)[number]["icon"] }) {
         strokeWidth="1.8"
         viewBox="0 0 24 24"
       >
-        <path d="m12 3 8 3-1.3 11.1L12 21l-6.7-3.9L4 6Z" />
-        <path d="m8.5 16 3.5-9 3.5 9M10 12.5h4" />
-      </svg>
-    );
-  }
-
-  if (icon === "nestjs") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M12 3 20 8v8l-8 5-8-5V8Z" />
-        <path d="M8 16V8l8 8V8" />
-      </svg>
-    );
-  }
-
-  if (icon === "postgresql") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <ellipse cx="10" cy="6" rx="6" ry="3" />
-        <path d="M4 6v7c0 1.7 2.7 3 6 3s6-1.3 6-3V6" />
-        <path d="M14.5 14.5 20 20M18.8 14.8l1.7 5.5-5.5-1.7" />
+        <circle cx="6" cy="12" r="2.5" />
+        <circle cx="18" cy="7" r="2.5" />
+        <circle cx="18" cy="17" r="2.5" />
+        <path d="M8.3 11 15.8 8M8.3 13l7.5 3" />
       </svg>
     );
   }
@@ -375,24 +342,6 @@ function StackIcon({ icon }: { icon: (typeof coreStack)[number]["icon"] }) {
     );
   }
 
-  if (icon === "queues") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-6 w-6"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M5 7h11M5 12h11M5 17h11" />
-        <path d="m16 5 3 2-3 2M16 10l3 2-3 2M16 15l3 2-3 2" />
-      </svg>
-    );
-  }
-
   return (
     <svg
       aria-hidden="true"
@@ -404,10 +353,8 @@ function StackIcon({ icon }: { icon: (typeof coreStack)[number]["icon"] }) {
       strokeWidth="1.8"
       viewBox="0 0 24 24"
     >
-      <circle cx="6" cy="12" r="2.5" />
-      <circle cx="18" cy="7" r="2.5" />
-      <circle cx="18" cy="17" r="2.5" />
-      <path d="M8.3 11 15.8 8M8.3 13l7.5 3" />
+      <path d="M12 3 20 8v8l-8 5-8-5V8Z" />
+      <path d="M8 16V8l8 8V8" />
     </svg>
   );
 }
@@ -421,7 +368,7 @@ function ContactDetailIcon({
     return (
       <svg
         aria-hidden="true"
-        className="h-4 w-4 text-teal-600 dark:text-teal-300"
+        className="h-4 w-4 text-[#24c6a8]"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
@@ -438,7 +385,7 @@ function ContactDetailIcon({
     return (
       <svg
         aria-hidden="true"
-        className="h-4 w-4 text-yellow-500"
+        className="h-4 w-4 text-[#f6a800]"
         fill="none"
         stroke="currentColor"
         strokeLinecap="round"
@@ -455,7 +402,7 @@ function ContactDetailIcon({
   return (
     <svg
       aria-hidden="true"
-      className="h-4 w-4 text-coral"
+      className="h-4 w-4 text-[#ff5f57]"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -471,103 +418,132 @@ function ContactDetailIcon({
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#fbfaf7] text-zinc-950 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-50">
-      <div className="scroll-progress fixed left-0 top-0 z-50 h-1 w-full bg-teal-700 dark:bg-teal-300" />
-      <div className="ambient-grid pointer-events-none fixed inset-0 bg-[linear-gradient(rgba(24,24,27,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(24,24,27,0.045)_1px,transparent_1px)] bg-[size:44px_44px] dark:bg-[linear-gradient(rgba(250,250,250,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(250,250,250,0.055)_1px,transparent_1px)]" />
+    <main className="geometry-theme min-h-screen overflow-hidden bg-[#dff7ff] text-[#101827] transition-colors duration-300 dark:bg-[#050713] dark:text-zinc-50">
+      <div className="scroll-progress fixed left-0 top-0 z-50 h-1.5 w-full bg-[linear-gradient(90deg,#39ff14,#00d5ff,#ffd60a,#ff3d6e)]" />
+      <div className="ambient-grid pointer-events-none fixed inset-0" />
+      <div className="noise-panel pointer-events-none fixed inset-0" />
+      <div aria-hidden="true" className="confetti-field pointer-events-none fixed inset-0">
+        {confetti.map((color, index) => (
+          <span
+            className="confetti"
+            key={`${color}-${index}`}
+            style={confettiStyle(color, index)}
+          />
+        ))}
+      </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-3 border-b border-zinc-200 bg-[#fbfaf7]/90 py-3 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/88">
+        <header className="sticky top-2 z-30 flex min-h-14 items-center justify-between gap-2 rounded-md border-2 border-zinc-950 bg-white/94 px-2.5 py-2 shadow-[5px_5px_0_#22c55e] backdrop-blur-md dark:border-zinc-50 dark:bg-[#0d1028]/94 dark:shadow-[5px_5px_0_#00d5ff] sm:px-3">
           <a
-            className="font-mono text-sm font-semibold uppercase tracking-[0.18em]"
+            className="logo-mark relative inline-flex h-10 min-w-11 items-center justify-center rounded-md border-2 border-zinc-950 bg-[#7dff6a] px-3 font-mono text-sm font-black uppercase text-zinc-950 shadow-[4px_4px_0_#ff2f6d] transition hover:-rotate-3 hover:scale-105 dark:border-zinc-50 dark:bg-[#39ff14] dark:shadow-[4px_4px_0_#ff3d6e]"
             href="#home"
           >
             JDR
           </a>
 
-          <nav className="hidden items-center gap-1 rounded-lg border border-zinc-200 bg-white p-1 text-sm font-medium text-zinc-600 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 md:flex">
-            {navLinks.map((link) => (
+          <nav className="hidden items-center gap-1 rounded-md border-2 border-zinc-950 bg-[#f7fdff] p-1 text-sm font-black text-[#101827] shadow-[4px_4px_0_#0284c7] dark:border-zinc-50 dark:bg-[#0b1026] dark:text-white dark:shadow-[4px_4px_0_#00d5ff] md:flex">
+            {navLinks.map((link, index) => (
               <a
-                className="rounded-md px-3 py-2 transition hover:bg-yellow-100 hover:text-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-white"
+                className="nav-link rounded-md px-3 py-2 transition"
                 href={link.href}
                 key={link.href}
+                style={cardDelay(index)}
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-1 rounded-lg border border-zinc-200 bg-white p-1 shadow-sm transition-colors dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="control-shell flex items-center gap-1 rounded-md border-2 border-zinc-950 bg-[#f7fdff] p-1 shadow-[4px_4px_0_#ffd60a] dark:border-zinc-50 dark:bg-[#0b1026]">
             <ThemeToggle />
             <a
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-teal-800 focus:outline-none focus:ring-4 focus:ring-teal-200 dark:bg-teal-400 dark:text-zinc-950 dark:hover:bg-teal-300 dark:focus:ring-teal-500/25"
+              className="motion-card accent-contact inline-flex min-h-9 items-center justify-center gap-2 rounded-md bg-[#ff2f6d] px-3 py-2 text-sm font-black text-white transition focus:outline-none focus:ring-4 focus:ring-[#ffd60a]/60 dark:bg-[#ff3d6e] sm:px-4"
               href="#contact"
             >
-              <span>Hire Me</span>
-              <svg
-                aria-hidden="true"
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 12h14" />
-                <path d="m13 6 6 6-6 6" />
-              </svg>
+              <span className="hidden min-[380px]:inline">Hire Me</span>
+              <ArrowIcon />
             </a>
           </div>
         </header>
 
         <section
-          className="grid scroll-mt-24 items-center gap-6 overflow-hidden py-8 sm:gap-8 sm:py-10 md:min-h-[calc(100svh-64px)] md:grid-cols-[1fr_0.86fr] lg:py-6"
+          className="home-level relative grid scroll-mt-24 items-center gap-6 overflow-hidden py-5 sm:gap-7 sm:py-6 md:min-h-[calc(100svh-82px)] md:grid-cols-[minmax(0,1.02fr)_minmax(17rem,0.78fr)] lg:gap-8 lg:py-4"
           id="home"
         >
-          <div className="max-w-2xl space-y-4">
+          <div aria-hidden="true" className="spark-line left-[7%] top-[12%]" />
+          <div aria-hidden="true" className="spark-line spark-line-two right-[11%] top-[18%]" />
+          <div aria-hidden="true" className="level-platform level-platform-one" />
+          <div aria-hidden="true" className="level-platform level-platform-two" />
+          <div aria-hidden="true" className="spike-row" />
+
+          <div className="relative z-10 max-w-2xl space-y-4 lg:space-y-5">
             <div
-              className="animated-card motion-card accent-teal inline-flex items-center gap-3 rounded-md border border-zinc-200 bg-white px-3 py-2 text-xs font-normal text-zinc-650 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
+              className="animated-card hero-kicker inline-flex items-center gap-2 rounded-md border-2 border-zinc-950 bg-[#ffd60a] px-3 py-2 text-[0.7rem] font-black uppercase tracking-normal text-zinc-950 shadow-[4px_4px_0_#0284c7] dark:border-zinc-50 dark:shadow-[4px_4px_0_#00d5ff]"
               style={cardDelay(0)}
             >
-              <span className="h-2 w-2 bg-emerald-500" />
-              Available for full-stack opportunities
+              <span className="signal-dot h-2.5 w-2.5 rounded-sm bg-[#22c55e] dark:bg-[#39ff14]" />
+              Level 01 - Full-stack runner
             </div>
 
             <div className="space-y-3">
-              <h1 className="max-w-2xl text-3xl font-normal leading-tight tracking-normal text-zinc-950 dark:text-zinc-50 sm:text-4xl lg:text-[2.75rem]">
+              <h1 className="max-w-2xl text-4xl font-black leading-none tracking-normal text-[#101827] dark:text-white sm:text-5xl lg:text-6xl">
                 Jimuel Dave Rodado
+                <span className="title-spark mt-2 block text-2xl text-[#15803d] dark:text-[#39ff14] sm:text-3xl lg:text-5xl">
+                  clears messy workflows one jump at a time.
+                </span>
               </h1>
-              <p className="text-lg font-normal text-teal-700 dark:text-teal-300 sm:text-xl">
+              <p className="wiggle-word inline-block rounded-md border-2 border-zinc-950 bg-[#67e8f9] px-3 py-1.5 text-base font-black text-zinc-950 shadow-[4px_4px_0_#ff2f6d] dark:border-zinc-50 dark:bg-[#00d5ff] dark:shadow-[4px_4px_0_#ff3d6e] sm:text-lg">
                 Software Engineer
               </p>
-              <p className="max-w-xl text-sm font-normal leading-7 text-zinc-650 dark:text-zinc-300 sm:text-base">
-                I build clean Laravel-first systems for healthcare and
-                enterprise teams, with a practical approach to dashboards,
-                workflows, APIs, and maintainable code.
+              <p className="max-w-xl text-sm font-semibold leading-6 text-slate-700 dark:text-blue-50 sm:text-base sm:leading-7">
+                Laravel-first systems for healthcare and enterprise teams:
+                dashboards, workflows, APIs, automation, and maintainable code
+                that lands cleanly.
               </p>
             </div>
 
-            <div className="grid max-w-sm grid-cols-2 gap-2">
-              {["Healthcare", "ERP/CRM"].map((item, index) => (
-                <div
-                  className="animated-card motion-card accent-teal rounded-md border border-zinc-200 bg-white px-3 py-3 text-center text-xs font-normal text-zinc-650 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
-                  key={item}
-                  style={cardDelay(index + 1)}
+            <div className="ticker-strip animated-card hidden overflow-hidden rounded-md border-2 border-zinc-950 bg-white py-2 text-[#101827] shadow-[5px_5px_0_#ffd60a] dark:border-zinc-50 dark:bg-[#0b1026] dark:text-white sm:block">
+              <div className="ticker-track flex w-max items-center gap-2">
+                {[...rhythmStrips, ...rhythmStrips].map((item, index) => (
+                  <span
+                    className="ticker-chip rounded-md border border-current px-3 py-1 text-xs font-black uppercase"
+                    key={`${item}-${index}`}
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
+              {heroStats.map((stat, index) => (
+                <article
+                  className="animated-card metric-burst motion-card rounded-md border-2 border-zinc-950 bg-white p-3 shadow-[5px_5px_0_#0284c7] dark:border-zinc-50 dark:bg-[#111632] dark:shadow-[5px_5px_0_#0b1026] sm:p-4"
+                  key={stat.label}
+                  style={{
+                    ...cardDelay(index + 1),
+                    ...customStyle({ "--motion-accent": stat.accent }),
+                  }}
                 >
-                  {item}
-                </div>
+                  <p className="font-mono text-2xl font-black text-[#101827] dark:text-white sm:text-3xl">
+                    {stat.value}
+                  </p>
+                  <p className="mt-1 text-[0.65rem] font-black uppercase leading-4 text-slate-600 dark:text-blue-100 sm:text-xs">
+                    {stat.label}
+                  </p>
+                </article>
               ))}
             </div>
 
-            <div className="flex items-center gap-2">
-              {socialLinks.map((link) => (
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              {socialLinks.map((link, index) => (
                 <a
                   aria-label={link.label}
-                  className="animated-card motion-card accent-teal grid h-10 w-10 place-items-center rounded-md border border-zinc-200 bg-white text-zinc-650 shadow-sm hover:text-teal-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:text-teal-300"
+                  className="animated-card motion-card accent-about grid h-10 w-10 place-items-center rounded-md border-2 border-zinc-950 bg-[#ffd60a] text-zinc-950 shadow-[4px_4px_0_#0284c7] transition dark:border-zinc-50 dark:shadow-[4px_4px_0_#0b1026] sm:h-11 sm:w-11"
                   href={link.href}
                   key={link.label}
                   rel={link.icon === "mail" ? undefined : "noreferrer"}
-                  style={cardDelay(4)}
+                  style={cardDelay(index + 4)}
                   target={link.icon === "mail" ? undefined : "_blank"}
                   title={link.label}
                 >
@@ -576,165 +552,233 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               <a
-                className="motion-card accent-teal rounded-md bg-teal-700 px-4 py-3 text-sm font-semibold text-white transition dark:bg-teal-500 dark:text-zinc-950"
+                className="motion-card accent-contact inline-flex items-center gap-2 rounded-md border-2 border-zinc-950 bg-[#ff2f6d] px-4 py-2.5 text-sm font-black text-white shadow-[5px_5px_0_#0284c7] transition focus:outline-none focus:ring-4 focus:ring-[#ffd60a]/60 dark:border-zinc-50 dark:bg-[#ff3d6e] dark:shadow-[5px_5px_0_#0b1026] sm:px-5"
                 href="#contact"
               >
-                Start a conversation
+                Start
+                <ArrowIcon />
               </a>
               <a
-                className="motion-card accent-about rounded-md border border-zinc-300 bg-white px-4 py-3 text-sm font-semibold transition dark:border-zinc-700 dark:bg-zinc-900"
+                className="motion-card accent-about rounded-md border-2 border-zinc-950 bg-[#7dff6a] px-4 py-2.5 text-sm font-black text-zinc-950 shadow-[5px_5px_0_#0284c7] transition focus:outline-none focus:ring-4 focus:ring-[#00d5ff]/45 dark:border-zinc-50 dark:bg-[#39ff14] dark:shadow-[5px_5px_0_#0b1026] sm:px-5"
                 href="#experience"
               >
-                View experience
+                Experience
               </a>
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[22rem] md:ml-auto lg:max-w-[24rem]">
-            <div className="floating-accent absolute -left-3 top-8 hidden h-20 w-20 rounded-md border border-zinc-950 bg-yellow-300 dark:border-zinc-100 sm:block" />
-            <div className="floating-accent floating-accent-two absolute -right-3 -top-3 hidden h-14 w-14 rounded-md border border-zinc-950 bg-coral dark:border-zinc-100 sm:block" />
-            <div className="floating-accent floating-accent-three absolute -bottom-4 left-10 hidden h-12 w-28 rounded-md border border-zinc-950 bg-teal-500 dark:border-zinc-100 sm:block" />
+          <div className="portrait-stage relative z-10 mx-auto w-full max-w-[18rem] sm:max-w-[22rem] md:ml-auto lg:max-w-[24rem]">
+            {orbitNotes.map((note, index) => (
+              <span
+                className="orbit-chip absolute z-20 hidden rounded-md border-2 border-zinc-950 bg-white px-3 py-2 text-xs font-black uppercase text-zinc-950 shadow-[4px_4px_0_var(--orbit-accent)] dark:border-zinc-50 dark:bg-[#17162a] dark:text-zinc-50 sm:inline-flex"
+                key={note.label}
+                style={orbitStyle(note, index)}
+              >
+                {note.label}
+              </span>
+            ))}
+
             <div
-              className="animated-card motion-card accent-teal relative overflow-hidden rounded-lg border border-zinc-200 bg-white p-2 shadow-[0_24px_70px_-45px_rgba(24,24,27,0.45)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-[0_24px_70px_-45px_rgba(20,184,166,0.42)]"
+              className="portrait-frame animated-card motion-card accent-contact relative overflow-hidden rounded-md border-2 border-zinc-950 bg-white p-2 shadow-[8px_8px_0_#22c55e] dark:border-zinc-50 dark:bg-[#0b1026] dark:shadow-[8px_8px_0_#00d5ff]"
               style={cardDelay(2)}
             >
               <Image
                 alt="Portrait of Jimuel Dave Rodado."
-                className="h-[34svh] min-h-56 max-h-[26rem] w-full rounded-md object-cover object-[center_34%] sm:h-[46svh] md:h-[62svh] md:max-h-none"
+                className="image-glitch h-56 w-full rounded-md object-cover object-[center_32%] sm:h-72 md:h-[24rem] lg:h-[27rem]"
                 height={1536}
                 priority
                 src="/jim-cafe-portrait.png"
                 width={1024}
               />
             </div>
+
+            <div className="mini-terminal animated-card relative z-20 mt-3 w-full rounded-md border-2 border-zinc-950 bg-white p-3 text-[#101827] shadow-[5px_5px_0_#ff2f6d] dark:border-zinc-50 dark:bg-[#0b1026] dark:text-zinc-50 dark:shadow-[5px_5px_0_#ff3d6e] sm:absolute sm:-bottom-3 sm:left-3 sm:mt-0 sm:w-[82%]">
+              <div className="terminal-lights mb-2 flex gap-1.5">
+                <span className="bg-[#ff3d6e]" />
+                <span className="bg-[#ffd60a]" />
+                <span className="bg-[#39ff14]" />
+              </div>
+              <p className="font-mono text-[0.7rem] font-bold leading-5 text-[#15803d] dark:text-[#ccff00]">
+                jump --queue --deploy
+                <span className="terminal-cursor ml-1 inline-block h-4 w-2 bg-[#39ff14] align-middle" />
+              </p>
+            </div>
           </div>
         </section>
 
         <section
-          className="scroll-reveal grid scroll-mt-24 gap-8 border-y border-zinc-200 py-12 dark:border-zinc-800 sm:py-14 lg:grid-cols-[0.72fr_1.28fr] lg:items-start"
+          className="scroll-reveal grid scroll-mt-28 gap-8 border-y-2 border-zinc-950 py-14 dark:border-zinc-50 lg:grid-cols-[0.7fr_1.3fr] lg:items-start"
           id="about"
         >
           <div>
-            <p className="font-mono text-sm font-semibold uppercase tracking-[0.2em] text-coral">
+            <p className="section-label inline-flex rounded-md border-2 border-zinc-950 bg-[#7c3aed] px-3 py-2 font-mono text-sm font-black uppercase text-white shadow-[4px_4px_0_#111827] dark:border-zinc-50">
               About
             </p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-normal sm:text-4xl">
-              Practical engineering for systems people actually depend on.
+            <h2 className="mt-5 text-3xl font-black leading-tight tracking-normal sm:text-5xl">
+              Practical engineering, but the dashboard has a pulse.
             </h2>
           </div>
 
-          <div className="space-y-6 lg:sticky lg:top-24">
-            <div className="space-y-4 text-base leading-8 text-zinc-700 dark:text-zinc-300">
-              <p>
-                I am a Full-Stack Developer with a Computer Engineering
-                background and a strong passion for scalable, maintainable, and
-                useful web applications.
-              </p>
-              <p>
-                My work spans hospital systems, healthcare workflows, ERP and CRM
-                platforms, internal automation, role-based access, dashboards,
-                APIs, and operational tools.
-              </p>
+          <div className="space-y-6 lg:sticky lg:top-28">
+            <div className="quirk-card scroll-reveal rounded-lg border-2 border-zinc-950 bg-white p-5 shadow-[8px_8px_0_#24c6a8] dark:border-zinc-50 dark:bg-[#17162a]">
+              <div className="space-y-4 text-base font-medium leading-8 text-zinc-700 dark:text-zinc-200">
+                <p>
+                  I am a Full-Stack Developer with a Computer Engineering
+                  background and a strong passion for scalable, maintainable,
+                  and useful web applications.
+                </p>
+                <p>
+                  My work spans hospital systems, healthcare workflows, ERP and
+                  CRM platforms, internal automation, role-based access,
+                  dashboards, APIs, and operational tools.
+                </p>
+              </div>
             </div>
 
             <div className="grid gap-3 md:grid-cols-3">
               {aboutCards.map((card, index) => (
                 <article
-                  className="animated-card scroll-reveal motion-card accent-about rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5"
+                  className="animated-card scroll-reveal quirk-card motion-card rounded-lg border-2 border-zinc-950 bg-white p-4 shadow-[6px_6px_0_#111827] dark:border-zinc-50 dark:bg-[#17162a] sm:p-5"
                   key={card.title}
-                  style={cardDelay(index)}
+                  style={{
+                    ...cardDelay(index),
+                    ...customStyle({
+                      "--motion-accent":
+                        index === 0 ? "#24c6a8" : index === 1 ? "#ff5f57" : "#ffd166",
+                    }),
+                  }}
                 >
-                  <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
+                  <p className="font-mono text-xs font-black uppercase text-zinc-500 dark:text-zinc-300">
                     {card.title}
                   </p>
-                  <h3 className="mt-3 text-xl font-semibold">{card.value}</h3>
-                  <p className="mt-3 text-sm leading-6 text-zinc-650 dark:text-zinc-300">
+                  <h3 className="mt-3 text-xl font-black">{card.value}</h3>
+                  <p className="mt-3 text-sm font-medium leading-6 text-zinc-650 dark:text-zinc-300">
                     {card.copy}
                   </p>
                 </article>
               ))}
             </div>
 
-            <div className="animated-card scroll-reveal motion-card accent-teal rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5">
-              <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
-                Stack
-              </p>
-              <ul
-                aria-label="Core technology stack"
-                className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-6 lg:flex lg:flex-wrap"
-              >
-                {coreStack.map((item) => (
-                  <li key={item.name}>
-                    <span
-                      aria-label={item.name}
-                      className="stack-icon-tile group relative grid h-11 w-11 place-items-center rounded-md border border-zinc-200 bg-[#fbfaf7] text-[var(--stack-accent)] shadow-sm transition hover:-translate-y-1 hover:border-[var(--stack-accent)] hover:bg-white focus:outline-none focus:ring-4 focus:ring-[color-mix(in_srgb,var(--stack-accent)_28%,transparent)] dark:border-zinc-700 dark:bg-zinc-950 dark:hover:bg-zinc-900 sm:h-12 sm:w-12"
-                      role="img"
-                      style={stackAccent(item.color)}
-                      tabIndex={0}
-                      title={item.name}
-                    >
-                      <StackIcon icon={item.icon} />
+            <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="quirk-card scroll-reveal rounded-lg border-2 border-zinc-950 bg-[#111827] p-5 text-white shadow-[8px_8px_0_#ff5f57] dark:border-zinc-50">
+                <p className="font-mono text-xs font-black uppercase text-[#ffd166]">
+                  Build temperament
+                </p>
+                <div className="mt-5 grid gap-4">
+                  {labNotes.map((note, index) => (
+                    <div key={note.label}>
+                      <div className="flex items-center justify-between gap-3 text-sm font-black">
+                        <span>{note.label}</span>
+                        <span>{note.value}</span>
+                      </div>
                       <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md border border-zinc-900 bg-zinc-950 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100 dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-950"
+                        className="meter-bar mt-2 block h-3 rounded-md border border-white/60 bg-white/10"
+                        style={meterStyle(note.color, note.value, index)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="animated-card scroll-reveal quirk-card motion-card rounded-lg border-2 border-zinc-950 bg-white p-4 shadow-[8px_8px_0_#ffd166] dark:border-zinc-50 dark:bg-[#17162a] sm:p-5">
+                <p className="font-mono text-xs font-black uppercase text-zinc-500 dark:text-zinc-300">
+                  Stack
+                </p>
+                <ul
+                  aria-label="Core technology stack"
+                  className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-6 lg:flex lg:flex-wrap"
+                >
+                  {coreStack.map((item, index) => (
+                    <li className="flex justify-center" key={item.name}>
+                      <span
+                        aria-label={item.name}
+                        className="stack-icon-tile group relative grid h-11 w-11 place-items-center rounded-md border-2 border-zinc-950 bg-[#fbfff4] text-[var(--stack-accent)] shadow-[3px_3px_0_#111827] transition focus:outline-none focus:ring-4 focus:ring-[color-mix(in_srgb,var(--stack-accent)_28%,transparent)] dark:border-zinc-50 dark:bg-[#100f1f] sm:h-12 sm:w-12"
+                        role="img"
+                        style={{
+                          ...stackAccent(item.color),
+                          ...cardDelay(index),
+                        }}
+                        tabIndex={0}
+                        title={item.name}
                       >
-                        {item.name}
+                        <StackIcon icon={item.icon} />
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 max-w-28 -translate-x-1/2 rounded-md border-2 border-zinc-950 bg-white px-2 py-1 text-center text-xs font-black leading-tight text-zinc-950 opacity-0 shadow-[3px_3px_0_#111827] transition group-hover:opacity-100 group-focus-visible:opacity-100 dark:border-zinc-50 dark:bg-zinc-950 dark:text-zinc-50"
+                        >
+                          {item.name}
+                        </span>
                       </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </section>
 
         <section
-          className="scroll-reveal grid scroll-mt-24 gap-8 py-12 sm:py-14 lg:grid-cols-[0.65fr_1.35fr]"
+          className="scroll-reveal grid scroll-mt-28 gap-8 py-14 lg:grid-cols-[0.65fr_1.35fr]"
           id="experience"
         >
           <div className="space-y-5">
             <div>
-              <p className="font-mono text-sm font-semibold uppercase tracking-[0.2em] text-teal-700 dark:text-teal-300">
+              <p className="section-label inline-flex rounded-md border-2 border-zinc-950 bg-[#24c6a8] px-3 py-2 font-mono text-sm font-black uppercase text-zinc-950 shadow-[4px_4px_0_#111827] dark:border-zinc-50">
                 Experience
               </p>
-              <h2 className="mt-4 text-3xl font-semibold tracking-normal sm:text-4xl">
+              <h2 className="mt-5 text-3xl font-black leading-tight tracking-normal sm:text-5xl">
                 Healthcare reliability, enterprise workflow thinking.
               </h2>
             </div>
-            <p className="text-base leading-8 text-zinc-700 dark:text-zinc-300">
+            <p className="text-base font-medium leading-8 text-zinc-700 dark:text-zinc-200">
               The through-line is practical software: dashboards, APIs,
               automation, user management, queues, tests, and clean workflows
               that support real teams.
             </p>
+            <div className="desk-preview relative overflow-hidden rounded-lg border-2 border-zinc-950 bg-white p-2 shadow-[8px_8px_0_#7c3aed] dark:border-zinc-50 dark:bg-[#17162a]">
+              <Image
+                alt="Stylized workstation with healthcare dashboard visuals."
+                className="h-44 w-full rounded-md object-cover"
+                height={1024}
+                src="/portfolio-hero.png"
+                width={1536}
+              />
+            </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             {experience.map((job, index) => (
               <article
-                className="animated-card scroll-reveal motion-card accent-experience rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-5"
+                className="animated-card scroll-reveal timeline-card motion-card rounded-lg border-2 border-zinc-950 bg-white p-4 shadow-[8px_8px_0_#111827] dark:border-zinc-50 dark:bg-[#17162a] sm:p-5"
                 key={`${job.company}-${job.role}`}
-                style={cardDelay(index)}
+                style={{
+                  ...cardDelay(index),
+                  ...customStyle({
+                    "--motion-accent":
+                      index % 3 === 0 ? "#ff5f57" : index % 3 === 1 ? "#24c6a8" : "#ffd166",
+                  }),
+                }}
               >
                 <div className="flex flex-col gap-4 sm:flex-row">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-zinc-900 bg-[#fbfaf7] font-mono text-sm font-bold dark:border-zinc-100 dark:bg-zinc-950">
+                  <div className="timeline-index flex h-12 w-12 shrink-0 items-center justify-center rounded-md border-2 border-zinc-950 bg-[#ffd166] font-mono text-sm font-black text-zinc-950 shadow-[4px_4px_0_#111827] dark:border-zinc-50">
                     {String(index + 1).padStart(2, "0")}
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold">{job.role}</h3>
-                    <p className="mt-1 font-medium text-zinc-700 dark:text-zinc-300">
+                    <h3 className="text-xl font-black">{job.role}</h3>
+                    <p className="mt-1 font-black text-zinc-700 dark:text-zinc-200">
                       {job.company}
                     </p>
-                    <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+                    <p className="mt-2 text-sm font-medium text-zinc-500 dark:text-zinc-300">
                       {job.meta}
                     </p>
                   </div>
                 </div>
-                <ul className="mt-5 space-y-3 text-sm leading-6 text-zinc-650 dark:text-zinc-300">
+                <ul className="mt-5 space-y-3 text-sm font-medium leading-6 text-zinc-650 dark:text-zinc-300">
                   {job.points.map((point) => (
                     <li className="flex gap-3" key={point}>
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-coral" />
+                      <span className="mt-2 h-2 w-2 shrink-0 rounded-full border border-zinc-950 bg-[#ff5f57] dark:border-zinc-50" />
                       <span>{point}</span>
                     </li>
                   ))}
@@ -745,51 +789,57 @@ export default function Home() {
         </section>
 
         <section
-          className="scroll-reveal grid scroll-mt-24 gap-8 border-t border-zinc-200 py-12 dark:border-zinc-800 sm:py-14 lg:grid-cols-[0.85fr_1.15fr]"
+          className="contact-section grid scroll-mt-28 gap-8 border-t-2 border-zinc-950 py-14 dark:border-zinc-50 lg:grid-cols-[0.85fr_1.15fr]"
           id="contact"
         >
           <div className="space-y-5">
-            <p className="font-mono text-sm font-semibold uppercase tracking-[0.2em] text-teal-700 dark:text-teal-300">
+            <p className="section-label inline-flex rounded-md border-2 border-zinc-950 bg-[#ff5f57] px-3 py-2 font-mono text-sm font-black uppercase text-zinc-950 shadow-[4px_4px_0_#111827] dark:border-zinc-50">
               Contact
             </p>
-            <h2 className="text-3xl font-semibold tracking-normal sm:text-4xl">
-              Have an idea, role, or project in mind? I&apos;d be glad to hear it.
+            <h2 className="text-3xl font-black leading-tight tracking-normal sm:text-5xl">
+              Have an idea, role, or project in mind? I&apos;d be glad to hear
+              it.
             </h2>
-            <p className="max-w-xl text-base leading-8 text-zinc-700 dark:text-zinc-300">
+            <p className="max-w-xl text-base font-medium leading-8 text-zinc-700 dark:text-zinc-200">
               Share your name, email, and a short note about what you&apos;re
-              looking for. I&apos;ll read it carefully and reply with a clear next
-              step.
+              looking for. I&apos;ll read it carefully and reply with a clear
+              next step.
             </p>
-            <div className="grid gap-3 pt-2">
-              {contactDetails.map((detail, index) => (
-                <div
-                  className="animated-card scroll-reveal motion-card accent-teal flex items-center gap-3 rounded-md border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-650 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
-                  key={detail.label}
-                  style={cardDelay(index)}
-                >
-                  <ContactDetailIcon icon={detail.icon} />
-                  <span className="min-w-0">
-                    <span className="block text-xs uppercase tracking-[0.14em] text-zinc-500 dark:text-zinc-400">
-                      {detail.label}
+            <div className="contact-meter quirk-card rounded-lg border-2 border-zinc-950 bg-white p-4 text-[#101827] shadow-[8px_8px_0_#22c55e] dark:border-zinc-50 dark:bg-[#111632] dark:text-white dark:shadow-[8px_8px_0_#00d5ff]">
+              <p className="font-mono text-xs font-black uppercase text-[#b45309] dark:text-[#ffd60a]">
+                Signal board
+              </p>
+              <div className="mt-4 grid gap-3">
+                {contactDetails.map((detail, index) => (
+                  <div
+                    className="animated-card motion-card flex items-center gap-3 rounded-md border-2 border-zinc-950 bg-[#f7fdff] px-4 py-3 text-sm text-[#101827] shadow-[3px_3px_0_#ffd60a] dark:border-zinc-50 dark:bg-[#0b1026] dark:text-white dark:shadow-[3px_3px_0_#00d5ff]"
+                    key={detail.label}
+                    style={cardDelay(index)}
+                  >
+                    <ContactDetailIcon icon={detail.icon} />
+                    <span className="min-w-0">
+                      <span className="block text-xs font-black uppercase text-slate-600 dark:text-zinc-300">
+                        {detail.label}
+                      </span>
+                      <span className="mt-1 block break-words font-bold">
+                        {detail.value}
+                      </span>
                     </span>
-                    <span className="mt-1 block break-words">
-                      {detail.value}
-                    </span>
-                  </span>
-                </div>
-              ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           <ContactForm />
         </section>
 
-        <footer className="scroll-reveal border-t border-zinc-200 py-12 text-zinc-650 dark:border-zinc-800 dark:text-zinc-300">
+        <footer className="site-footer border-t-2 border-zinc-950 py-12 text-[#101827] dark:border-[#00d5ff] dark:text-[#b9ecff]">
           <div className="grid gap-10 md:grid-cols-[1.25fr_0.75fr_1fr]">
             <div className="max-w-md">
-              <h2 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">
+              <h2 className="text-xl font-black text-zinc-950 dark:text-[#39ff14]">
                 Jimuel Dave Rodado
               </h2>
-              <p className="mt-5 text-sm leading-7">
+              <p className="mt-5 text-sm font-medium leading-7">
                 Software Engineer focused on full-stack development, healthcare
                 systems, enterprise workflows, and clean, maintainable web
                 applications.
@@ -797,16 +847,12 @@ export default function Home() {
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">
+              <h2 className="text-xl font-black text-zinc-950 dark:text-[#39ff14]">
                 Quick Links
               </h2>
-              <nav className="mt-5 grid gap-3 text-sm">
+              <nav className="mt-5 grid gap-3 text-sm font-bold">
                 {navLinks.map((link) => (
-                  <a
-                    className="transition hover:text-teal-700 dark:hover:text-teal-300"
-                    href={link.href}
-                    key={link.href}
-                  >
+                  <a className="nav-link w-max rounded-md px-2 py-1" href={link.href} key={link.href}>
                     {link.label}
                   </a>
                 ))}
@@ -814,69 +860,33 @@ export default function Home() {
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-zinc-950 dark:text-zinc-50">
+              <h2 className="text-xl font-black text-zinc-950 dark:text-[#39ff14]">
                 Get in Touch
               </h2>
-              <div className="mt-5 grid gap-4 text-sm">
-                <p className="flex items-center gap-3">
-                  <svg
-                    aria-hidden="true"
-                    className="h-4 w-4 text-coral"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M4 6h16v12H4z" />
-                    <path d="m4 7 8 6 8-6" />
-                  </svg>
-                  {contactEmail}
+              <div className="mt-5 grid gap-4 text-sm font-medium">
+                <p className="flex min-w-0 items-center gap-3">
+                  <ContactDetailIcon icon="mail" />
+                  <span className="min-w-0 break-all">{contactEmail}</span>
                 </p>
-                <p className="flex items-center gap-3">
-                  <svg
-                    aria-hidden="true"
-                    className="h-4 w-4 text-teal-600 dark:text-teal-300"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.63 2.6a2 2 0 0 1-.45 2.11L8 9.72a16 16 0 0 0 6.28 6.28l1.29-1.29a2 2 0 0 1 2.11-.45c.83.3 1.7.51 2.6.63A2 2 0 0 1 22 16.92Z" />
-                  </svg>
-                  {contactPhone}
+                <p className="flex min-w-0 items-center gap-3">
+                  <ContactDetailIcon icon="phone" />
+                  <span className="min-w-0 break-words">{contactPhone}</span>
                 </p>
-                <p className="flex items-center gap-3">
-                  <svg
-                    aria-hidden="true"
-                    className="h-4 w-4 text-yellow-500"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 21s7-5.33 7-12A7 7 0 0 0 5 9c0 6.67 7 12 7 12Z" />
-                    <circle cx="12" cy="9" r="2.5" />
-                  </svg>
-                  Davao City, Philippines
+                <p className="flex min-w-0 items-center gap-3">
+                  <ContactDetailIcon icon="location" />
+                  <span className="min-w-0 break-words">
+                    Davao City, Philippines
+                  </span>
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col gap-4 border-t border-zinc-200 pt-7 text-sm dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-10 flex flex-col gap-4 border-t-2 border-zinc-950 pt-7 text-sm font-bold dark:border-[#00d5ff] sm:flex-row sm:items-center sm:justify-between">
             <p>
               &copy; <CurrentYear /> Jimuel Dave Rodado. All rights reserved.
             </p>
-            <a
-              className="transition hover:text-teal-700 dark:hover:text-teal-300"
-              href="#contact"
-            >
+            <a className="nav-link w-max rounded-md px-2 py-1" href="#contact">
               Let&apos;s connect.
             </a>
           </div>
