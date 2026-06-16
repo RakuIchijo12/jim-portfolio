@@ -750,15 +750,15 @@ export default function Home() {
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header className="sticky top-2 z-30 flex min-h-14 items-center justify-between gap-2 rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/90 px-2.5 py-2 shadow-[0_0_28px_#48f5ff33] backdrop-blur-md dark:border-[#78e5ff]/60 dark:bg-[#02040d]/92 dark:shadow-[0_0_32px_#48f5ff33] sm:px-3">
+        <header className="sticky top-2 z-30 grid min-h-14 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/90 px-2.5 py-2 shadow-[0_0_28px_#48f5ff33] backdrop-blur-md dark:border-[#78e5ff]/60 dark:bg-[#02040d]/92 dark:shadow-[0_0_32px_#48f5ff33] sm:px-3 lg:grid-cols-[auto_minmax(0,1fr)_auto]">
           <a
-            className="logo-mark relative inline-flex h-11 min-w-12 items-center justify-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] px-3 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] transition hover:-rotate-3 hover:scale-105 dark:border-[#eaf6ff]/80 dark:bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] dark:shadow-[4px_4px_0_#ff4fd866]"
+            className="logo-mark relative z-10 inline-flex h-11 min-w-12 items-center justify-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] px-3 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] transition hover:-rotate-3 hover:scale-105 dark:border-[#eaf6ff]/80 dark:bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] dark:shadow-[4px_4px_0_#ff4fd866]"
             href="#home"
           >
             JDR
           </a>
 
-          <nav className="hidden items-center gap-1 rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 p-1 text-sm font-black text-[#eaf6ff] shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80 dark:text-[#eaf6ff] dark:shadow-[0_0_22px_#48f5ff2e] md:flex">
+          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 p-1 text-sm font-black text-[#eaf6ff] shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80 dark:text-[#eaf6ff] dark:shadow-[0_0_22px_#48f5ff2e] lg:flex">
             {navLinks.map((link, index) => (
               <a
                 className="nav-link inline-flex min-h-11 items-center rounded-md px-3 py-2 transition"
@@ -771,11 +771,11 @@ export default function Home() {
             ))}
           </nav>
 
-          <div className="control-shell flex items-center gap-1 rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 p-1 shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80">
+          <div className="control-shell relative z-10 flex items-center justify-self-end rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 p-1 shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80 sm:gap-1">
             <ThemeToggle />
             <AudioControl />
             <a
-              className="motion-card accent-contact inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-3 py-2 text-sm font-black text-white transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] sm:px-4"
+              className="motion-card action-link action-link-primary accent-contact inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-3 py-2 text-sm font-black text-white transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] sm:px-4"
               href="#contact"
             >
               <span className="hidden min-[380px]:inline">Hire Me</span>
@@ -814,7 +814,7 @@ export default function Home() {
                 Software Engineer
               </p>
               <p className="max-w-xl text-sm font-semibold leading-6 text-slate-700 dark:text-blue-50 sm:text-base sm:leading-7">
-                Laravel-first systems for healthcare and enterprise teams:
+                I build solutions for healthcare and enterprise teams:
                 dashboards, workflows, APIs, automation, and maintainable code
                 that lands cleanly.
               </p>
@@ -857,7 +857,7 @@ export default function Home() {
               {socialLinks.map((link, index) => (
                 <a
                   aria-label={link.label}
-                  className="animated-card motion-card accent-about grid h-11 w-11 place-items-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] text-[#03111f] shadow-[4px_4px_0_#ff4fd866] transition dark:border-[#eaf6ff]/80 dark:shadow-[4px_4px_0_#ff4fd866]"
+                  className="animated-card motion-card social-chip accent-about grid h-11 w-11 place-items-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] text-[#03111f] shadow-[4px_4px_0_#ff4fd866] transition dark:border-[#eaf6ff]/80 dark:shadow-[4px_4px_0_#ff4fd866]"
                   href={link.href}
                   key={link.label}
                   rel={link.icon === "mail" ? undefined : "noreferrer"}
@@ -872,14 +872,14 @@ export default function Home() {
 
             <div className="flex flex-wrap gap-2 sm:gap-3">
               <a
-                className="motion-card accent-contact inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-[#ff8fe8]/80 bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-4 py-2.5 text-sm font-black text-white shadow-[5px_5px_0_#48f5ff66] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:border-[#ff8fe8]/80 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] dark:shadow-[5px_5px_0_#48f5ff66] sm:px-5"
+                className="motion-card action-link action-link-primary accent-contact inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-[#ff8fe8]/80 bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-4 py-2.5 text-sm font-black text-white shadow-[5px_5px_0_#48f5ff66] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:border-[#ff8fe8]/80 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] dark:shadow-[5px_5px_0_#48f5ff66] sm:px-5"
                 href="#contact"
               >
                 Start
                 <ArrowIcon />
               </a>
               <a
-                className="motion-card accent-about inline-flex min-h-11 items-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] px-4 py-2.5 text-sm font-black text-[#03111f] shadow-[5px_5px_0_#ff4fd866] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:border-[#eaf6ff]/80 dark:bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] dark:shadow-[5px_5px_0_#ff4fd866] sm:px-5"
+                className="motion-card action-link action-link-secondary accent-about inline-flex min-h-11 items-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] px-4 py-2.5 text-sm font-black text-[#03111f] shadow-[5px_5px_0_#ff4fd866] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:border-[#eaf6ff]/80 dark:bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] dark:shadow-[5px_5px_0_#ff4fd866] sm:px-5"
                 href="#experience"
               >
                 Experience
@@ -960,7 +960,7 @@ export default function Home() {
             <div className="grid gap-3 md:grid-cols-3">
               {aboutCards.map((card, index) => (
                 <article
-                  className="animated-card scroll-reveal quirk-card motion-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-4 shadow-[0_0_24px_#48f5ff2e] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 sm:p-5"
+                  className="animated-card scroll-reveal about-tile quirk-card motion-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-4 shadow-[0_0_24px_#48f5ff2e] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 sm:p-5"
                   key={card.title}
                   style={{
                     ...cardDelay(index),
@@ -982,7 +982,7 @@ export default function Home() {
             </div>
 
             <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="quirk-card scroll-reveal rounded-lg border-2 border-[#78e5ff]/55 bg-[#061329]/90 p-5 text-white shadow-[0_0_26px_#ff4fd833] dark:border-[#78e5ff]/55">
+              <div className="temperament-card quirk-card scroll-reveal rounded-lg border-2 border-[#78e5ff]/55 bg-[#061329]/90 p-5 text-white shadow-[0_0_26px_#ff4fd833] dark:border-[#78e5ff]/55">
                 <p className="font-mono text-xs font-black uppercase text-[#ffe66d]">
                   Build temperament
                 </p>
@@ -1002,7 +1002,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="animated-card scroll-reveal quirk-card motion-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-4 shadow-[0_0_24px_#48f5ff2e] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 sm:p-5">
+              <div className="animated-card scroll-reveal stack-console quirk-card motion-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-4 shadow-[0_0_24px_#48f5ff2e] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 sm:p-5">
                 <p className="font-mono text-xs font-black uppercase text-zinc-500 dark:text-zinc-300">
                   Stack
                 </p>
@@ -1139,7 +1139,7 @@ export default function Home() {
               <div className="mt-4 grid gap-3">
                 {contactDetails.map((detail, index) => (
                   <div
-                    className="animated-card motion-card flex items-center gap-3 rounded-md border-2 border-[#78e5ff]/45 bg-[#030916]/75 px-4 py-3 text-sm text-[#eaf6ff] shadow-[0_0_18px_#48f5ff2e] dark:border-[#78e5ff]/45 dark:bg-[#030916]/75 dark:text-white dark:shadow-[0_0_18px_#48f5ff2e]"
+                    className="animated-card contact-row motion-card flex items-center gap-3 rounded-md border-2 border-[#78e5ff]/45 bg-[#030916]/75 px-4 py-3 text-sm text-[#eaf6ff] shadow-[0_0_18px_#48f5ff2e] dark:border-[#78e5ff]/45 dark:bg-[#030916]/75 dark:text-white dark:shadow-[0_0_18px_#48f5ff2e]"
                     key={detail.label}
                     style={cardDelay(index)}
                   >
