@@ -54,14 +54,14 @@ export default function ContactForm() {
 
   return (
     <form
-      className="animated-card quirk-card motion-card accent-contact rounded-lg border-2 border-zinc-950 bg-white p-5 shadow-[8px_8px_0_#ff2f6d] dark:border-zinc-50 dark:bg-[#111632] dark:shadow-[8px_8px_0_#00d5ff] sm:p-6"
+      className="animated-card quirk-card motion-card accent-contact rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-5 shadow-[0_0_26px_#48f5ff33] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 dark:shadow-[0_0_26px_#48f5ff33] sm:p-6"
       onSubmit={handleSubmit}
     >
       <div className="grid gap-5">
         <label className="grid gap-2">
           <span className="text-sm font-black text-zinc-800 dark:text-zinc-100">Name</span>
           <input
-            className="rounded-md border-2 border-zinc-950 bg-[#fbfff4] px-4 py-3 text-base font-medium text-zinc-950 shadow-[3px_3px_0_#ffd166] outline-none transition focus:bg-white focus:shadow-[5px_5px_0_#24c6a8] focus:ring-4 focus:ring-[#24c6a8]/20 dark:border-zinc-50 dark:bg-[#100f1f] dark:text-zinc-50"
+            className="rounded-md border-2 border-[#78e5ff]/60 bg-[#030916]/75 px-4 py-3 text-base font-medium text-[#eaf6ff] shadow-[0_0_18px_#48f5ff2e] outline-none transition focus:bg-[#07172c] focus:shadow-[0_0_24px_#48f5ff55] focus:ring-4 focus:ring-[#48f5ff]/25 dark:border-[#78e5ff]/60 dark:bg-[#030916]/75 dark:text-zinc-50"
             minLength={3}
             onChange={(event) => setName(event.target.value)}
             placeholder="e.g. Maria Santos"
@@ -74,7 +74,7 @@ export default function ContactForm() {
         <label className="grid gap-2">
           <span className="text-sm font-black text-zinc-800 dark:text-zinc-100">Email</span>
           <input
-            className="rounded-md border-2 border-zinc-950 bg-[#fbfff4] px-4 py-3 text-base font-medium text-zinc-950 shadow-[3px_3px_0_#ffd166] outline-none transition focus:bg-white focus:shadow-[5px_5px_0_#24c6a8] focus:ring-4 focus:ring-[#24c6a8]/20 dark:border-zinc-50 dark:bg-[#100f1f] dark:text-zinc-50"
+            className="rounded-md border-2 border-[#78e5ff]/60 bg-[#030916]/75 px-4 py-3 text-base font-medium text-[#eaf6ff] shadow-[0_0_18px_#48f5ff2e] outline-none transition focus:bg-[#07172c] focus:shadow-[0_0_24px_#48f5ff55] focus:ring-4 focus:ring-[#48f5ff]/25 dark:border-[#78e5ff]/60 dark:bg-[#030916]/75 dark:text-zinc-50"
             onChange={(event) => setClientEmail(event.target.value)}
             placeholder="e.g. maria@company.com"
             required
@@ -86,7 +86,7 @@ export default function ContactForm() {
         <label className="grid gap-2">
           <span className="text-sm font-black text-zinc-800 dark:text-zinc-100">Message body</span>
           <textarea
-            className="min-h-44 resize-y rounded-md border-2 border-zinc-950 bg-[#fbfff4] px-4 py-3 text-base font-medium leading-7 text-zinc-950 shadow-[3px_3px_0_#ffd166] outline-none transition focus:bg-white focus:shadow-[5px_5px_0_#24c6a8] focus:ring-4 focus:ring-[#24c6a8]/20 dark:border-zinc-50 dark:bg-[#100f1f] dark:text-zinc-50"
+            className="min-h-44 resize-y rounded-md border-2 border-[#78e5ff]/60 bg-[#030916]/75 px-4 py-3 text-base font-medium leading-7 text-[#eaf6ff] shadow-[0_0_18px_#48f5ff2e] outline-none transition focus:bg-[#07172c] focus:shadow-[0_0_24px_#48f5ff55] focus:ring-4 focus:ring-[#48f5ff]/25 dark:border-[#78e5ff]/60 dark:bg-[#030916]/75 dark:text-zinc-50"
             minLength={10}
             onChange={(event) => setBody(event.target.value)}
             placeholder="Tell me about the project, role, or opportunity you have in mind."
@@ -97,11 +97,11 @@ export default function ContactForm() {
         </label>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-mono text-xs font-black uppercase text-zinc-500 dark:text-zinc-300">
+          <p className="font-mono text-xs font-black uppercase text-slate-600 dark:text-zinc-300">
             {characterCount} characters
           </p>
           <button
-            className="quirk-submit rounded-md border-2 border-zinc-950 bg-[#ff2f6d] px-5 py-3 text-sm font-black text-white shadow-[5px_5px_0_#22c55e] transition focus:outline-none focus:ring-4 focus:ring-[#ffd60a]/50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-50 dark:bg-zinc-50 dark:text-zinc-950 dark:shadow-[5px_5px_0_#00d5ff]"
+            className="quirk-submit rounded-md border-2 border-[#ff8fe8]/80 bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-5 py-3 text-sm font-black text-white shadow-[5px_5px_0_#48f5ff66] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 disabled:cursor-not-allowed disabled:opacity-60 dark:border-[#ff8fe8]/80 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] dark:text-white dark:shadow-[5px_5px_0_#48f5ff66]"
             disabled={status === "sending"}
             type="submit"
           >
@@ -112,8 +112,8 @@ export default function ContactForm() {
           <p
             className={`text-sm font-bold ${
               status === "sent"
-                ? "text-[#0f9f89] dark:text-[#4ee7c7]"
-                : "text-[#ff5f57]"
+                ? "text-[#0f766e] dark:text-[#b8ff5c]"
+                : "text-[#be185d] dark:text-[#ff4fd8]"
             }`}
           >
             {statusMessage}

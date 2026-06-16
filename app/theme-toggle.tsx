@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
 
-function getInitialTheme(): Theme {
+const themeChangeEvent = "portfolio-theme-change";
+
+function getPreferredTheme(): Theme {
   if (typeof window === "undefined") {
     return "light";
   }
@@ -20,23 +22,45 @@ function getInitialTheme(): Theme {
     : "light";
 }
 
+function subscribeToThemeChanges(onStoreChange: () => void) {
+  const colorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(themeChangeEvent, onStoreChange);
+  colorSchemeQuery.addEventListener("change", onStoreChange);
+
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(themeChangeEvent, onStoreChange);
+    colorSchemeQuery.removeEventListener("change", onStoreChange);
+  };
+}
+
+function getServerTheme(): Theme {
+  return "light";
+}
+
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const theme = useSyncExternalStore(
+    subscribeToThemeChanges,
+    getPreferredTheme,
+    getServerTheme,
+  );
   const isDark = theme === "dark";
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
-    window.localStorage.setItem("theme", theme);
-  }, [isDark, theme]);
+  }, [isDark]);
 
   function toggleTheme() {
-    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
+    window.localStorage.setItem("theme", isDark ? "light" : "dark");
+    window.dispatchEvent(new Event(themeChangeEvent));
   }
 
   return (
     <button
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="quirk-icon-button grid h-10 w-10 place-items-center rounded-md border-2 border-transparent text-[#101827] transition hover:border-zinc-950 hover:bg-[#ffd60a] hover:text-zinc-950 focus:outline-none focus:ring-4 focus:ring-[#0284c7]/35 dark:text-zinc-50 dark:hover:border-zinc-50 dark:hover:bg-[#232044] dark:hover:text-zinc-50 dark:focus:ring-[#00d5ff]/35"
+      className="quirk-icon-button grid h-11 w-11 place-items-center rounded-md border-2 border-transparent text-[#eaf6ff] transition hover:border-[#78e5ff]/70 hover:bg-[#48f5ff]/15 hover:text-[#ffffff] focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:text-zinc-50 dark:hover:border-[#78e5ff]/70 dark:hover:bg-[#48f5ff]/15 dark:hover:text-zinc-50 dark:focus:ring-[#48f5ff]/35"
       onClick={toggleTheme}
       suppressHydrationWarning
       title={isDark ? "Light mode" : "Dark mode"}
