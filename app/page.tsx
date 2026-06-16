@@ -90,7 +90,7 @@ const aboutCards = [
   {
     title: "Education",
     value: "Computer Engineering",
-    copy: "Bachelor of Science from the University of Mindanao, with a STEM foundation.",
+    copy: "Bachelor of Science from the University of Mindanao",
   },
 ];
 
