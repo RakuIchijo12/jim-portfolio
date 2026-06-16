@@ -1182,6 +1182,22 @@ a {
   animation: index-wobble 4.5s ease-in-out infinite;
 }
 
+.space-theme .timeline-index {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-color: rgba(2, 132, 199, 0.4) !important;
+  box-shadow:
+    0 0 18px rgba(2, 132, 199, 0.18),
+    3px 3px 0 rgba(99, 102, 241, 0.16) !important;
+  color: #075985 !important;
+}
+
+.dark .space-theme .timeline-index {
+  background: rgba(6, 19, 41, 0.9) !important;
+  border-color: rgba(120, 229, 255, 0.6) !important;
+  box-shadow: 0 0 18px rgba(72, 245, 255, 0.33) !important;
+  color: #f8fbff !important;
+}
+
 .contact-meter {
   overflow: hidden;
   position: relative;

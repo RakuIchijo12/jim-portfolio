@@ -17,9 +17,7 @@ function getPreferredTheme(): Theme {
     return storedTheme;
   }
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return "dark";
 }
 
 function subscribeToThemeChanges(onStoreChange: () => void) {
@@ -37,7 +35,7 @@ function subscribeToThemeChanges(onStoreChange: () => void) {
 }
 
 function getServerTheme(): Theme {
-  return "light";
+  return "dark";
 }
 
 export default function ThemeToggle() {
