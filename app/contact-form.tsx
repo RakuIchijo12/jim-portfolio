@@ -38,7 +38,7 @@ export default function ContactForm() {
       }
 
       setStatus("sent");
-      setStatusMessage("Message sent. Thanks for reaching out.");
+      setStatusMessage(data.message ?? "Message sent to Gmail.");
       setClientEmail("");
       setName("");
       setBody("");
