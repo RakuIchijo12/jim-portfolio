@@ -172,7 +172,6 @@ a {
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.95), transparent 92%);
   opacity: 0.55;
   animation: grid-drift 22s linear infinite;
-  will-change: background-position;
 }
 
 .dark .ambient-grid {
@@ -214,9 +213,7 @@ a {
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.98) 0 18%, var(--twinkle-color) 19% 46%, transparent 47%);
   clip-path: polygon(50% 0, 61% 34%, 98% 35%, 68% 56%, 79% 91%, 50% 70%, 21% 91%, 32% 56%, 2% 35%, 39% 34%);
-  filter:
-    drop-shadow(0 0 6px var(--twinkle-color))
-    drop-shadow(0 0 14px color-mix(in srgb, var(--twinkle-color) 62%, transparent));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--twinkle-color) 54%, transparent);
   height: var(--twinkle-size, 0.55rem);
   left: var(--twinkle-left);
   opacity: 0.72;
@@ -224,7 +221,6 @@ a {
   top: var(--twinkle-top);
   transform: rotate(0deg) scale(0.8);
   width: var(--twinkle-size, 0.55rem);
-  will-change: opacity, transform;
 }
 
 .twinkle-star::before,
@@ -259,9 +255,7 @@ a {
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.98) 0 16%, var(--rolling-star-color) 17% 48%, transparent 49%);
   clip-path: polygon(50% 0, 61% 34%, 98% 35%, 68% 56%, 79% 91%, 50% 70%, 21% 91%, 32% 56%, 2% 35%, 39% 34%);
-  filter:
-    drop-shadow(0 0 8px var(--rolling-star-color))
-    drop-shadow(0 0 18px color-mix(in srgb, var(--rolling-star-color) 58%, transparent));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--rolling-star-color) 48%, transparent);
   height: var(--rolling-star-size, 0.9rem);
   left: var(--rolling-star-left);
   opacity: 0;
@@ -269,7 +263,6 @@ a {
   top: -8vh;
   transform-origin: 50% 50%;
   width: var(--rolling-star-size, 0.9rem);
-  will-change: opacity, transform;
 }
 
 .rolling-falling-star::before,
@@ -304,9 +297,6 @@ a {
 .comet {
   animation: comet-fall var(--comet-duration, 9s) linear infinite;
   animation-delay: var(--comet-delay, 0s);
-  filter:
-    drop-shadow(0 0 8px color-mix(in srgb, var(--comet-color) 52%, transparent))
-    drop-shadow(0 0 18px color-mix(in srgb, var(--comet-color) 28%, transparent));
   height: var(--comet-height, 1rem);
   left: var(--comet-left);
   opacity: 0;
@@ -314,7 +304,6 @@ a {
   top: -11rem;
   transform-origin: 86% 50%;
   width: var(--comet-width, 10rem);
-  will-change: opacity, transform;
 }
 
 .comet::before {
@@ -484,7 +473,6 @@ a {
 .animated-card {
   animation: var(--card-enter, card-in) var(--card-enter-duration, 680ms) cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--delay, 0ms);
-  will-change: opacity, transform;
 }
 
 .motion-card {
@@ -580,7 +568,7 @@ a {
     0 18px 42px -30px rgba(14, 116, 144, 0.34),
     6px 6px 0 rgba(99, 102, 241, 0.14) !important;
   color: #0f172a !important;
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(8px);
 }
 
 .dark .space-theme header,
@@ -819,11 +807,6 @@ a {
     0 0 22px rgba(72, 245, 255, 0.42),
     inset 0 0 18px rgba(72, 245, 255, 0.18) !important;
   color: #eaf6ff !important;
-}
-
-.space-theme .audio-toggle[data-autoplay-blocked="true"] {
-  animation: audio-nudge 1.35s ease-in-out infinite;
-  border-color: rgba(255, 79, 216, 0.66) !important;
 }
 
 .audio-volume {
@@ -1554,6 +1537,19 @@ a {
   transform: scale(1);
 }
 
+.form-skeleton {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(120, 229, 255, 0.12),
+      rgba(120, 229, 255, 0.34),
+      rgba(255, 79, 216, 0.14)
+    );
+  background-size: 220% 100%;
+  display: block;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
 .contact-section,
 .site-footer {
   backface-visibility: hidden;
@@ -1596,7 +1592,6 @@ a {
     animation: var(--reveal-enter, reveal-up) both;
     animation-range: entry 8% cover 32%;
     animation-timeline: view();
-    will-change: opacity, transform;
   }
 }
 
@@ -2073,14 +2068,16 @@ a {
   }
 }
 
-@keyframes audio-nudge {
+@keyframes skeleton-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 rgba(255, 79, 216, 0);
+    background-position: 100% 0;
+    opacity: 0.52;
   }
 
   50% {
-    box-shadow: 0 0 22px rgba(255, 79, 216, 0.42);
+    background-position: 0 0;
+    opacity: 0.9;
   }
 }
 
@@ -2107,6 +2104,28 @@ a {
 
   .level-platform-two {
     display: none;
+  }
+
+  .ambient-grid {
+    animation: none;
+    opacity: 0.32;
+  }
+
+  .noise-panel,
+  .space-effect-field {
+    display: none;
+  }
+
+  .animated-card,
+  .hero-kicker,
+  .mini-terminal,
+  .portrait-frame,
+  .scroll-reveal,
+  .signal-dot,
+  .spark-line,
+  .ticker-track,
+  .wiggle-word {
+    animation: none !important;
   }
 
   .portrait-stage {
@@ -2153,6 +2172,7 @@ a {
   .scroll-progress,
   .scroll-reveal,
   .comet,
+  .form-skeleton,
   .signal-dot,
   .spark-line,
   .social-chip::after,

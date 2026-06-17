@@ -1,8 +1,6 @@
 import type { CSSProperties } from "react";
-import Image from "next/image";
 import AudioControl from "./audio-control";
-import ContactForm from "./contact-form";
-import CurrentYear from "./current-year";
+import DeferredContactForm from "./deferred-contact-form";
 import ThemeToggle from "./theme-toggle";
 
 const navLinks = [
@@ -193,9 +191,9 @@ const cometColors = [
   "#7c3aed",
 ];
 
-const fallingCometColors = cometColors.slice(0, 7);
-const twinkleStars = Array.from({ length: 28 }, (_, index) => index);
-const rollingStars = Array.from({ length: 8 }, (_, index) => index);
+const fallingCometColors = cometColors.slice(0, 3);
+const twinkleStars = Array.from({ length: 14 }, (_, index) => index);
+const rollingStars = Array.from({ length: 3 }, (_, index) => index);
 
 function customStyle(properties: Record<string, string>): CSSProperties {
   return properties as CSSProperties;
@@ -932,13 +930,14 @@ export default function Home() {
               className="portrait-frame animated-card motion-card accent-contact relative overflow-hidden rounded-md border-2 border-[#78e5ff]/60 bg-[#07172c]/80 p-2 shadow-[0_0_32px_#48f5ff33] dark:border-[#78e5ff]/60 dark:bg-[#07172c]/80 dark:shadow-[0_0_32px_#48f5ff33]"
               style={cardDelay(2)}
             >
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element -- Already compressed local WebP; raw img avoids next/image runtime for this static page. */}
+              <img
                 alt="Portrait of Jimuel Dave Rodado."
                 className="image-glitch h-56 w-full rounded-md object-cover object-[center_32%] sm:h-72 md:h-[24rem] lg:h-[27rem]"
+                decoding="async"
+                fetchPriority="high"
                 height={1154}
-                preload
-                quality={78}
-                sizes="(max-width: 640px) 18rem, (max-width: 1024px) 22rem, 24rem"
+                loading="eager"
                 src="/jim-cafe-portrait-optimized.webp"
                 width={768}
               />
@@ -1091,14 +1090,14 @@ export default function Home() {
               that support real teams.
             </p>
             <div className="desk-preview relative overflow-hidden rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-2 shadow-[0_0_28px_#9b8cff33] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element -- Already compressed local WebP; raw img avoids next/image runtime for this static page. */}
+              <img
                 alt="Stylized workstation with healthcare dashboard visuals."
                 className="h-44 w-full rounded-md object-cover"
                 decoding="async"
+                fetchPriority="low"
                 height={640}
                 loading="lazy"
-                quality={76}
-                sizes="(max-width: 1024px) 100vw, 28rem"
                 src="/portfolio-hero-optimized.webp"
                 width={960}
               />
@@ -1187,7 +1186,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <ContactForm />
+          <DeferredContactForm />
         </section>
 
         <footer className="site-footer border-t-2 border-[#78e5ff]/45 py-12 text-[#c8d8ee] dark:border-[#78e5ff]/45 dark:text-[#b9ecff]">
@@ -1253,7 +1252,8 @@ export default function Home() {
 
           <div className="mt-10 flex flex-col gap-4 border-t-2 border-[#78e5ff]/45 pt-7 text-sm font-bold dark:border-[#78e5ff]/45 sm:flex-row sm:items-center sm:justify-between">
             <p>
-              &copy; <CurrentYear /> Jimuel Dave Rodado. All rights reserved.
+              &copy; {new Date().getFullYear()} Jimuel Dave Rodado. All rights
+              reserved.
             </p>
             <a
               className="nav-link inline-flex min-h-11 w-max items-center rounded-md px-2 py-1"

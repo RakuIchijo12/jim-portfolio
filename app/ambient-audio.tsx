@@ -6,10 +6,8 @@ const audioSource = "/A%20Sky%20Full%20of%20Stars%20(Instrumental).mp3";
 
 export default function AmbientAudio() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const activationAttemptedRef = useRef(false);
   const volumeRef = useRef(72);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isAutoplayBlocked, setIsAutoplayBlocked] = useState(true);
   const [volume, setVolume] = useState(72);
 
   useEffect(() => {
@@ -20,7 +18,7 @@ export default function AmbientAudio() {
     }
   }, [volume]);
 
-  async function startAudio(markBlocked = true) {
+  async function startAudio() {
     const audio = audioRef.current;
 
     if (!audio) {
@@ -32,15 +30,9 @@ export default function AmbientAudio() {
     try {
       await audio.play();
       setIsPlaying(true);
-      setIsAutoplayBlocked(false);
       return true;
     } catch {
       setIsPlaying(false);
-
-      if (markBlocked) {
-        setIsAutoplayBlocked(true);
-      }
-
       return false;
     }
   }
@@ -54,56 +46,7 @@ export default function AmbientAudio() {
 
     audio.pause();
     setIsPlaying(false);
-    setIsAutoplayBlocked(false);
   }
-
-  useEffect(() => {
-    if (!isAutoplayBlocked || isPlaying || activationAttemptedRef.current) {
-      return;
-    }
-
-    let isTrying = false;
-
-    const handleFirstInteraction = (event: Event) => {
-      if (isTrying) {
-        return;
-      }
-
-      if (
-        event.target instanceof Element &&
-        event.target.closest(".audio-control")
-      ) {
-        return;
-      }
-
-      isTrying = true;
-      activationAttemptedRef.current = true;
-      void startAudio(false).then((started) => {
-        isTrying = false;
-
-        if (!started) {
-          activationAttemptedRef.current = false;
-          setIsAutoplayBlocked(true);
-        }
-      });
-    };
-
-    document.addEventListener("pointerdown", handleFirstInteraction, {
-      capture: true,
-    });
-    document.addEventListener("keydown", handleFirstInteraction, {
-      capture: true,
-    });
-
-    return () => {
-      document.removeEventListener("pointerdown", handleFirstInteraction, {
-        capture: true,
-      });
-      document.removeEventListener("keydown", handleFirstInteraction, {
-        capture: true,
-      });
-    };
-  }, [isAutoplayBlocked, isPlaying]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -134,9 +77,8 @@ export default function AmbientAudio() {
         onPause={() => setIsPlaying(false)}
         onPlay={() => {
           setIsPlaying(true);
-          setIsAutoplayBlocked(false);
         }}
-        preload="metadata"
+        preload="none"
         ref={audioRef}
         src={audioSource}
       />
@@ -148,7 +90,6 @@ export default function AmbientAudio() {
         }
         aria-pressed={isPlaying}
         className="quirk-icon-button audio-toggle grid h-11 w-11 place-items-center rounded-md border-2 border-transparent text-[#eaf6ff] transition hover:border-[#78e5ff]/70 hover:bg-[#48f5ff]/15 hover:text-white focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:text-zinc-50"
-        data-autoplay-blocked={isAutoplayBlocked ? "true" : undefined}
         onClick={toggleAudio}
         title={
           isPlaying
