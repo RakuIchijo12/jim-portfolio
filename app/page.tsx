@@ -904,10 +904,11 @@ export default function Home() {
                 Experience
               </a>
               <a
-                aria-label="Download resume PDF"
-                className="motion-card action-link action-link-secondary inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-[#78e5ff]/70 bg-[#07172c]/80 px-4 py-2.5 text-sm font-black text-[#eaf6ff] shadow-[5px_5px_0_#b8ff5c66] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:border-[#78e5ff]/70 dark:bg-[#07172c]/80 dark:text-[#eaf6ff] dark:shadow-[5px_5px_0_#b8ff5c66] sm:px-5"
-                download="Rodado-Resume-2026.pdf"
+                aria-label="Open resume PDF in a new tab"
+                className="motion-card action-link action-link-secondary accent-resume inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-[#f59e0b]/60 bg-[#fff7d6]/90 px-4 py-2.5 text-sm font-black text-[#1f2937] shadow-[5px_5px_0_#48f5ff4d] transition focus:outline-none focus:ring-4 focus:ring-[#f59e0b]/25 dark:border-[#ffe66d]/75 dark:bg-[#ffe66d]/90 dark:text-[#03111f] dark:shadow-[5px_5px_0_#48f5ff66] sm:px-5"
                 href={resumeHref}
+                rel="noreferrer"
+                target="_blank"
               >
                 Resume
                 <ResumeIcon />
@@ -1190,8 +1191,8 @@ export default function Home() {
         </section>
 
         <footer className="site-footer border-t-2 border-[#78e5ff]/45 py-12 text-[#c8d8ee] dark:border-[#78e5ff]/45 dark:text-[#b9ecff]">
-          <div className="grid gap-10 md:grid-cols-[1.25fr_0.75fr_1fr]">
-            <div className="max-w-md">
+          <div className="grid gap-8 md:grid-cols-[1.15fr_1fr_1fr] md:items-start">
+            <div className="footer-column max-w-md">
               <h2 className="text-xl font-black text-[#f4fbff] dark:text-[#b8ff5c]">
                 Jimuel Dave Rodado
               </h2>
@@ -1202,24 +1203,26 @@ export default function Home() {
               </p>
             </div>
 
-            <div>
+            <div className="footer-column">
               <h2 className="text-xl font-black text-[#f4fbff] dark:text-[#b8ff5c]">
-                Quick Links
+                Explore
               </h2>
-              <nav className="mt-5 grid gap-3 text-sm font-bold">
+              <nav className="mt-5 grid grid-cols-2 gap-2 text-sm font-bold">
                 {navLinks.map((link) => (
                   <a
-                    className="nav-link inline-flex min-h-11 w-max items-center rounded-md px-2 py-1"
+                    className="footer-link inline-flex min-h-11 items-center justify-between gap-2 rounded-md px-3 py-2"
                     href={link.href}
                     key={link.href}
                   >
                     {link.label}
+                    <ArrowIcon />
                   </a>
                 ))}
                 <a
-                  className="nav-link inline-flex min-h-11 w-max items-center gap-2 rounded-md px-2 py-1"
-                  download="Rodado-Resume-2026.pdf"
+                  className="footer-link footer-link-resume col-span-2 inline-flex min-h-11 items-center justify-between gap-2 rounded-md px-3 py-2"
                   href={resumeHref}
+                  rel="noreferrer"
+                  target="_blank"
                 >
                   Resume
                   <ResumeIcon />
@@ -1227,7 +1230,7 @@ export default function Home() {
               </nav>
             </div>
 
-            <div>
+            <div className="footer-column">
               <h2 className="text-xl font-black text-[#f4fbff] dark:text-[#b8ff5c]">
                 Get in Touch
               </h2>
@@ -1256,10 +1259,11 @@ export default function Home() {
               reserved.
             </p>
             <a
-              className="nav-link inline-flex min-h-11 w-max items-center rounded-md px-2 py-1"
+              className="footer-link inline-flex min-h-11 w-max items-center gap-2 rounded-md px-3 py-2"
               href="#contact"
             >
               Let&apos;s connect.
+              <ArrowIcon />
             </a>
           </div>
         </footer>

@@ -1,49 +1,11 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
-const themeChangeEvent = "portfolio-theme-change";
-
-function getPreferredTheme(): Theme {
-  if (typeof window === "undefined") {
-    return "light";
-  }
-
-  const storedTheme = window.localStorage.getItem("theme");
-
-  if (storedTheme === "dark" || storedTheme === "light") {
-    return storedTheme;
-  }
-
-  return "dark";
-}
-
-function subscribeToThemeChanges(onStoreChange: () => void) {
-  const colorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-  window.addEventListener("storage", onStoreChange);
-  window.addEventListener(themeChangeEvent, onStoreChange);
-  colorSchemeQuery.addEventListener("change", onStoreChange);
-
-  return () => {
-    window.removeEventListener("storage", onStoreChange);
-    window.removeEventListener(themeChangeEvent, onStoreChange);
-    colorSchemeQuery.removeEventListener("change", onStoreChange);
-  };
-}
-
-function getServerTheme(): Theme {
-  return "dark";
-}
-
 export default function ThemeToggle() {
-  const theme = useSyncExternalStore(
-    subscribeToThemeChanges,
-    getPreferredTheme,
-    getServerTheme,
-  );
+  const [theme, setTheme] = useState<Theme>("dark");
   const isDark = theme === "dark";
 
   useEffect(() => {
@@ -51,8 +13,7 @@ export default function ThemeToggle() {
   }, [isDark]);
 
   function toggleTheme() {
-    window.localStorage.setItem("theme", isDark ? "light" : "dark");
-    window.dispatchEvent(new Event(themeChangeEvent));
+    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
   }
 
   return (

@@ -34,7 +34,7 @@ export default function RootLayout({
           id="theme-bootstrap"
           dangerouslySetInnerHTML={{
             __html:
-              "try{var t=localStorage.getItem('theme');var d=t?t==='dark':true;document.documentElement.classList.toggle('dark',d)}catch(e){}",
+              "try{localStorage.removeItem('theme')}catch(e){}document.documentElement.classList.add('dark')",
           }}
         />
         {children}

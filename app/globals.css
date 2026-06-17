@@ -500,6 +500,10 @@ a {
   --motion-accent: #48f5ff;
 }
 
+.motion-card.accent-resume {
+  --motion-accent: #f59e0b;
+}
+
 .motion-card > * {
   position: relative;
   z-index: 1;
@@ -630,6 +634,26 @@ a {
   color: #03111f !important;
 }
 
+.space-theme .motion-card.accent-resume {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 230, 109, 0.66)) !important;
+  border-color: rgba(245, 158, 11, 0.62) !important;
+  box-shadow:
+    0 0 0 1px rgba(245, 158, 11, 0.14),
+    0 0 22px rgba(245, 158, 11, 0.2),
+    5px 5px 0 rgba(72, 245, 255, 0.28) !important;
+  color: #1f2937 !important;
+}
+
+.dark .space-theme .motion-card.accent-resume {
+  background: linear-gradient(135deg, rgba(255, 230, 109, 0.94), rgba(249, 115, 22, 0.78)) !important;
+  border-color: rgba(255, 246, 173, 0.86) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 230, 109, 0.18),
+    0 0 24px rgba(255, 230, 109, 0.26),
+    5px 5px 0 rgba(72, 245, 255, 0.42) !important;
+  color: #03111f !important;
+}
+
 .space-theme .section-label,
 .space-theme .hero-kicker {
   background: linear-gradient(90deg, rgba(72, 245, 255, 0.9), rgba(184, 255, 92, 0.84)) !important;
@@ -715,7 +739,8 @@ a {
 .space-theme .logo-mark,
 .space-theme .section-label,
 .space-theme .hero-kicker,
-.space-theme .motion-card.accent-about {
+.space-theme .motion-card.accent-about,
+.space-theme .motion-card.accent-resume {
   color: #03111f !important;
 }
 
@@ -1565,6 +1590,79 @@ a {
   box-shadow: none;
 }
 
+.footer-column {
+  min-width: 0;
+}
+
+.footer-link {
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(2, 132, 199, 0.24);
+  box-shadow: 3px 3px 0 rgba(99, 102, 241, 0.12);
+  color: #0f172a;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    color 180ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-link svg {
+  height: 1rem;
+  width: 1rem;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+  background: rgba(72, 245, 255, 0.16);
+  border-color: rgba(2, 132, 199, 0.46);
+  box-shadow:
+    0 0 18px rgba(72, 245, 255, 0.18),
+    4px 4px 0 rgba(255, 79, 216, 0.18);
+  color: #075985;
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.footer-link:hover svg,
+.footer-link:focus-visible svg {
+  transform: translateX(2px);
+}
+
+.footer-link-resume {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 230, 109, 0.48));
+  border-color: rgba(245, 158, 11, 0.42);
+}
+
+.dark .footer-link {
+  background: rgba(7, 23, 44, 0.72);
+  border-color: rgba(120, 229, 255, 0.34);
+  box-shadow: 3px 3px 0 rgba(72, 245, 255, 0.16);
+  color: #eaf6ff;
+}
+
+.dark .footer-link:hover,
+.dark .footer-link:focus-visible {
+  background: rgba(72, 245, 255, 0.14);
+  border-color: rgba(120, 229, 255, 0.68);
+  box-shadow:
+    0 0 18px rgba(72, 245, 255, 0.26),
+    4px 4px 0 rgba(255, 79, 216, 0.24);
+  color: #b8ff5c;
+}
+
+.dark .footer-link-resume {
+  background: linear-gradient(135deg, rgba(255, 230, 109, 0.92), rgba(249, 115, 22, 0.7));
+  border-color: rgba(255, 246, 173, 0.74);
+  color: #03111f;
+}
+
+.dark .footer-link-resume:hover,
+.dark .footer-link-resume:focus-visible {
+  color: #03111f;
+}
+
 .quirk-icon-button,
 .quirk-submit {
   transition:
@@ -1792,6 +1890,18 @@ a {
   to {
     opacity: 1;
     transform: translateY(0) scale(1) rotate(0);
+  }
+}
+
+@keyframes mobile-reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -2111,21 +2221,86 @@ a {
     opacity: 0.32;
   }
 
-  .noise-panel,
-  .space-effect-field {
+  .noise-panel {
     display: none;
   }
 
-  .animated-card,
+  .space-effect-field {
+    display: block;
+    opacity: 0.78;
+  }
+
+  .twinkle-star:nth-of-type(n + 9),
+  .rolling-falling-star:nth-of-type(17),
+  .comet:nth-of-type(20) {
+    display: none;
+  }
+
+  .twinkle-star {
+    animation-duration: 3.8s, 9.2s;
+    box-shadow: 0 0 7px color-mix(in srgb, var(--twinkle-color) 42%, transparent);
+    opacity: 0.56;
+    transform: rotate(0deg) scale(0.72);
+    will-change: opacity, transform, translate;
+  }
+
+  .twinkle-star::before,
+  .twinkle-star::after {
+    box-shadow: 0 0 8px color-mix(in srgb, currentColor 54%, transparent);
+    opacity: 0.42;
+  }
+
+  .rolling-falling-star {
+    animation-duration: 8.8s;
+    box-shadow: 0 0 9px color-mix(in srgb, var(--rolling-star-color) 34%, transparent);
+    will-change: opacity, transform;
+  }
+
+  .rolling-falling-star::before,
+  .rolling-falling-star::after {
+    box-shadow: 0 0 8px color-mix(in srgb, currentColor 44%, transparent);
+    opacity: 0.44;
+  }
+
+  .comet {
+    animation-duration: 14s;
+    height: 0.5rem;
+    top: -7rem;
+    width: clamp(4.5rem, 22vw, 5.8rem);
+    will-change: opacity, transform;
+  }
+
+  .comet::before {
+    opacity: 0.42;
+    right: 0.38rem;
+  }
+
+  .comet::after {
+    box-shadow:
+      0 0 0 0.08rem color-mix(in srgb, #fff 24%, transparent),
+      0 0 10px color-mix(in srgb, var(--comet-color) 48%, transparent);
+    height: 0.62rem;
+    width: 0.62rem;
+  }
+
+  .animated-card:not(.scroll-reveal),
   .hero-kicker,
   .mini-terminal,
   .portrait-frame,
-  .scroll-reveal,
   .signal-dot,
   .spark-line,
   .ticker-track,
   .wiggle-word {
     animation: none !important;
+  }
+
+  @supports (animation-timeline: view()) {
+    .scroll-reveal {
+      animation: mobile-reveal-up both;
+      animation-range: entry 10% cover 28%;
+      animation-timeline: view();
+      will-change: opacity, transform;
+    }
   }
 
   .portrait-stage {
