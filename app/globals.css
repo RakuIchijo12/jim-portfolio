@@ -2543,6 +2543,103 @@ a {
   transform: translateY(-2px) !important;
 }
 
+/* Performance pass: reduce constant paint work while keeping the space feel. */
+.ambient-grid {
+  animation: none;
+}
+
+.space-effect-field {
+  contain: strict;
+  opacity: 0.62;
+}
+
+.twinkle-star {
+  animation: star-twinkle 4.8s ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+  box-shadow: 0 0 7px color-mix(in srgb, var(--twinkle-color) 36%, transparent);
+}
+
+.twinkle-star::before,
+.twinkle-star::after,
+.rolling-falling-star::before,
+.rolling-falling-star::after {
+  display: none;
+}
+
+.rolling-falling-star {
+  animation-duration: 13s;
+  box-shadow: 0 0 9px color-mix(in srgb, var(--rolling-star-color) 32%, transparent);
+}
+
+.comet {
+  animation-duration: 18s;
+}
+
+.comet::before {
+  opacity: 0.36;
+}
+
+.comet::after {
+  box-shadow:
+    0 0 0 0.08rem color-mix(in srgb, #fff 22%, transparent),
+    0 0 12px color-mix(in srgb, var(--comet-color) 44%, transparent);
+}
+
+.solar-system::before {
+  animation: none;
+}
+
+.solar-core {
+  animation-duration: 8s;
+}
+
+.solar-orbit {
+  animation-duration: calc(var(--orbit-speed) * 1.7);
+}
+
+.portrait-frame {
+  animation-duration: 680ms, 12s;
+}
+
+.ticker-track {
+  animation-duration: 42s;
+}
+
+.contact-meter::after,
+.desk-preview::after,
+.portrait-frame::after {
+  animation-duration: 8s;
+}
+
+.metric-burst:hover::after,
+.metric-burst:focus-within::after,
+.timeline-card:hover::before,
+.timeline-card:focus-within::before,
+.stack-console:hover::after,
+.stack-console:focus-within::after {
+  animation: none !important;
+}
+
+@supports (content-visibility: auto) {
+  .space-theme section:not(.home-level),
+  .site-footer {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 900px;
+  }
+
+  #about {
+    contain-intrinsic-size: 1px 1200px;
+  }
+
+  #experience {
+    contain-intrinsic-size: 1px 900px;
+  }
+
+  #contact {
+    contain-intrinsic-size: 1px 760px;
+  }
+}
+
 @supports (animation-timeline: view()) {
   .scroll-reveal {
     animation: var(--reveal-enter, reveal-up) both;
@@ -3260,6 +3357,25 @@ a {
   .social-chip:hover,
   .social-chip:focus-visible {
     transform: translateY(-0.18rem);
+  }
+
+  .space-effect-field {
+    opacity: 0.48;
+  }
+
+  .rolling-falling-star {
+    display: none;
+  }
+
+  .comet:nth-of-type(n + 2) {
+    display: none;
+  }
+
+  .solar-orbit-two,
+  .portrait-frame,
+  .mini-terminal,
+  .orbit-chip {
+    animation: none !important;
   }
 }
 

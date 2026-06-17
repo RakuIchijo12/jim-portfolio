@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { CSSProperties } from "react";
 import AudioControl from "./audio-control";
 import DeferredContactForm from "./deferred-contact-form";
@@ -225,9 +224,9 @@ const cometColors = [
   "#7c3aed",
 ];
 
-const fallingCometColors = cometColors.slice(0, 3);
-const twinkleStars = Array.from({ length: 14 }, (_, index) => index);
-const rollingStars = Array.from({ length: 3 }, (_, index) => index);
+const fallingCometColors = cometColors.slice(0, 2);
+const twinkleStars = Array.from({ length: 9 }, (_, index) => index);
+const rollingStars = Array.from({ length: 1 }, (_, index) => index);
 
 function customStyle(properties: Record<string, string>): CSSProperties {
   return properties as CSSProperties;
@@ -403,12 +402,15 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
 function StackIcon({ icon }: { icon: string }) {
   if (icon) {
     return (
-      <Image
+      // eslint-disable-next-line @next/next/no-img-element -- Tiny local icons; raw img avoids many optimizer requests.
+      <img
         alt=""
         aria-hidden="true"
         className="stack-icon-img"
+        decoding="async"
         draggable={false}
         height={48}
+        loading="lazy"
         src={`/stack-icons/${icon}.png`}
         width={48}
       />
