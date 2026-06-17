@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import AudioControl from "./audio-control";
 import DeferredContactForm from "./deferred-contact-form";
@@ -55,24 +56,57 @@ const contactDetails = [
   },
 ] as const;
 
+const stackGroups = [
+  {
+    id: "frontend",
+    label: "Frontend",
+  },
+  {
+    id: "backend",
+    label: "Backend",
+  },
+  {
+    id: "others",
+    label: "Other Techs",
+  },
+] as const;
+
 const coreStack = [
-  { name: "Laravel", icon: "laravel", color: "#ff3d2e" },
-  { name: "Filament PHP", icon: "filament", color: "#f6a800" },
-  { name: "Livewire", icon: "livewire", color: "#ff4d9d" },
-  { name: "Tailwind CSS", icon: "tailwind", color: "#16b8f3" },
-  { name: "React", icon: "react", color: "#61dafb" },
-  { name: "Alpine.js", icon: "alpine", color: "#0f9f89" },
-  { name: "MySQL", icon: "mysql", color: "#00758f" },
-  { name: "Angular", icon: "angular", color: "#dd0031" },
-  { name: "Django", icon: "django", color: "#0c4b33" },
-  { name: "NestJS", icon: "nestjs", color: "#e0234e" },
-  { name: "PostgreSQL", icon: "postgresql", color: "#336791" },
-  { name: "Pest PHP", icon: "pest", color: "#72b01d" },
-  { name: "Figma", icon: "figma", color: "#a259ff" },
-  { name: "Postman", icon: "postman", color: "#ff6c37" },
-  { name: "TablePlus", icon: "tableplus", color: "#f59e0b" },
-  { name: "Queues", icon: "queues", color: "#7c3aed" },
-  { name: "RESTful APIs", icon: "api", color: "#0891b2" },
+  { name: "React", icon: "react", color: "#61dafb", group: "frontend" },
+  { name: "Next.js", icon: "next-js", color: "#111827", group: "frontend" },
+  { name: "Vue.js", icon: "vue-js", color: "#42b883", group: "frontend" },
+  { name: "Angular", icon: "angular", color: "#dd0031", group: "frontend" },
+  { name: "Alpine.js", icon: "alpine-js", color: "#77c1d2", group: "frontend" },
+  { name: "Tailwind CSS", icon: "tailwind-css", color: "#38bdf8", group: "frontend" },
+  { name: "Livewire", icon: "livewire", color: "#fb70b6", group: "frontend" },
+  { name: "HTML5", icon: "html5", color: "#e34f26", group: "frontend" },
+  { name: "CSS3", icon: "css3", color: "#1572b6", group: "frontend" },
+  { name: "JavaScript", icon: "javascript", color: "#f7df1e", group: "frontend" },
+  { name: "TypeScript", icon: "typescript", color: "#3178c6", group: "frontend" },
+  { name: "Laravel", icon: "laravel", color: "#ff4d3d", group: "backend" },
+  { name: "Filament", icon: "filament", color: "#f6a800", group: "backend" },
+  { name: "PHP", icon: "php", color: "#777bb4", group: "backend" },
+  { name: "Composer", icon: "composer", color: "#8b5e34", group: "backend" },
+  { name: "Python", icon: "python", color: "#3776ab", group: "backend" },
+  { name: "Django", icon: "django", color: "#0c4b33", group: "backend" },
+  { name: "NestJS", icon: "nestjs", color: "#e0234e", group: "backend" },
+  { name: "C", icon: "c", color: "#659ad2", group: "backend" },
+  { name: "C++", icon: "cplusplus", color: "#00599c", group: "backend" },
+  { name: "MySQL", icon: "mysql", color: "#00758f", group: "backend" },
+  { name: "PostgreSQL", icon: "postgresql", color: "#336791", group: "backend" },
+  { name: "Docker", icon: "docker", color: "#2496ed", group: "others" },
+  { name: "Azure", icon: "azure", color: "#0078d4", group: "others" },
+  { name: "Git", icon: "git", color: "#f05032", group: "others" },
+  { name: "GitLab", icon: "gitlab", color: "#fc6d26", group: "others" },
+  { name: "Postman", icon: "postman", color: "#ff6c37", group: "others" },
+  { name: "Figma", icon: "figma", color: "#a259ff", group: "others" },
+  { name: "Jira", icon: "jira", color: "#2684ff", group: "others" },
+  { name: "Slack", icon: "slack", color: "#4a154b", group: "others" },
+  { name: "Linux", icon: "linux", color: "#facc15", group: "others" },
+  { name: "Android Studio", icon: "android-studio", color: "#3ddc84", group: "others" },
+  { name: "VS Code", icon: "vs-code", color: "#007acc", group: "others" },
+  { name: "Visual Studio", icon: "visual-studio", color: "#7f3f98", group: "others" },
+  { name: "Ren'Py", icon: "renpy", color: "#ff7a8a", group: "others" },
 ] as const;
 
 const aboutCards = [
@@ -136,7 +170,7 @@ const experience = [
 
 const heroStats = [
   { value: "4", label: "lanes", accent: "#ff4fd8" },
-  { value: "17", label: "tools", accent: "#48f5ff" },
+  { value: "35", label: "tools", accent: "#48f5ff" },
   { value: "99%", label: "focus", accent: "#b8ff5c" },
 ];
 
@@ -366,7 +400,21 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
   );
 }
 
-function StackIcon({ icon }: { icon: (typeof coreStack)[number]["icon"] }) {
+function StackIcon({ icon }: { icon: string }) {
+  if (icon) {
+    return (
+      <Image
+        alt=""
+        aria-hidden="true"
+        className="stack-icon-img"
+        draggable={false}
+        height={48}
+        src={`/stack-icons/${icon}.png`}
+        width={48}
+      />
+    );
+  }
+
   if (icon === "laravel") {
     return (
       <svg
@@ -1011,63 +1059,88 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="temperament-card quirk-card scroll-reveal rounded-lg border-2 border-[#78e5ff]/55 bg-[#061329]/90 p-5 text-white shadow-[0_0_26px_#ff4fd833] dark:border-[#78e5ff]/55">
-                <p className="font-mono text-xs font-black uppercase text-[#ffe66d]">
-                  Build temperament
-                </p>
-                <div className="mt-5 grid gap-4">
-                  {labNotes.map((note, index) => (
-                    <div key={note.label}>
-                      <div className="flex items-center justify-between gap-3 text-sm font-black">
-                        <span>{note.label}</span>
-                        <span>{note.value}</span>
-                      </div>
-                      <span
-                        className="meter-bar mt-2 block h-3 rounded-md border border-white/60 bg-white/10"
-                        style={meterStyle(note.color, note.value, index)}
-                      />
+            <div className="temperament-card quirk-card scroll-reveal rounded-lg border-2 border-[#78e5ff]/55 bg-[#061329]/90 p-5 text-white shadow-[0_0_26px_#ff4fd833] dark:border-[#78e5ff]/55">
+              <p className="font-mono text-xs font-black uppercase text-[#ffe66d]">
+                Build temperament
+              </p>
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                {labNotes.map((note, index) => (
+                  <div key={note.label}>
+                    <div className="flex items-center justify-between gap-3 text-sm font-black">
+                      <span>{note.label}</span>
+                      <span>{note.value}</span>
                     </div>
-                  ))}
-                </div>
+                    <span
+                      className="meter-bar mt-2 block h-3 rounded-md border border-white/60 bg-white/10"
+                      style={meterStyle(note.color, note.value, index)}
+                    />
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <div className="animated-card scroll-reveal stack-console quirk-card motion-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-4 shadow-[0_0_24px_#48f5ff2e] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 sm:p-5">
+          </div>
+
+          <div className="animated-card scroll-reveal stack-console lg:col-span-2">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
                 <p className="font-mono text-xs font-black uppercase text-zinc-500 dark:text-zinc-300">
                   Stack
                 </p>
-                <ul
-                  aria-label="Core technology stack"
-                  className="mt-5 grid grid-cols-4 gap-x-3 gap-y-7 sm:grid-cols-6 lg:flex lg:flex-wrap lg:gap-x-5 lg:gap-y-7"
-                >
-                  {coreStack.map((item, index) => (
-                    <li
-                      className="stack-item group relative flex min-h-16 min-w-14 items-start justify-center text-center"
-                      key={item.name}
-                      style={{
-                        ...stackAccent(item.color),
-                        ...cardDelay(index),
-                      }}
-                    >
-                      <span
-                        aria-label={item.name}
-                        className="stack-icon-tile relative z-10 grid h-12 w-12 place-items-center rounded-md text-[var(--stack-accent)] transition focus:outline-none focus:ring-4 focus:ring-[color-mix(in_srgb,var(--stack-accent)_28%,transparent)]"
-                        role="img"
-                        tabIndex={0}
-                        title={item.name}
-                      >
-                        <StackIcon icon={item.icon} />
-                      </span>
-                      <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute left-1/2 top-12 z-30 w-max max-w-28 -translate-x-1/2 text-center text-[0.65rem] font-black uppercase leading-tight text-[var(--stack-accent)] opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100 sm:text-xs"
-                      >
-                        {item.name}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
               </div>
+            </div>
+
+            <div className="stack-layout mt-5">
+              {stackGroups.map((group, groupIndex) => {
+                const groupItems = coreStack.filter(
+                  (item) => item.group === group.id,
+                );
+
+                return (
+                  <section
+                    aria-labelledby={`stack-${group.id}`}
+                    className={`stack-group stack-group-${group.id}`}
+                    key={group.id}
+                  >
+                    <div className="stack-group-bar flex items-center justify-between gap-3">
+                      <h4
+                        className="stack-group-heading text-2xl font-black uppercase leading-none sm:text-3xl"
+                        id={`stack-${group.id}`}
+                      >
+                        {group.label}
+                      </h4>
+                    </div>
+                    <ul
+                      aria-label={`${group.label} stack`}
+                      className="stack-grid mt-5"
+                    >
+                      {groupItems.map((item, index) => (
+                        <li
+                          className="stack-item group text-center"
+                          key={item.name}
+                          style={{
+                            ...stackAccent(item.color),
+                            ...cardDelay(index + groupIndex * 6),
+                          }}
+                        >
+                          <span
+                            aria-label={item.name}
+                            className="stack-icon-tile"
+                            role="img"
+                            tabIndex={0}
+                            title={item.name}
+                          >
+                            <StackIcon icon={item.icon} />
+                          </span>
+                          <span className="stack-label">
+                            {item.name}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                );
+              })}
             </div>
           </div>
         </section>
