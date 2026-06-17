@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 
-const audioSource = "/A%20Sky%20Full%20of%20Stars%20(Instrumental).mp3";
+const audioSource =
+  "/Interstellar%20Official%20Soundtrack%20%20Cornfield%20Chase%20%20Hans%20Zimmer%20%20WaterTower.mp3";
+const audioLabel = "Interstellar official soundtrack";
 
 export default function AmbientAudio() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -85,16 +87,16 @@ export default function AmbientAudio() {
       <button
         aria-label={
           isPlaying
-            ? "Stop Sky Full of Stars instrumental"
-            : "Play Sky Full of Stars instrumental"
+            ? `Stop ${audioLabel}`
+            : `Play ${audioLabel}`
         }
         aria-pressed={isPlaying}
         className="quirk-icon-button audio-toggle grid h-11 w-11 place-items-center rounded-md border-2 border-transparent text-[#eaf6ff] transition hover:border-[#78e5ff]/70 hover:bg-[#48f5ff]/15 hover:text-white focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:text-zinc-50"
         onClick={toggleAudio}
         title={
           isPlaying
-            ? "Stop Sky Full of Stars instrumental"
-            : "Play Sky Full of Stars instrumental"
+            ? `Stop ${audioLabel}`
+            : `Play ${audioLabel}`
         }
         type="button"
       >
@@ -123,14 +125,14 @@ export default function AmbientAudio() {
         </svg>
       </button>
       <input
-        aria-label="Sky Full of Stars instrumental volume"
+        aria-label="Volume"
         aria-valuetext={`${volume}%`}
         className="audio-volume h-11 w-16 sm:w-20"
         max="100"
         min="0"
         onChange={handleVolumeChange}
         step="1"
-        title={`Sky Full of Stars instrumental volume: ${volume}%`}
+        title={`Volume: ${volume}%`}
         type="range"
         value={volume}
       />

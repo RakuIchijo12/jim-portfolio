@@ -860,6 +860,18 @@ export default function Home() {
           <div aria-hidden="true" className="level-platform level-platform-one" />
           <div aria-hidden="true" className="level-platform level-platform-two" />
           <div aria-hidden="true" className="spike-row" />
+          <div aria-hidden="true" className="solar-system pointer-events-none">
+            <span className="solar-core" />
+            <span className="solar-orbit solar-orbit-one">
+              <span className="solar-planet solar-planet-one" />
+            </span>
+            <span className="solar-orbit solar-orbit-two">
+              <span className="solar-planet solar-planet-two" />
+            </span>
+            <span className="solar-orbit solar-orbit-three">
+              <span className="solar-planet solar-planet-three" />
+            </span>
+          </div>
 
           <div className="relative z-10 max-w-2xl space-y-4 lg:space-y-5">
             <div
