@@ -772,7 +772,7 @@ function ContactDetailIcon({
   return (
     <svg
       aria-hidden="true"
-      className="h-4 w-4 text-[#ff4fd8]"
+      className="h-4 w-4 text-coral"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -964,7 +964,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="portrait-stage relative z-10 mx-auto w-full max-w-[18rem] sm:max-w-[22rem] md:ml-auto lg:max-w-[24rem]">
+          <div className="portrait-stage relative z-10 mx-auto w-full max-w-[18rem] sm:max-w-88 md:ml-auto lg:max-w-[24rem]">
             {orbitNotes.map((note, index) => (
               <span
                 className="orbit-chip absolute z-20 hidden rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/90 px-3 py-2 text-xs font-black uppercase text-[#eaf6ff] shadow-[4px_4px_0_var(--orbit-accent)] dark:border-[#78e5ff]/60 dark:bg-[#061329]/90 dark:text-zinc-50 sm:inline-flex"
@@ -982,7 +982,7 @@ export default function Home() {
               {/* eslint-disable-next-line @next/next/no-img-element -- Already compressed local WebP; raw img avoids next/image runtime for this static page. */}
               <img
                 alt="Portrait of Jimuel Dave Rodado."
-                className="image-glitch h-56 w-full rounded-md object-cover object-[center_32%] sm:h-72 md:h-[24rem] lg:h-[27rem]"
+                className="image-glitch h-56 w-full rounded-md object-cover object-[center_32%] sm:h-72 md:h-96 lg:h-108"
                 decoding="async"
                 fetchPriority="high"
                 height={1154}
@@ -994,7 +994,7 @@ export default function Home() {
 
             <div className="mini-terminal animated-card relative z-20 mt-3 w-full rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/90 p-3 text-[#eaf6ff] shadow-[0_0_26px_#48f5ff33] dark:border-[#78e5ff]/60 dark:bg-[#061329]/90 dark:text-zinc-50 dark:shadow-[0_0_26px_#48f5ff33] sm:absolute sm:-bottom-3 sm:left-3 sm:mt-0 sm:w-[82%]">
               <div className="terminal-lights mb-2 flex gap-1.5">
-                <span className="bg-[#ff4fd8]" />
+                <span className="bg-coral" />
                 <span className="bg-[#ffe66d]" />
                 <span className="bg-[#b8ff5c]" />
               </div>
@@ -1251,7 +1251,7 @@ export default function Home() {
                       <span className="block text-xs font-black uppercase text-slate-600 dark:text-zinc-300">
                         {detail.label}
                       </span>
-                      <span className="mt-1 block break-words font-bold">
+                      <span className="mt-1 block wrap-break-word font-bold">
                         {detail.value}
                       </span>
                     </span>
@@ -1314,11 +1314,11 @@ export default function Home() {
                 </p>
                 <p className="flex min-w-0 items-center gap-3">
                   <ContactDetailIcon icon="phone" />
-                  <span className="min-w-0 break-words">{contactPhone}</span>
+                  <span className="min-w-0 wrap-break-word">{contactPhone}</span>
                 </p>
                 <p className="flex min-w-0 items-center gap-3">
                   <ContactDetailIcon icon="location" />
-                  <span className="min-w-0 break-words">
+                  <span className="min-w-0 wrap-break-word">
                     Davao City, Philippines
                   </span>
                 </p>
