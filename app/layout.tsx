@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Jimuel Rodado | Full-Stack Developer",
+  title: "Jimuel Rodado | Software Engineer",
   description:
-    "Portfolio of Jimuel Dave Rodado, a full-stack developer focused on healthcare and enterprise web applications.",
+    "Portfolio of Jimuel Dave Rodado, a Software Engineer focused on healthcare and enterprise web applications.",
 };
 
 export default function RootLayout({

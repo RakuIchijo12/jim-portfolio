@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <rect width="48" height="48" rx="10" fill="#0D0D0D"/>
+  <!-- OpenAI logo: 6 interlocking circles, white strokes on dark bg -->
+  <g transform="translate(24,24)" fill="none" stroke="white" stroke-width="2.6">
+    <circle cx="0"     cy="-10"   r="10"/>
+    <circle cx="8.66"  cy="-5"    r="10"/>
+    <circle cx="8.66"  cy="5"     r="10"/>
+    <circle cx="0"     cy="10"    r="10"/>
+    <circle cx="-8.66" cy="5"     r="10"/>
+    <circle cx="-8.66" cy="-5"    r="10"/>
+  </g>
+</svg>

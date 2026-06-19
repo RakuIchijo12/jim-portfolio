@@ -56,66 +56,45 @@ const contactDetails = [
 ] as const;
 
 const stackGroups = [
-  {
-    id: "frontend",
-    label: "Frontend",
-  },
-  {
-    id: "backend",
-    label: "Backend",
-  },
-  {
-    id: "others",
-    label: "Other Techs",
-  },
+  { id: "frontend", label: "Frontend"  },
+  { id: "backend",  label: "Backend"   },
+  { id: "ai",       label: "AI Tools"  },
 ] as const;
 
 const coreStack = [
-  { name: "React", icon: "react", color: "#61dafb", group: "frontend" },
-  { name: "Next.js", icon: "next-js", color: "#111827", group: "frontend" },
-  { name: "Vue.js", icon: "vue-js", color: "#42b883", group: "frontend" },
-  { name: "Angular", icon: "angular", color: "#dd0031", group: "frontend" },
-  { name: "Alpine.js", icon: "alpine-js", color: "#77c1d2", group: "frontend" },
+  { name: "React",        icon: "react",        color: "#61dafb", group: "frontend" },
+  { name: "Next.js",      icon: "next-js",      color: "#111827", group: "frontend" },
+  { name: "Vue.js",       icon: "vue-js",       color: "#42b883", group: "frontend" },
+  { name: "Angular",      icon: "angular",      color: "#dd0031", group: "frontend" },
+  { name: "Alpine.js",    icon: "alpine-js",    color: "#77c1d2", group: "frontend" },
   { name: "Tailwind CSS", icon: "tailwind-css", color: "#38bdf8", group: "frontend" },
-  { name: "Livewire", icon: "livewire", color: "#fb70b6", group: "frontend" },
-  { name: "HTML5", icon: "html5", color: "#e34f26", group: "frontend" },
-  { name: "CSS3", icon: "css3", color: "#1572b6", group: "frontend" },
-  { name: "JavaScript", icon: "javascript", color: "#f7df1e", group: "frontend" },
-  { name: "TypeScript", icon: "typescript", color: "#3178c6", group: "frontend" },
-  { name: "Laravel", icon: "laravel", color: "#ff4d3d", group: "backend" },
-  { name: "Filament", icon: "filament", color: "#f6a800", group: "backend" },
-  { name: "PHP", icon: "php", color: "#777bb4", group: "backend" },
-  { name: "Composer", icon: "composer", color: "#8b5e34", group: "backend" },
-  { name: "Python", icon: "python", color: "#3776ab", group: "backend" },
-  { name: "Django", icon: "django", color: "#0c4b33", group: "backend" },
-  { name: "NestJS", icon: "nestjs", color: "#e0234e", group: "backend" },
-  { name: "C", icon: "c", color: "#659ad2", group: "backend" },
-  { name: "C++", icon: "cplusplus", color: "#00599c", group: "backend" },
-  { name: "MySQL", icon: "mysql", color: "#00758f", group: "backend" },
-  { name: "PostgreSQL", icon: "postgresql", color: "#336791", group: "backend" },
-  { name: "Docker", icon: "docker", color: "#2496ed", group: "others" },
-  { name: "Azure", icon: "azure", color: "#0078d4", group: "others" },
-  { name: "Git", icon: "git", color: "#f05032", group: "others" },
-  { name: "GitLab", icon: "gitlab", color: "#fc6d26", group: "others" },
-  { name: "Postman", icon: "postman", color: "#ff6c37", group: "others" },
-  { name: "Figma", icon: "figma", color: "#a259ff", group: "others" },
-  { name: "Jira", icon: "jira", color: "#2684ff", group: "others" },
-  { name: "Slack", icon: "slack", color: "#4a154b", group: "others" },
-  { name: "Linux", icon: "linux", color: "#facc15", group: "others" },
-  { name: "Android Studio", icon: "android-studio", color: "#3ddc84", group: "others" },
-  { name: "VS Code", icon: "vs-code", color: "#007acc", group: "others" },
-  { name: "Visual Studio", icon: "visual-studio", color: "#7f3f98", group: "others" },
-  { name: "Ren'Py", icon: "renpy", color: "#ff7a8a", group: "others" },
+  { name: "Livewire",     icon: "livewire",     color: "#fb70b6", group: "frontend" },
+  { name: "HTML5",        icon: "html5",        color: "#e34f26", group: "frontend" },
+  { name: "CSS3",         icon: "css3",         color: "#1572b6", group: "frontend" },
+  { name: "JavaScript",   icon: "javascript",   color: "#f7df1e", group: "frontend" },
+  { name: "TypeScript",   icon: "typescript",   color: "#3178c6", group: "frontend" },
+  { name: "Laravel",      icon: "laravel",      color: "#ff4d3d", group: "backend"  },
+  { name: "Filament",     icon: "filament",     color: "#f6a800", group: "backend"  },
+  { name: "PHP",          icon: "php",          color: "#777bb4", group: "backend"  },
+  { name: "Composer",     icon: "composer",     color: "#8b5e34", group: "backend"  },
+  { name: "Python",       icon: "python",       color: "#3776ab", group: "backend"  },
+  { name: "Django",       icon: "django",       color: "#0c4b33", group: "backend"  },
+  { name: "NestJS",       icon: "nestjs",       color: "#e0234e", group: "backend"  },
+  { name: "MySQL",        icon: "mysql",        color: "#00758f", group: "backend"  },
+  { name: "PostgreSQL",   icon: "postgresql",   color: "#336791", group: "backend"  },
+  { name: "Claude",       icon: "claude",       color: "#D4806A", group: "ai"       },
+  { name: "OpenAI",       icon: "openai",       color: "#CCCCCC", group: "ai"       },
+  { name: "Codex",        icon: "codex",        color: "#7C83F0", group: "ai"       },
 ] as const;
 
 const aboutCards = [
   {
-    title: "Current lane",
+    title: "Current Role",
     value: "Healthcare systems",
     copy: "Daily work on hospital workflows where reliability, accuracy, and speed matter.",
   },
   {
-    title: "System shape",
+    title: "Specialization",
     value: "Enterprise tools",
     copy: "ERP, CRM, dashboards, user management, automation, and operational platforms.",
   },
@@ -135,6 +114,7 @@ const experience = [
       "Developing and maintaining healthcare systems for critical daily operations.",
       "Supporting process automation, user management, internal workflows, and system maintenance.",
       "Turning fast-moving operational requirements into dependable web tools.",
+      "Leveraging AI tools (Claude, OpenAI, Codex) to accelerate development, code review, and problem-solving.",
     ],
   },
   {
@@ -168,33 +148,33 @@ const experience = [
 ];
 
 const heroStats = [
-  { value: "4", label: "lanes", accent: "#ff4fd8" },
-  { value: "35", label: "tools", accent: "#48f5ff" },
-  { value: "99%", label: "focus", accent: "#b8ff5c" },
+  { value: "2+", label: "years exp.", accent: "#ff4fd8" },
+  { value: "35+", label: "technologies", accent: "#48f5ff" },
+  { value: "4", label: "industries", accent: "#b8ff5c" },
 ];
 
 const rhythmStrips = [
   "Laravel",
-  "hospital workflows",
+  "healthcare systems",
   "queues",
   "dashboards",
-  "APIs",
-  "role access",
-  "tests",
+  "REST APIs",
+  "role-based access",
+  "testing",
   "automation",
 ];
 
 const orbitNotes = [
-  { label: "API gate", x: "3%", y: "8%", color: "#48f5ff" },
-  { label: "CRUD jump", x: "66%", y: "3%", color: "#ff4fd8" },
-  { label: "Ops shield", x: "64%", y: "70%", color: "#b8ff5c" },
-  { label: "UI coin", x: "1%", y: "66%", color: "#ffe66d" },
+  { label: "Healthcare", x: "3%", y: "8%", color: "#48f5ff" },
+  { label: "Laravel", x: "66%", y: "3%", color: "#ff4fd8" },
+  { label: "Full-Stack", x: "64%", y: "70%", color: "#b8ff5c" },
+  { label: "TypeScript", x: "1%", y: "66%", color: "#ffe66d" },
 ];
 
 const labNotes = [
   { label: "Reliability", value: "97%", color: "#48f5ff" },
-  { label: "Workflow clarity", value: "91%", color: "#ff4fd8" },
-  { label: "Debug patience", value: "99%", color: "#b8ff5c" },
+  { label: "Code clarity", value: "91%", color: "#ff4fd8" },
+  { label: "Attention to detail", value: "99%", color: "#b8ff5c" },
 ];
 
 const cometColors = [
@@ -233,7 +213,7 @@ function customStyle(properties: Record<string, string>): CSSProperties {
 }
 
 function cardDelay(index: number): CSSProperties {
-  return customStyle({ "--delay": `${index * 90}ms` });
+  return customStyle({ "--delay": `${index * 45}ms` });
 }
 
 function stackAccent(color: string): CSSProperties {
@@ -399,8 +379,15 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
   );
 }
 
+const AI_ICON_PATHS: Record<string, string> = {
+  claude: "/claude-color.png",
+  codex: "/codex-color.png",
+  openai: "/openai.png",
+};
+
 function StackIcon({ icon }: { icon: string }) {
   if (icon) {
+    const src = AI_ICON_PATHS[icon] ?? `/stack-icons/${icon}.png`;
     return (
       // eslint-disable-next-line @next/next/no-img-element -- Tiny local icons; raw img avoids many optimizer requests.
       <img
@@ -411,7 +398,7 @@ function StackIcon({ icon }: { icon: string }) {
         draggable={false}
         height={48}
         loading="lazy"
-        src={`/stack-icons/${icon}.png`}
+        src={src}
         width={48}
       />
     );
@@ -819,7 +806,7 @@ export default function Home() {
       </div>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header className="sticky top-2 z-30 grid min-h-14 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/90 px-2.5 py-2 shadow-[0_0_28px_#48f5ff33] backdrop-blur-md dark:border-[#78e5ff]/60 dark:bg-[#02040d]/92 dark:shadow-[0_0_32px_#48f5ff33] sm:px-3 lg:grid-cols-[auto_minmax(0,1fr)_auto]">
+        <header className="sticky top-2 z-30 grid min-h-14 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/97 px-2.5 py-2 shadow-[0_0_28px_#48f5ff33] dark:border-[#78e5ff]/60 dark:bg-[#02040d]/98 dark:shadow-[0_0_32px_#48f5ff33] sm:px-3 lg:grid-cols-[auto_minmax(0,1fr)_auto]">
           <a
             className="logo-mark relative z-10 inline-flex h-11 min-w-12 items-center justify-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] px-3 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] transition hover:-rotate-3 hover:scale-105 dark:border-[#eaf6ff]/80 dark:bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] dark:shadow-[4px_4px_0_#ff4fd866]"
             href="#home"
@@ -877,21 +864,21 @@ export default function Home() {
 
           <div className="relative z-10 max-w-2xl space-y-4 lg:space-y-5">
             <div
-              className="animated-card hero-kicker inline-flex items-center gap-2 rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 text-[0.7rem] font-black uppercase tracking-normal text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80 dark:shadow-[4px_4px_0_#ff4fd866]"
+              className="animated-card hero-kicker inline-flex items-center gap-2 rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 text-xs font-black uppercase tracking-wide text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80 dark:shadow-[4px_4px_0_#ff4fd866]"
               style={cardDelay(0)}
             >
               <span className="signal-dot h-2.5 w-2.5 rounded-sm bg-[#b8ff5c] dark:bg-[#b8ff5c]" />
-              Level 01 - Full-stack runner
+              Software Engineer · Healthcare &amp; Enterprise
             </div>
 
             <div className="space-y-3">
               <h1 className="max-w-2xl text-4xl font-black leading-none tracking-normal text-[#f4fbff] dark:text-white sm:text-5xl lg:text-6xl">
-                Jimuel Dave Rodado
-                <span className="title-spark mt-2 block text-2xl text-[#48f5ff] dark:text-[#48f5ff] sm:text-3xl lg:text-5xl">
-                  clears messy workflows one jump at a time.
+                Engr. Jimuel Dave Rodado
+                <span className="title-spark mt-2 block text-xl text-[#48f5ff] dark:text-[#48f5ff] sm:text-2xl lg:text-3xl">
+                  builds reliable systems for healthcare and enterprise teams.
                 </span>
               </h1>
-              <p className="wiggle-word inline-block rounded-md border-2 border-[#48f5ff]/80 bg-[#48f5ff]/15 px-3 py-1.5 text-base font-black text-[#eaf6ff] shadow-[4px_4px_0_#ff4fd866] dark:border-[#48f5ff]/80 dark:bg-[#48f5ff]/15 dark:shadow-[4px_4px_0_#ff4fd866] sm:text-lg">
+              <p className="wiggle-word inline-block rounded-md border-2 border-[#48f5ff]/80 bg-[#48f5ff]/15 px-3 py-1.5 text-sm font-black text-[#eaf6ff] shadow-[4px_4px_0_#ff4fd866] dark:border-[#48f5ff]/80 dark:bg-[#48f5ff]/15 dark:shadow-[4px_4px_0_#ff4fd866] sm:text-base">
                 Software Engineer
               </p>
               <p className="max-w-xl text-sm font-semibold leading-6 text-slate-700 dark:text-blue-50 sm:text-base sm:leading-7">
@@ -927,7 +914,7 @@ export default function Home() {
                   <p className="font-mono text-2xl font-black text-[#f8fbff] dark:text-white sm:text-3xl">
                     {stat.value}
                   </p>
-                  <p className="mt-1 text-[0.65rem] font-black uppercase leading-4 text-slate-600 dark:text-blue-100 sm:text-xs">
+                  <p className="mt-1 text-xs font-bold uppercase leading-4 text-slate-500 dark:text-blue-100/80">
                     {stat.label}
                   </p>
                 </article>
@@ -956,7 +943,7 @@ export default function Home() {
                 className="motion-card action-link action-link-primary accent-contact inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-[#ff8fe8]/80 bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-4 py-2.5 text-sm font-black text-white shadow-[5px_5px_0_#48f5ff66] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:border-[#ff8fe8]/80 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] dark:shadow-[5px_5px_0_#48f5ff66] sm:px-5"
                 href="#contact"
               >
-                Start
+                Get in Touch
                 <ArrowIcon />
               </a>
               <a
@@ -1013,7 +1000,7 @@ export default function Home() {
                 <span className="bg-[#b8ff5c]" />
               </div>
               <p className="font-mono text-[0.7rem] font-bold leading-5 text-[#b8ff5c] dark:text-[#b8ff5c]">
-                jump --queue --deploy
+                git push origin main
                 <span className="terminal-cursor ml-1 inline-block h-4 w-2 bg-[#b8ff5c] align-middle" />
               </p>
             </div>
@@ -1028,8 +1015,8 @@ export default function Home() {
             <p className="section-label inline-flex rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80">
               About
             </p>
-            <h2 className="mt-5 text-3xl font-black leading-tight tracking-normal sm:text-5xl">
-              Practical engineering, but the dashboard has a pulse.
+            <h2 className="mt-5 text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-4xl">
+              Clean engineering with a focus on reliability and delivery.
             </h2>
           </div>
 
@@ -1037,7 +1024,7 @@ export default function Home() {
             <div className="quirk-card scroll-reveal rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-5 shadow-[0_0_26px_#48f5ff33] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80">
               <div className="space-y-4 text-base font-medium leading-8 text-zinc-700 dark:text-zinc-200">
                 <p>
-                  I am a Full-Stack Developer with a Computer Engineering
+                  I am a Software Engineer with a Computer Engineering
                   background and a strong passion for scalable, maintainable,
                   and useful web applications.
                 </p>
@@ -1075,7 +1062,7 @@ export default function Home() {
 
             <div className="temperament-card quirk-card scroll-reveal rounded-lg border-2 border-[#78e5ff]/55 bg-[#061329]/90 p-5 text-white shadow-[0_0_26px_#ff4fd833] dark:border-[#78e5ff]/55">
               <p className="font-mono text-xs font-black uppercase text-[#ffe66d]">
-                Build temperament
+                Work approach
               </p>
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {labNotes.map((note, index) => (
@@ -1118,7 +1105,7 @@ export default function Home() {
                   >
                     <div className="stack-group-bar flex items-center justify-between gap-3">
                       <h4
-                        className="stack-group-heading text-2xl font-black uppercase leading-none sm:text-3xl"
+                        className="stack-group-heading text-sm font-black uppercase leading-none tracking-widest sm:text-base"
                         id={`stack-${group.id}`}
                       >
                         {group.label}
@@ -1168,7 +1155,7 @@ export default function Home() {
               <p className="section-label inline-flex rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80">
                 Experience
               </p>
-              <h2 className="mt-5 text-3xl font-black leading-tight tracking-normal sm:text-5xl">
+              <h2 className="mt-5 text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-4xl">
                 Healthcare reliability, enterprise workflow thinking.
               </h2>
             </div>
@@ -1210,8 +1197,8 @@ export default function Home() {
                     {String(index + 1).padStart(2, "0")}
                   </div>
                   <div>
-                    <h3 className="text-xl font-black">{job.role}</h3>
-                    <p className="mt-1 font-black text-zinc-700 dark:text-zinc-200">
+                    <h3 className="text-lg font-black">{job.role}</h3>
+                    <p className="mt-1 text-sm font-bold text-zinc-600 dark:text-zinc-300">
                       {job.company}
                     </p>
                     <p className="mt-2 text-sm font-medium text-zinc-500 dark:text-zinc-300">
@@ -1240,7 +1227,7 @@ export default function Home() {
             <p className="section-label inline-flex rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80">
               Contact
             </p>
-            <h2 className="text-3xl font-black leading-tight tracking-normal sm:text-5xl">
+            <h2 className="text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-4xl">
               Have an idea, role, or project in mind? I&apos;d be glad to hear
               it.
             </h2>
@@ -1280,8 +1267,8 @@ export default function Home() {
         <footer className="site-footer border-t-2 border-[#78e5ff]/45 py-12 text-[#c8d8ee] dark:border-[#78e5ff]/45 dark:text-[#b9ecff]">
           <div className="grid gap-8 md:grid-cols-[1.15fr_1fr_1fr] md:items-start">
             <div className="footer-column max-w-md">
-              <h2 className="text-xl font-black text-[#f4fbff] dark:text-[#b8ff5c]">
-                Jimuel Dave Rodado
+              <h2 className="text-sm font-black uppercase tracking-widest text-[#f4fbff] dark:text-[#b8ff5c]">
+                Engr. Jimuel Dave Rodado
               </h2>
               <p className="mt-5 text-sm font-medium leading-7">
                 Software Engineer focused on full-stack development, healthcare
@@ -1291,7 +1278,7 @@ export default function Home() {
             </div>
 
             <div className="footer-column">
-              <h2 className="text-xl font-black text-[#f4fbff] dark:text-[#b8ff5c]">
+              <h2 className="text-sm font-black uppercase tracking-widest text-[#f4fbff] dark:text-[#b8ff5c]">
                 Explore
               </h2>
               <nav className="mt-5 grid grid-cols-2 gap-2 text-sm font-bold">
@@ -1318,7 +1305,7 @@ export default function Home() {
             </div>
 
             <div className="footer-column">
-              <h2 className="text-xl font-black text-[#f4fbff] dark:text-[#b8ff5c]">
+              <h2 className="text-sm font-black uppercase tracking-widest text-[#f4fbff] dark:text-[#b8ff5c]">
                 Get in Touch
               </h2>
               <div className="mt-5 grid gap-4 text-sm font-medium">

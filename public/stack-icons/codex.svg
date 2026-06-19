@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="cg" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#B4C0FB"/>
+      <stop offset="100%" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+  <!-- Cloud body: rect base + three bumps on top -->
+  <rect x="8" y="26" width="32" height="16" rx="6" fill="url(#cg)"/>
+  <circle cx="15" cy="27" r="8"  fill="url(#cg)"/>
+  <circle cx="24" cy="22" r="9"  fill="url(#cg)"/>
+  <circle cx="33" cy="27" r="7"  fill="url(#cg)"/>
+  <!-- Terminal prompt: > chevron and - dash -->
+  <polyline points="13,38 19,34 13,30" fill="none" stroke="white" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="22" y1="38" x2="31" y2="38" stroke="white" stroke-width="2.7" stroke-linecap="round"/>
+</svg>
