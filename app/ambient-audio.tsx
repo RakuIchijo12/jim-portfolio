@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 
 const audioSource =
-  "/Interstellar%20Official%20Soundtrack%20%20Cornfield%20Chase%20%20Hans%20Zimmer%20%20WaterTower.mp3";
+  "/audio/Interstellar%20Official%20Soundtrack%20%20Cornfield%20Chase%20%20Hans%20Zimmer%20%20WaterTower.mp3";
 const audioLabel = "Interstellar official soundtrack";
 
 export default function AmbientAudio() {

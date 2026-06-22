@@ -1,18 +1,20 @@
 import type { CSSProperties } from "react";
 import AudioControl from "./audio-control";
 import DeferredContactForm from "./deferred-contact-form";
+import ProjectCard from "./project-card";
 import ThemeToggle from "./theme-toggle";
 
 const navLinks = [
   { href: "#home", label: "Home" },
   { href: "#about", label: "About" },
+  { href: "#projects", label: "Projects" },
   { href: "#experience", label: "Experience" },
   { href: "#contact", label: "Contact" },
 ];
 
 const contactEmail = "rjimueldave12@gmail.com";
 const contactPhone = "+63 976 317 0755";
-const resumeHref = "/Rodado-Resume-2026.pdf";
+const resumeHref = "/resume/Rodado-Resume-2026.pdf";
 
 const socialLinks = [
   {
@@ -105,6 +107,68 @@ const aboutCards = [
   },
 ];
 
+const projects = [
+  {
+    id: "obsentry",
+    name: "Obsentry",
+    category: "Vehicle Tracking",
+    tagline: "School vehicle monitoring — University of Mindanao",
+    overview:
+      "A web-based system to monitor data from GPS, gas sensors, and RFID. Built to help track untracked school vehicles at the University of Mindanao.",
+    details: [
+      "Arduino handles sensor data capture; an SSL/HTTP module sends data to the deployed web server.",
+      "Socket.io paired with Leaflet.js powers real-time map updates and live sensor dashboards.",
+    ],
+    features: [
+      "Real-time GPS tracking of vehicles",
+      "Gas sensor data monitoring",
+      "RFID, Gas Sensor, and GPS Sensor integration for passenger tracking",
+      "Responsive web dashboard",
+      "Authentication",
+    ],
+    technologies: ["HTML", "CSS", "JavaScript", "Node.js", "Express.js", "Firebase", "GitHub"],
+    images: [
+      { src: "/projects/obsentry/obs1.webp", alt: "Obsentry - Image 1" },
+      { src: "/projects/obsentry/obs2.webp", alt: "Obsentry - Image 2" },
+      { src: "/projects/obsentry/obs3.webp", alt: "Obsentry - Image 3" },
+      { src: "/projects/obsentry/obs4.webp", alt: "Obsentry - Image 4" },
+      { src: "/projects/obsentry/obs5.webp", alt: "Obsentry - Image 5" },
+    ],
+    link: "https://um-obsentry.onrender.com/",
+    linkLabel: "View Live Site",
+  },
+  {
+    id: "eingress",
+    name: "Eingress",
+    category: "Door Lock System",
+    tagline: "Door lock security & employee monitoring system",
+    overview:
+      "A door lock system built to secure and monitor a company building. The admin panel includes user management to track employees in and out, along with their personal details.",
+    details: [
+      "Understanding of UI/UX principles, browser dev tools, client-server architecture, rendering, and security.",
+      "A robust REST API built with NestJS handles authentication, authorization, and all employee access records.",
+    ],
+    features: [
+      "Secure door lock monitoring",
+      "Employee access tracking",
+      "Robust REST API with NestJS",
+      "Relational database management",
+      "Authentication and Authorization",
+    ],
+    technologies: ["HTML", "CSS", "TypeScript", "Angular", "Node.js", "NestJS", "PostgreSQL", "GitHub"],
+    images: [
+      { src: "/projects/eingress/Screenshot%202024-11-04%20102254.png", alt: "Eingress - Image 1" },
+      { src: "/projects/eingress/Screenshot%202024-11-04%20102340.png", alt: "Eingress - Image 2" },
+      { src: "/projects/eingress/Screenshot%202024-11-04%20102446.png", alt: "Eingress - Image 3" },
+      { src: "/projects/eingress/Screenshot%202024-11-04%20102512.png", alt: "Eingress - Image 4" },
+      { src: "/projects/eingress/Screenshot%202024-11-04%20102742.png", alt: "Eingress - Image 5" },
+      { src: "/projects/eingress/Screenshot%202024-11-04%20102824.png", alt: "Eingress - Image 6" },
+    ],
+    link: "https://github.com/RakuIchijo12",
+    linkLabel: "GitHub",
+  },
+] as const;
+
 const experience = [
   {
     role: "Computer Programmer",
@@ -150,7 +214,7 @@ const experience = [
 const heroStats = [
   { value: "2+", label: "years exp.", accent: "#ff4fd8" },
   { value: "35+", label: "technologies", accent: "#48f5ff" },
-  { value: "4", label: "industries", accent: "#b8ff5c" },
+  { value: "3", label: "industries", accent: "#b8ff5c" },
 ];
 
 const rhythmStrips = [
@@ -380,9 +444,9 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
 }
 
 const AI_ICON_PATHS: Record<string, string> = {
-  claude: "/claude-color.png",
-  codex: "/codex-color.png",
-  openai: "/openai.png",
+  claude: "/ai-icons/claude-color.png",
+  codex: "/ai-icons/codex-color.png",
+  openai: "/ai-icons/openai.png",
 };
 
 function StackIcon({ icon }: { icon: string }) {
@@ -988,7 +1052,7 @@ export default function Home() {
                 fetchPriority="high"
                 height={1154}
                 loading="eager"
-                src="/jim-cafe-portrait-optimized.webp"
+                src="/images/jim-cafe-portrait-optimized.webp"
                 width={768}
               />
             </div>
@@ -1147,6 +1211,31 @@ export default function Home() {
         </section>
 
         <section
+          className="scroll-reveal scroll-mt-28 gap-8 border-b-2 border-[#78e5ff]/45 py-14 dark:border-[#78e5ff]/45"
+          id="projects"
+        >
+          <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="section-label inline-flex rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80">
+                Projects
+              </p>
+              <h2 className="mt-5 text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-4xl">
+                Things I&apos;ve built.
+              </h2>
+            </div>
+            <p className="max-w-sm text-base font-medium leading-7 text-zinc-700 dark:text-zinc-200">
+              A selection of projects spanning IoT systems, real-time dashboards, and full-stack web applications.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </section>
+
+        <section
           className="scroll-reveal grid scroll-mt-28 gap-8 py-14 lg:grid-cols-[0.65fr_1.35fr]"
           id="experience"
         >
@@ -1164,19 +1253,6 @@ export default function Home() {
               automation, user management, queues, tests, and clean workflows
               that support real teams.
             </p>
-            <div className="desk-preview relative overflow-hidden rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-2 shadow-[0_0_28px_#9b8cff33] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80">
-              {/* eslint-disable-next-line @next/next/no-img-element -- Already compressed local WebP; raw img avoids next/image runtime for this static page. */}
-              <img
-                alt="Stylized workstation with healthcare dashboard visuals."
-                className="h-44 w-full rounded-md object-cover"
-                decoding="async"
-                fetchPriority="low"
-                height={640}
-                loading="lazy"
-                src="/portfolio-hero-optimized.webp"
-                width={960}
-              />
-            </div>
           </div>
 
           <div className="space-y-5">
@@ -1264,82 +1340,8 @@ export default function Home() {
           <DeferredContactForm />
         </section>
 
-        <footer className="site-footer border-t-2 border-[#78e5ff]/45 py-12 text-[#c8d8ee] dark:border-[#78e5ff]/45 dark:text-[#b9ecff]">
-          <div className="grid gap-8 md:grid-cols-[1.15fr_1fr_1fr] md:items-start">
-            <div className="footer-column max-w-md">
-              <h2 className="text-sm font-black uppercase tracking-widest text-[#f4fbff] dark:text-[#b8ff5c]">
-                Engr. Jimuel Dave Rodado
-              </h2>
-              <p className="mt-5 text-sm font-medium leading-7">
-                Software Engineer focused on full-stack development, healthcare
-                systems, enterprise workflows, and clean, maintainable web
-                applications.
-              </p>
-            </div>
-
-            <div className="footer-column">
-              <h2 className="text-sm font-black uppercase tracking-widest text-[#f4fbff] dark:text-[#b8ff5c]">
-                Explore
-              </h2>
-              <nav className="mt-5 grid grid-cols-2 gap-2 text-sm font-bold">
-                {navLinks.map((link) => (
-                  <a
-                    className="footer-link inline-flex min-h-11 items-center justify-between gap-2 rounded-md px-3 py-2"
-                    href={link.href}
-                    key={link.href}
-                  >
-                    {link.label}
-                    <ArrowIcon />
-                  </a>
-                ))}
-                <a
-                  className="footer-link footer-link-resume col-span-2 inline-flex min-h-11 items-center justify-between gap-2 rounded-md px-3 py-2"
-                  href={resumeHref}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Resume
-                  <ResumeIcon />
-                </a>
-              </nav>
-            </div>
-
-            <div className="footer-column">
-              <h2 className="text-sm font-black uppercase tracking-widest text-[#f4fbff] dark:text-[#b8ff5c]">
-                Get in Touch
-              </h2>
-              <div className="mt-5 grid gap-4 text-sm font-medium">
-                <p className="flex min-w-0 items-center gap-3">
-                  <ContactDetailIcon icon="mail" />
-                  <span className="min-w-0 break-all">{contactEmail}</span>
-                </p>
-                <p className="flex min-w-0 items-center gap-3">
-                  <ContactDetailIcon icon="phone" />
-                  <span className="min-w-0 wrap-break-word">{contactPhone}</span>
-                </p>
-                <p className="flex min-w-0 items-center gap-3">
-                  <ContactDetailIcon icon="location" />
-                  <span className="min-w-0 wrap-break-word">
-                    Davao City, Philippines
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-10 flex flex-col gap-4 border-t-2 border-[#78e5ff]/45 pt-7 text-sm font-bold dark:border-[#78e5ff]/45 sm:flex-row sm:items-center sm:justify-between">
-            <p>
-              &copy; {new Date().getFullYear()} Jimuel Dave Rodado. All rights
-              reserved.
-            </p>
-            <a
-              className="footer-link inline-flex min-h-11 w-max items-center gap-2 rounded-md px-3 py-2"
-              href="#contact"
-            >
-              Let&apos;s connect.
-              <ArrowIcon />
-            </a>
-          </div>
+        <footer className="border-t-2 border-[#78e5ff]/45 py-6 text-center text-sm font-medium text-[#c8d8ee] dark:border-[#78e5ff]/45 dark:text-[#b9ecff]">
+          &copy; {new Date().getFullYear()} Jimuel Dave Rodado. All rights reserved.
         </footer>
       </div>
     </main>
