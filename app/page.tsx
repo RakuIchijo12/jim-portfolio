@@ -228,13 +228,6 @@ const rhythmStrips = [
   "automation",
 ];
 
-const orbitNotes = [
-  { label: "Healthcare", x: "3%", y: "8%", color: "#48f5ff" },
-  { label: "Laravel", x: "66%", y: "3%", color: "#ff4fd8" },
-  { label: "Full-Stack", x: "64%", y: "70%", color: "#b8ff5c" },
-  { label: "TypeScript", x: "1%", y: "66%", color: "#ffe66d" },
-];
-
 const labNotes = [
   { label: "Reliability", value: "97%", color: "#48f5ff" },
   { label: "Code clarity", value: "91%", color: "#ff4fd8" },
@@ -348,18 +341,6 @@ function cometStyle(color: string, index: number): CSSProperties {
     "--comet-scale": `${scale}`,
     "--comet-start-x": `${direction * -18}vw`,
     "--comet-width": `${6.8 + (index % 5) * 0.82}rem`,
-  });
-}
-
-function orbitStyle(
-  note: (typeof orbitNotes)[number],
-  index: number,
-): CSSProperties {
-  return customStyle({
-    "--orbit-accent": note.color,
-    "--orbit-x": note.x,
-    "--orbit-y": note.y,
-    "--delay": `${index * -0.65}s`,
   });
 }
 
@@ -913,19 +894,6 @@ export default function Home() {
           <div aria-hidden="true" className="level-platform level-platform-one" />
           <div aria-hidden="true" className="level-platform level-platform-two" />
           <div aria-hidden="true" className="spike-row" />
-          <div aria-hidden="true" className="solar-system pointer-events-none">
-            <span className="solar-core" />
-            <span className="solar-orbit solar-orbit-one">
-              <span className="solar-planet solar-planet-one" />
-            </span>
-            <span className="solar-orbit solar-orbit-two">
-              <span className="solar-planet solar-planet-two" />
-            </span>
-            <span className="solar-orbit solar-orbit-three">
-              <span className="solar-planet solar-planet-three" />
-            </span>
-          </div>
-
           <div className="relative z-10 max-w-2xl space-y-4 lg:space-y-5">
             <div
               className="animated-card hero-kicker inline-flex items-center gap-2 rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 text-xs font-black uppercase tracking-wide text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80 dark:shadow-[4px_4px_0_#ff4fd866]"
@@ -1030,15 +998,6 @@ export default function Home() {
           </div>
 
           <div className="portrait-stage relative z-10 mx-auto w-full max-w-[18rem] sm:max-w-88 md:ml-auto lg:max-w-[24rem]">
-            {orbitNotes.map((note, index) => (
-              <span
-                className="orbit-chip absolute z-20 hidden rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/90 px-3 py-2 text-xs font-black uppercase text-[#eaf6ff] shadow-[4px_4px_0_var(--orbit-accent)] dark:border-[#78e5ff]/60 dark:bg-[#061329]/90 dark:text-zinc-50 sm:inline-flex"
-                key={note.label}
-                style={orbitStyle(note, index)}
-              >
-                {note.label}
-              </span>
-            ))}
 
             <div
               className="portrait-frame animated-card motion-card accent-contact relative overflow-hidden rounded-md border-2 border-[#78e5ff]/60 bg-[#07172c]/80 p-2 shadow-[0_0_32px_#48f5ff33] dark:border-[#78e5ff]/60 dark:bg-[#07172c]/80 dark:shadow-[0_0_32px_#48f5ff33]"
