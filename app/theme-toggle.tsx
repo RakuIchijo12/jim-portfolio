@@ -5,21 +5,26 @@ import { useEffect, useState } from "react";
 type Theme = "light" | "dark";
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("light");
   const isDark = theme === "dark";
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    setTheme(mq.matches ? "dark" : "light");
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 
   function toggleTheme() {
-    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
+    setTheme((t) => (t === "dark" ? "light" : "dark"));
   }
 
   return (
     <button
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="quirk-icon-button grid h-11 w-11 place-items-center rounded-md border-2 border-transparent text-[#eaf6ff] transition hover:border-[#78e5ff]/70 hover:bg-[#48f5ff]/15 hover:text-[#ffffff] focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:text-zinc-50 dark:hover:border-[#78e5ff]/70 dark:hover:bg-[#48f5ff]/15 dark:hover:text-zinc-50 dark:focus:ring-[#48f5ff]/35"
+      className="quirk-icon-button grid h-11 w-11 place-items-center rounded-md border border-transparent transition focus:outline-none focus:ring-2 focus:ring-(--accent)/30"
       onClick={toggleTheme}
       suppressHydrationWarning
       title={isDark ? "Light mode" : "Dark mode"}

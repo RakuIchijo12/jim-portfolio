@@ -7,62 +7,34 @@ import ThemeToggle from "./theme-toggle";
 export const dynamic = "force-static";
 
 const navLinks = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#projects", label: "Projects" },
+  { href: "#home",       label: "Home"       },
+  { href: "#about",      label: "About"      },
+  { href: "#projects",   label: "Projects"   },
   { href: "#experience", label: "Experience" },
-  { href: "#contact", label: "Contact" },
+  { href: "#contact",    label: "Contact"    },
 ];
 
 const contactEmail = "rjimueldave12@gmail.com";
-const contactPhone = "+63 976 317 0755";
-const resumeHref = "/resume/Rodado-Resume-2026.pdf";
+const contactPhone  = "+63 976 317 0755";
+const resumeHref    = "/resume/Rodado-Resume-2026.pdf";
 
 const socialLinks = [
-  {
-    href: "https://www.linkedin.com/in/jimuel-dave-rodado-1731b9182/",
-    label: "LinkedIn",
-    icon: "linkedin",
-  },
-  {
-    href: "https://github.com/RakuIchijo12",
-    label: "GitHub",
-    icon: "github",
-  },
-  {
-    href: "https://www.facebook.com/jimueldave.rodado",
-    label: "Facebook",
-    icon: "facebook",
-  },
-  {
-    href: `mailto:${contactEmail}`,
-    label: "Email",
-    icon: "mail",
-  },
+  { href: "https://www.linkedin.com/in/jimuel-dave-rodado-1731b9182/", label: "LinkedIn", icon: "linkedin" },
+  { href: "https://github.com/RakuIchijo12",                           label: "GitHub",   icon: "github"   },
+  { href: "https://www.facebook.com/jimueldave.rodado",                label: "Facebook", icon: "facebook" },
+  { href: `mailto:${contactEmail}`,                                    label: "Email",    icon: "mail"     },
 ] as const;
 
 const contactDetails = [
-  {
-    label: "Phone",
-    value: contactPhone,
-    icon: "phone",
-  },
-  {
-    label: "Email",
-    value: contactEmail,
-    icon: "mail",
-  },
-  {
-    label: "Location",
-    value: "Davao City, Philippines",
-    icon: "location",
-  },
+  { label: "Phone",    value: contactPhone,              icon: "phone"    },
+  { label: "Email",    value: contactEmail,              icon: "mail"     },
+  { label: "Location", value: "Davao City, Philippines", icon: "location" },
 ] as const;
 
 const stackGroups = [
-  { id: "frontend", label: "Frontend"  },
-  { id: "backend",  label: "Backend"   },
-  { id: "ai",       label: "AI Tools"  },
+  { id: "frontend", label: "Frontend" },
+  { id: "backend",  label: "Backend"  },
+  { id: "ai",       label: "AI Tools" },
 ] as const;
 
 const coreStack = [
@@ -95,17 +67,17 @@ const aboutCards = [
   {
     title: "Current Role",
     value: "Healthcare systems",
-    copy: "Daily work on hospital workflows where reliability, accuracy, and speed matter.",
+    copy:  "Daily work on hospital workflows where reliability, accuracy, and speed matter.",
   },
   {
     title: "Specialization",
     value: "Enterprise tools",
-    copy: "ERP, CRM, dashboards, user management, automation, and operational platforms.",
+    copy:  "ERP, CRM, dashboards, user management, automation, and operational platforms.",
   },
   {
     title: "Education",
     value: "Computer Engineering",
-    copy: "Bachelor of Science from the University of Mindanao",
+    copy:  "Bachelor of Science from the University of Mindanao",
   },
 ];
 
@@ -214,48 +186,16 @@ const experience = [
 ];
 
 const heroStats = [
-  { value: "2+", label: "years exp.", accent: "#ff4fd8" },
-  { value: "35+", label: "technologies", accent: "#48f5ff" },
-  { value: "3", label: "industries", accent: "#b8ff5c" },
+  { value: "2+",  label: "years exp."    },
+  { value: "35+", label: "technologies"  },
+  { value: "3",   label: "industries"    },
 ];
-
 
 const labNotes = [
-  { label: "Reliability", value: "97%", color: "#48f5ff" },
-  { label: "Code clarity", value: "91%", color: "#ff4fd8" },
-  { label: "Attention to detail", value: "99%", color: "#b8ff5c" },
+  { label: "Reliability",         value: "97%", color: "#9E6F1E" },
+  { label: "Code clarity",        value: "91%", color: "#3A7DAF" },
+  { label: "Attention to detail", value: "99%", color: "#806090" },
 ];
-
-const cometColors = [
-  "#0284c7",
-  "#0f766e",
-  "#be185d",
-  "#f59e0b",
-  "#6366f1",
-  "#334155",
-  "#21d4fd",
-  "#7c5cff",
-  "#0891b2",
-  "#c026d3",
-  "#0369a1",
-  "#475569",
-  "#0891b2",
-  "#9333ea",
-  "#0e7490",
-  "#b45309",
-  "#2563eb",
-  "#db2777",
-  "#155e75",
-  "#4f46e5",
-  "#14b8a6",
-  "#f97316",
-  "#64748b",
-  "#7c3aed",
-];
-
-const fallingCometColors = cometColors.slice(0, 2);
-const twinkleStars = Array.from({ length: 9 }, (_, index) => index);
-const rollingStars = Array.from({ length: 1 }, (_, index) => index);
 
 function customStyle(properties: Record<string, string>): CSSProperties {
   return properties as CSSProperties;
@@ -272,82 +212,15 @@ function stackAccent(color: string): CSSProperties {
 function meterStyle(color: string, width: string, index: number): CSSProperties {
   return customStyle({
     "--meter-accent": color,
-    "--meter-width": width,
-    "--delay": `${index * 120}ms`,
-  });
-}
-
-function twinkleStarStyle(index: number): CSSProperties {
-  return customStyle({
-    "--twinkle-color": cometColors[index % cometColors.length],
-    "--twinkle-delay": `${index * -0.31}s`,
-    "--twinkle-duration": `${2.2 + (index % 7) * 0.38}s`,
-    "--twinkle-left": `${(index * 17 + 9) % 100}%`,
-    "--twinkle-size": `${0.38 + (index % 5) * 0.13}rem`,
-    "--twinkle-top": `${(index * 23 + 7) % 100}%`,
-  });
-}
-
-function rollingStarStyle(index: number): CSSProperties {
-  const direction = index % 2 === 0 ? 1 : -1;
-  const drift = 18 + (index % 5) * 8;
-  const scale = 0.82 + (index % 4) * 0.08;
-
-  return customStyle({
-    "--rolling-star-color": cometColors[(index * 3 + 2) % cometColors.length],
-    "--rolling-star-delay": `${index * -0.74}s`,
-    "--rolling-star-duration": `${5.8 + (index % 6) * 0.74}s`,
-    "--rolling-star-end-x": `${direction * drift}vw`,
-    "--rolling-star-left": `${(index * 13 + 4) % 98}%`,
-    "--rolling-star-mid-x": `${direction * drift * 0.52}vw`,
-    "--rolling-star-opacity": `${0.68 + (index % 4) * 0.07}`,
-    "--rolling-star-end-scale": `${scale * 0.78}`,
-    "--rolling-star-scale": `${scale}`,
-    "--rolling-star-start-scale": `${scale * 0.74}`,
-    "--rolling-star-size": `${0.75 + (index % 4) * 0.16}rem`,
-    "--rolling-star-spin": `${direction * (720 + (index % 3) * 180)}deg`,
-    "--rolling-star-spin-mid": `${direction * (340 + (index % 3) * 90)}deg`,
-    "--rolling-star-start-x": `${direction * -14}vw`,
-  });
-}
-
-function cometStyle(color: string, index: number): CSSProperties {
-  const direction = index % 2 === 0 ? 1 : -1;
-  const drift = 24 + (index % 6) * 6;
-  const scale = 0.72 + (index % 5) * 0.05;
-
-  return customStyle({
-    "--comet-angle": `${direction === 1 ? 29 + (index % 4) * 3 : 151 - (index % 4) * 3}deg`,
-    "--comet-boost-scale": `${scale + 0.06}`,
-    "--comet-color": color,
-    "--comet-delay": `${index * -1.65}s`,
-    "--comet-duration": `${11.4 + (index % 5) * 0.9}s`,
-    "--comet-end-x": `${direction * drift}vw`,
-    "--comet-head-size": `${0.86 + (index % 3) * 0.11}rem`,
-    "--comet-height": `${0.68 + (index % 4) * 0.09}rem`,
-    "--comet-intro-x": `${direction * -13}vw`,
-    "--comet-left": `${(index * 11 + 5) % 96}%`,
-    "--comet-mid-x": `${direction * drift * 0.44}vw`,
-    "--comet-opacity": `${0.34 + (index % 4) * 0.05}`,
-    "--comet-pre-end-x": `${direction * drift * 0.88}vw`,
-    "--comet-scale": `${scale}`,
-    "--comet-start-x": `${direction * -18}vw`,
-    "--comet-width": `${6.8 + (index % 5) * 0.82}rem`,
+    "--meter-width":  width,
+    "--delay":        `${index * 120}ms`,
   });
 }
 
 function ArrowIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor"
+      strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
       <path d="M5 12h14" />
       <path d="m13 6 6 6-6 6" />
     </svg>
@@ -356,16 +229,8 @@ function ArrowIcon() {
 
 function ResumeIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor"
+      strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
       <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z" />
       <path d="M14 2v5h5" />
       <path d="M12 11v6" />
@@ -382,7 +247,6 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
       </svg>
     );
   }
-
   if (icon === "github") {
     return (
       <svg aria-hidden="true" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -390,7 +254,6 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
       </svg>
     );
   }
-
   if (icon === "facebook") {
     return (
       <svg aria-hidden="true" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
@@ -398,18 +261,9 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
       </svg>
     );
   }
-
   return (
-    <svg
-      aria-hidden="true"
-      className="h-4 w-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor"
+      strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
       <path d="M4 6h16v12H4z" />
       <path d="m4 7 8 6 8-6" />
     </svg>
@@ -418,442 +272,86 @@ function SocialIcon({ icon }: { icon: (typeof socialLinks)[number]["icon"] }) {
 
 const AI_ICON_PATHS: Record<string, string> = {
   claude: "/ai-icons/claude-color.png",
-  codex: "/ai-icons/codex-color.png",
+  codex:  "/ai-icons/codex-color.png",
   openai: "/ai-icons/openai.png",
 };
 
 function StackIcon({ icon }: { icon: string }) {
-  if (icon) {
-    const src = AI_ICON_PATHS[icon] ?? `/stack-icons/${icon}.png`;
-    return (
-      // eslint-disable-next-line @next/next/no-img-element -- Tiny local icons; raw img avoids many optimizer requests.
-      <img
-        alt=""
-        aria-hidden="true"
-        className="stack-icon-img"
-        decoding="async"
-        draggable={false}
-        height={48}
-        loading="lazy"
-        src={src}
-        width={48}
-      />
-    );
-  }
-
-  if (icon === "laravel") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M5 7.5 12 3l7 4.5v8.5l-7 4.5L5 16Z" />
-        <path d="M5 7.5 12 12l7-4.5" />
-        <path d="M12 12v8.5" />
-        <path d="M8.5 5.3v4.5l7 4.4v-4.5" />
-      </svg>
-    );
-  }
-
-  if (icon === "filament") {
-    return (
-      <svg aria-hidden="true" className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2.8c3.2 2.4 4.9 4.8 4.9 7.3 0 2.1-1 3.8-2.2 5.5-1 1.5-2.2 3-2.7 5.6-.5-2.6-1.7-4.1-2.7-5.6-1.2-1.7-2.2-3.4-2.2-5.5 0-2.5 1.7-4.9 4.9-7.3Z" />
-        <path d="M12 7.4c1.5 1.3 2.2 2.6 2.2 3.9 0 1.4-.8 2.5-2.2 3.8-1.4-1.3-2.2-2.4-2.2-3.8 0-1.3.7-2.6 2.2-3.9Z" fill="#fff" opacity="0.72" />
-      </svg>
-    );
-  }
-
-  if (icon === "livewire") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M3 12.8c2.2-4 4.7-4 7.3 0s5.1 4 7.4 0" />
-        <path d="M6 17c2-2.2 4-2.2 6 0s4 2.2 6 0" />
-        <circle cx="7.2" cy="9" r="1.2" fill="currentColor" stroke="none" />
-        <circle cx="16.8" cy="15" r="1.2" fill="currentColor" stroke="none" />
-      </svg>
-    );
-  }
-
-  if (icon === "tailwind") {
-    return (
-      <svg aria-hidden="true" className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M6 10.5c1.6-3.2 4-4.2 7.2-3 1.8.7 2.9 2 4.8.9 1-.6 1.5-1.4 1.8-2.2-1.6 3.2-4 4.2-7.2 3-1.8-.7-2.9-2-4.8-.9-1 .6-1.5 1.4-1.8 2.2Z" />
-        <path d="M3 16.5c1.6-3.2 4-4.2 7.2-3 1.8.7 2.9 2 4.8.9 1-.6 1.5-1.4 1.8-2.2-1.6 3.2-4 4.2-7.2 3-1.8-.7-2.9-2-4.8-.9-1 .6-1.5 1.4-1.8 2.2Z" />
-      </svg>
-    );
-  }
-
-  if (icon === "react") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.6"
-        viewBox="0 0 24 24"
-      >
-        <ellipse cx="12" cy="12" rx="9" ry="3.8" />
-        <ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(60 12 12)" />
-        <ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(120 12 12)" />
-        <circle cx="12" cy="12" fill="currentColor" r="1.4" stroke="none" />
-      </svg>
-    );
-  }
-
-  if (icon === "alpine") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M3.5 18 9.5 7l3.1 5.2L15 8l5.5 10Z" />
-        <path d="m9.5 7 3.1 11" />
-        <path d="m15 8-2.4 4.2" />
-      </svg>
-    );
-  }
-
-  if (icon === "mysql") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <ellipse cx="12" cy="7" rx="7" ry="3" />
-        <path d="M5 7v6c0 1.7 3.1 3 7 3s7-1.3 7-3V7" />
-        <path d="M8.3 17.4c1.1.4 2.4.6 3.7.6 2.6 0 5-.8 6.2-2" />
-        <path d="M15.6 5.1c1.4-1 2.9-1 4.5-.2-.9.6-1.3 1.3-1.4 2.3" />
-      </svg>
-    );
-  }
-
-  if (icon === "angular") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M12 3 20 7.2l-1.3 10.3L12 21l-6.7-3.5L4 7.2Z" />
-        <path d="M8.2 17 12 7l3.8 10" />
-        <path d="M9.4 14h5.2" />
-      </svg>
-    );
-  }
-
-  if (icon === "django") {
-    return (
-      <svg aria-hidden="true" className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M9.7 4.2h3.2v11.9c-1 .5-2.3.8-3.7.8-3.2 0-5.2-1.8-5.2-4.8 0-3.2 2.2-5 5.3-5 .2 0 .4 0 .4.1v-3Zm0 5.9a2.5 2.5 0 0 0-.8-.1c-1.1 0-1.8.8-1.8 2s.7 2 1.9 2c.3 0 .5 0 .7-.1v-3.8Z" />
-        <path d="M15.2 7.4h3.1v9.5c0 2.5-1.4 3.8-4.2 3.8-.8 0-1.5-.1-2.2-.3l.3-2.4c.5.2 1 .2 1.5.2 1 0 1.5-.5 1.5-1.5V7.4Zm0-3.3h3.1v2.2h-3.1V4.1Z" />
-      </svg>
-    );
-  }
-
-  if (icon === "nestjs") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M12 3 20 8v8l-8 5-8-5V8Z" />
-        <path d="M8 16V8l8 8V8" />
-        <path d="M6.2 6.6 4 5.3" />
-        <path d="m17.8 6.6 2.2-1.3" />
-      </svg>
-    );
-  }
-
-  if (icon === "postgresql") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M8 18c-1.6-1.4-2.5-3.3-2.5-5.4 0-4 3-7.1 6.9-7.1 3.5 0 6.1 2.6 6.1 6.1 0 2.2-1.1 4.1-2.8 5.3" />
-        <path d="M12 10v8.5c0 1.2-.9 2-2.1 2H8.8" />
-        <path d="M14 11.2c1.4.2 2.6 1 3.5 2.1" />
-        <path d="M9.3 9.7h.1" />
-        <path d="M15.3 9.7h.1" />
-      </svg>
-    );
-  }
-
-  if (icon === "pest") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M8 12c0-2.2 1.8-4 4-4s4 1.8 4 4v3c0 2.2-1.8 4-4 4s-4-1.8-4-4Z" />
-        <path d="M9 6.2 10.2 8" />
-        <path d="M15 6.2 13.8 8" />
-        <path d="M6 13H3.8" />
-        <path d="M20.2 13H18" />
-        <path d="m10 13.5 1.4 1.5 3-3.5" />
-      </svg>
-    );
-  }
-
-  if (icon === "figma") {
-    return (
-      <svg aria-hidden="true" className="h-7 w-7" fill="none" viewBox="0 0 24 24">
-        <path
-          d="M10 3h4a3 3 0 0 1 0 6h-4V3Z"
-          fill="currentColor"
-          opacity="0.96"
-        />
-        <path
-          d="M10 9h4a3 3 0 0 1 0 6h-4V9Z"
-          fill="currentColor"
-          opacity="0.72"
-        />
-        <path
-          d="M10 15h3a3 3 0 1 1-3-3v3Z"
-          fill="currentColor"
-          opacity="0.84"
-          transform="translate(0 3)"
-        />
-        <path d="M7 3h3v6H7a3 3 0 0 1 0-6Z" fill="currentColor" opacity="0.88" />
-        <path d="M7 9h3v6H7a3 3 0 0 1 0-6Z" fill="currentColor" opacity="0.64" />
-      </svg>
-    );
-  }
-
-  if (icon === "postman") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <circle cx="12" cy="12" r="8.5" />
-        <path d="m8.3 13.4 6.9-6.2 1.6 1.6-6.2 6.9-3.2.9Z" />
-        <path d="m12.1 11.7 2.2 2.2" />
-        <path d="M15.4 7.4 17 5.8" />
-      </svg>
-    );
-  }
-
-  if (icon === "tableplus") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <rect height="13" rx="2.2" width="16" x="4" y="5" />
-        <path d="M4 9h16" />
-        <path d="M9.4 5v13" />
-        <path d="M14.8 5v13" />
-        <path d="M6.8 13.5H18" />
-        <path d="M17.4 14.9v5.2" />
-        <path d="M14.8 17.5H20" />
-      </svg>
-    );
-  }
-
-  if (icon === "queues") {
-    return (
-      <svg
-        aria-hidden="true"
-        className="h-7 w-7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-        viewBox="0 0 24 24"
-      >
-        <path d="M6 7h10a3 3 0 0 1 0 6H8a3 3 0 1 0 0 6h10" />
-        <path d="m16 4 3 3-3 3" />
-        <path d="m8 16-3 3 3 3" />
-      </svg>
-    );
-  }
-
+  const src = AI_ICON_PATHS[icon] ?? `/stack-icons/${icon}.png`;
   return (
-    <svg
-      aria-hidden="true"
-      className="h-7 w-7"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.8"
-      viewBox="0 0 24 24"
-    >
-      <path d="M8 8 4 12l4 4" />
-      <path d="m16 8 4 4-4 4" />
-      <path d="m14 5-4 14" />
-      <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
-    </svg>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img alt="" aria-hidden="true" className="stack-icon-img"
+      decoding="async" draggable={false} height={48} loading="lazy" src={src} width={48} />
   );
 }
 
-function ContactDetailIcon({
-  icon,
-}: {
-  icon: (typeof contactDetails)[number]["icon"];
-}) {
+function ContactDetailIcon({ icon }: { icon: (typeof contactDetails)[number]["icon"] }) {
   if (icon === "phone") {
     return (
-      <svg
-        aria-hidden="true"
-        className="h-4 w-4 text-[#48f5ff]"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
-      >
+      <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor"
+        strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.63 2.6a2 2 0 0 1-.45 2.11L8 9.72a16 16 0 0 0 6.28 6.28l1.29-1.29a2 2 0 0 1 2.11-.45c.83.3 1.7.51 2.6.63A2 2 0 0 1 22 16.92Z" />
       </svg>
     );
   }
-
   if (icon === "location") {
     return (
-      <svg
-        aria-hidden="true"
-        className="h-4 w-4 text-[#ffe66d]"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
-      >
+      <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor"
+        strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
         <path d="M12 21s7-5.33 7-12A7 7 0 0 0 5 9c0 6.67 7 12 7 12Z" />
         <circle cx="12" cy="9" r="2.5" />
       </svg>
     );
   }
-
   return (
-    <svg
-      aria-hidden="true"
-      className="h-4 w-4 text-coral"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor"
+      strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
       <path d="M4 6h16v12H4z" />
       <path d="m4 7 8 6 8-6" />
     </svg>
   );
 }
 
+function SectionHead({ num, title }: { num: string; title: string }) {
+  return (
+    <div className="mb-12 sm:mb-14">
+      <div className="flex items-center gap-3">
+        <div className="h-px w-8 bg-(--accent)" />
+        <span className="font-mono text-[0.58rem] font-bold tracking-[0.22em] text-(--accent)">{num}</span>
+        <span className="text-[0.65rem] font-black uppercase tracking-[0.22em]">{title}</span>
+        <div className="h-px flex-1 bg-(--border)" />
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
-    <main className="geometry-theme space-theme min-h-screen overflow-hidden bg-[#edf8ff] text-[#0f172a] transition-colors duration-300 dark:bg-[#02040d] dark:text-[#eaf6ff]">
-<div className="ambient-grid pointer-events-none fixed inset-0" />
-      <div className="noise-panel pointer-events-none fixed inset-0" />
-      <div aria-hidden="true" className="space-effect-field pointer-events-none fixed inset-0">
-        {twinkleStars.map((star) => (
-          <span
-            className="twinkle-star"
-            key={`star-${star}`}
-            style={twinkleStarStyle(star)}
-          />
-        ))}
-        {rollingStars.map((star) => (
-          <span
-            className="rolling-falling-star"
-            key={`rolling-star-${star}`}
-            style={rollingStarStyle(star)}
-          />
-        ))}
-        {fallingCometColors.map((color, index) => (
-          <span
-            className="comet"
-            key={`comet-${color}-${index}`}
-            style={cometStyle(color, index)}
-          />
-        ))}
-      </div>
+    <main className="ink-theme min-h-screen overflow-hidden transition-colors duration-300">
+      {/* Top accent bar — gold shimmer */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-x-0 top-0 z-[200] h-0.5"
+        style={{ background: "linear-gradient(90deg, transparent, #7A5315 12%, #C9A84C 42%, #EDD890 65%, #C9A84C 88%, transparent)" }}
+      />
+
+      <div className="ambient-grid pointer-events-none fixed inset-0" />
 
       <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header className="sticky top-2 z-30 grid min-h-14 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/97 px-2.5 py-2 shadow-[0_0_28px_#48f5ff33] dark:border-[#78e5ff]/60 dark:bg-[#02040d]/98 dark:shadow-[0_0_32px_#48f5ff33] sm:px-3 lg:grid-cols-[auto_minmax(0,1fr)_auto]">
+
+        {/* ── Header ─────────────────────────────────────────────────────── */}
+        <header className="sticky top-3 z-30 grid min-h-14 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 rounded-xl border bg-white/90 px-2.5 py-2 shadow-sm backdrop-blur-md sm:px-3 lg:grid-cols-[auto_minmax(0,1fr)_auto]">
           <a
-            className="logo-mark relative z-10 inline-flex h-11 min-w-12 items-center justify-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] px-3 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] transition hover:-rotate-3 hover:scale-105 dark:border-[#eaf6ff]/80 dark:bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] dark:shadow-[4px_4px_0_#ff4fd866]"
+            className="logo-mark relative z-10 inline-flex h-11 min-w-12 items-center justify-center rounded-lg px-3 font-mono text-sm font-black uppercase transition hover:-rotate-2 hover:scale-105"
             href="#home"
           >
             JDR
           </a>
 
-          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 p-1 text-sm font-black text-[#eaf6ff] shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80 dark:text-[#eaf6ff] dark:shadow-[0_0_22px_#48f5ff2e] lg:flex">
+          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-lg border bg-white/95 p-1 text-sm font-semibold backdrop-blur-sm lg:flex">
             {navLinks.map((link, index) => (
               <a
-                className="nav-link inline-flex min-h-11 items-center rounded-md px-3 py-2 transition"
+                className="nav-link inline-flex min-h-9 items-center rounded-md px-3 py-2 transition hover:text-(--accent)"
                 href={link.href}
                 key={link.href}
                 style={cardDelay(index)}
@@ -863,10 +361,10 @@ export default function Home() {
             ))}
           </nav>
 
-          <div className="control-shell relative z-10 flex items-center justify-self-end rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 p-1 shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80 sm:gap-1">
+          <div className="control-shell relative z-10 flex items-center justify-self-end gap-1 rounded-lg border bg-white/95 p-1 backdrop-blur-sm">
             <ThemeToggle />
             <a
-              className="motion-card action-link action-link-primary accent-contact inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-3 py-2 text-sm font-black text-white transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] sm:px-4"
+              className="motion-card action-link action-link-primary accent-contact inline-flex min-h-9 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-(--accent)/30 sm:px-4"
               href="#contact"
             >
               <span className="hidden min-[380px]:inline">Hire Me</span>
@@ -875,71 +373,97 @@ export default function Home() {
           </div>
         </header>
 
+        {/* ── Hero ───────────────────────────────────────────────────────── */}
         <section
-          className="home-level relative grid scroll-mt-24 items-center gap-6 overflow-hidden py-5 sm:gap-7 sm:py-6 md:min-h-[calc(100svh-82px)] md:grid-cols-[minmax(0,1.02fr)_minmax(17rem,0.78fr)] lg:gap-8 lg:py-4"
+          className="hero-luxe relative scroll-mt-24 py-20 sm:py-24 md:py-28"
           id="home"
         >
-          <div aria-hidden="true" className="spark-line left-[7%] top-[12%]" />
-          <div aria-hidden="true" className="spark-line spark-line-two right-[11%] top-[18%]" />
-          <div aria-hidden="true" className="level-platform level-platform-one" />
-          <div aria-hidden="true" className="level-platform level-platform-two" />
-          <div aria-hidden="true" className="spike-row" />
-          <div className="relative z-10 max-w-2xl space-y-4 lg:space-y-5">
-            <div
-              className="animated-card hero-kicker inline-flex items-center gap-2 rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 text-xs font-black uppercase tracking-wide text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80 dark:shadow-[4px_4px_0_#ff4fd866]"
-              style={cardDelay(0)}
-            >
-              <span className="signal-dot h-2.5 w-2.5 rounded-sm bg-[#b8ff5c] dark:bg-[#b8ff5c]" />
-              Software Engineer · Healthcare &amp; Enterprise
+          <div className="relative z-10 flex flex-col items-center gap-6 text-center sm:gap-7">
+
+            {/* Role kicker */}
+            <span className="font-mono text-xs font-bold tracking-[0.25em] uppercase text-(--accent)">
+              // Software Engineer
+            </span>
+
+            {/* Stacked name — full width centered */}
+            <h1 className="hero-name-xl w-full">
+              <span className="block">JIMUEL</span>
+              <span className="block">DAVE</span>
+              <span className="block">RODADO.</span>
+            </h1>
+
+            {/* Gold divider */}
+            <div aria-hidden="true" className="h-px w-16 bg-(--accent) opacity-60" />
+
+            {/* Specialty pill */}
+            <span className="inline-block rounded-full bg-(--accent-light) px-5 py-1.5 font-mono text-sm font-bold text-(--accent)">
+              Healthcare &amp; Enterprise
+            </span>
+
+            {/* Description */}
+            <p className="max-w-lg text-base font-medium leading-7">
+              I build solutions for healthcare and enterprise teams:
+              dashboards, workflows, APIs, automation, and maintainable
+              code that lands cleanly.
+            </p>
+
+            {/* Portrait — centered below text */}
+            <div className="portrait-stage relative mx-auto mt-2 w-full max-w-[18rem] sm:max-w-88">
+              <div
+                className="portrait-frame animated-card relative overflow-hidden rounded-2xl border p-2 shadow-lg"
+                style={cardDelay(2)}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt="Portrait of Jimuel Dave Rodado."
+                  className="image-glitch h-72 w-full rounded-xl object-cover object-[center_32%] sm:h-80"
+                  decoding="async"
+                  fetchPriority="high"
+                  height={1154}
+                  loading="eager"
+                  src="/images/jim-cafe-portrait-optimized.webp"
+                  width={768}
+                />
+              </div>
+
+              {/* Mini terminal */}
+              <div className="mini-terminal animated-card relative z-20 mt-3 w-full rounded-xl border p-3 sm:absolute sm:-bottom-3 sm:left-3 sm:mt-0 sm:w-[80%]">
+                <div className="terminal-lights mb-2 flex gap-1.5">
+                  <span className="bg-[#FF5F57]" />
+                  <span className="bg-[#FEBC2E]" />
+                  <span className="bg-[#28C840]" />
+                </div>
+                <p className="font-mono text-[0.7rem] font-bold leading-5 text-[#C9A84C]">
+                  git push origin main
+                  <span className="terminal-cursor ml-1 inline-block h-4 w-2 bg-[#C9A84C] align-middle" />
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <h1 className="max-w-2xl text-4xl font-black leading-none tracking-normal text-[#f4fbff] dark:text-white sm:text-5xl lg:text-6xl">
-                Engr. Jimuel Dave Rodado
-                <span className="title-spark mt-2 block text-xl text-[#48f5ff] dark:text-[#48f5ff] sm:text-2xl lg:text-3xl">
-                  builds reliable systems for healthcare and enterprise teams.
-                </span>
-              </h1>
-              <p className="wiggle-word inline-block rounded-md border-2 border-[#48f5ff]/80 bg-[#48f5ff]/15 px-3 py-1.5 text-sm font-black text-[#eaf6ff] shadow-[4px_4px_0_#ff4fd866] dark:border-[#48f5ff]/80 dark:bg-[#48f5ff]/15 dark:shadow-[4px_4px_0_#ff4fd866] sm:text-base">
-                Software Engineer
-              </p>
-              <p className="max-w-xl text-sm font-semibold leading-6 text-slate-700 dark:text-blue-50 sm:text-base sm:leading-7">
-                I build solutions for healthcare and enterprise teams:
-                dashboards, workflows, APIs, automation, and maintainable code
-                that lands cleanly.
-              </p>
-            </div>
-
-
-            <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
-              {heroStats.map((stat, index) => (
-                <article
-                  className="animated-card metric-burst motion-card rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 p-3 shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80 dark:shadow-[0_0_22px_#48f5ff2e] sm:p-4"
-                  key={stat.label}
-                  style={{
-                    ...cardDelay(index + 1),
-                    ...customStyle({ "--motion-accent": stat.accent }),
-                  }}
-                >
-                  <p className="font-mono text-2xl font-black text-[#f8fbff] dark:text-white sm:text-3xl">
+            {/* Inline stats */}
+            <div className="mt-4 flex items-stretch divide-x divide-(--border-strong)">
+              {heroStats.map((stat) => (
+                <div key={stat.label} className="pr-6 pl-6 first:pl-0 last:pr-0">
+                  <span className="block font-mono text-2xl font-black sm:text-3xl">
                     {stat.value}
-                  </p>
-                  <p className="mt-1 text-xs font-bold uppercase leading-4 text-slate-500 dark:text-blue-100/80">
+                  </span>
+                  <p className="mt-0.5 text-xs font-semibold uppercase tracking-wider">
                     {stat.label}
                   </p>
-                </article>
+                </div>
               ))}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {/* Social chips */}
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
               {socialLinks.map((link, index) => (
                 <a
                   aria-label={link.label}
-                  className="animated-card motion-card social-chip accent-about grid h-11 w-11 place-items-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] text-[#03111f] shadow-[4px_4px_0_#ff4fd866] transition dark:border-[#eaf6ff]/80 dark:shadow-[4px_4px_0_#ff4fd866]"
+                  className="animated-card motion-card social-chip grid h-11 w-11 place-items-center rounded-lg border transition"
                   href={link.href}
                   key={link.label}
                   rel={link.icon === "mail" ? undefined : "noreferrer"}
-                  style={cardDelay(index + 4)}
+                  style={cardDelay(index + 2)}
                   target={link.icon === "mail" ? undefined : "_blank"}
                   title={link.label}
                 >
@@ -948,23 +472,24 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-2 sm:gap-3">
+            {/* CTAs */}
+            <div className="flex flex-wrap justify-center gap-2.5 sm:gap-3">
               <a
-                className="motion-card action-link action-link-primary accent-contact inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-[#ff8fe8]/80 bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-4 py-2.5 text-sm font-black text-white shadow-[5px_5px_0_#48f5ff66] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:border-[#ff8fe8]/80 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] dark:shadow-[5px_5px_0_#48f5ff66] sm:px-5"
+                className="motion-card action-link action-link-primary accent-contact inline-flex min-h-11 items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-(--accent)/25"
                 href="#contact"
               >
                 Get in Touch
                 <ArrowIcon />
               </a>
               <a
-                className="motion-card action-link action-link-secondary accent-about inline-flex min-h-11 items-center rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] px-4 py-2.5 text-sm font-black text-[#03111f] shadow-[5px_5px_0_#ff4fd866] transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:border-[#eaf6ff]/80 dark:bg-[linear-gradient(135deg,#48f5ff,#b8ff5c)] dark:shadow-[5px_5px_0_#ff4fd866] sm:px-5"
+                className="motion-card action-link action-link-secondary accent-about inline-flex min-h-11 items-center rounded-xl border px-5 py-2.5 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-(--accent)/25"
                 href="#experience"
               >
                 Experience
               </a>
               <a
                 aria-label="Open resume PDF in a new tab"
-                className="motion-card action-link action-link-secondary accent-resume inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-[#f59e0b]/60 bg-[#fff7d6]/90 px-4 py-2.5 text-sm font-black text-[#1f2937] shadow-[5px_5px_0_#48f5ff4d] transition focus:outline-none focus:ring-4 focus:ring-[#f59e0b]/25 dark:border-[#ffe66d]/75 dark:bg-[#ffe66d]/90 dark:text-[#03111f] dark:shadow-[5px_5px_0_#48f5ff66] sm:px-5"
+                className="motion-card action-link action-link-secondary accent-resume inline-flex min-h-11 items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-bold transition focus:outline-none"
                 href={resumeHref}
                 rel="noreferrer"
                 target="_blank"
@@ -973,57 +498,24 @@ export default function Home() {
                 <ResumeIcon />
               </a>
             </div>
-          </div>
 
-          <div className="portrait-stage relative z-10 mx-auto w-full max-w-[18rem] sm:max-w-88 md:ml-auto lg:max-w-[24rem]">
-
-            <div
-              className="portrait-frame animated-card relative overflow-hidden rounded-md border border-slate-700/40 bg-[#07172c]/90 p-2 shadow-lg dark:border-slate-700/40 dark:bg-[#07172c]/90"
-              style={cardDelay(2)}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element -- Already compressed local WebP; raw img avoids next/image runtime for this static page. */}
-              <img
-                alt="Portrait of Jimuel Dave Rodado."
-                className="image-glitch h-56 w-full rounded-md object-cover object-[center_32%] sm:h-72 md:h-96 lg:h-108"
-                decoding="async"
-                fetchPriority="high"
-                height={1154}
-                loading="eager"
-                src="/images/jim-cafe-portrait-optimized.webp"
-                width={768}
-              />
-            </div>
-
-            <div className="mini-terminal animated-card relative z-20 mt-3 w-full rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/90 p-3 text-[#eaf6ff] shadow-[0_0_26px_#48f5ff33] dark:border-[#78e5ff]/60 dark:bg-[#061329]/90 dark:text-zinc-50 dark:shadow-[0_0_26px_#48f5ff33] sm:absolute sm:-bottom-3 sm:left-3 sm:mt-0 sm:w-[82%]">
-              <div className="terminal-lights mb-2 flex gap-1.5">
-                <span className="bg-coral" />
-                <span className="bg-[#ffe66d]" />
-                <span className="bg-[#b8ff5c]" />
-              </div>
-              <p className="font-mono text-[0.7rem] font-bold leading-5 text-[#b8ff5c] dark:text-[#b8ff5c]">
-                git push origin main
-                <span className="terminal-cursor ml-1 inline-block h-4 w-2 bg-[#b8ff5c] align-middle" />
-              </p>
-            </div>
           </div>
         </section>
 
+        {/* ── About ──────────────────────────────────────────────────────── */}
         <section
-          className="scroll-reveal grid scroll-mt-28 gap-8 border-y-2 border-[#78e5ff]/45 py-14 dark:border-[#78e5ff]/45 lg:grid-cols-[0.7fr_1.3fr] lg:items-start"
+          className="scroll-reveal scroll-mt-28 border-t py-16 sm:py-20"
           id="about"
         >
-          <div>
-            <p className="section-label inline-flex rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80">
-              About
-            </p>
-            <h2 className="mt-5 text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-4xl">
-              Clean engineering with a focus on reliability and delivery.
-            </h2>
-          </div>
+          <SectionHead num="01" title="About" />
 
-          <div className="space-y-6 lg:sticky lg:top-28">
-            <div className="quirk-card scroll-reveal rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-5 shadow-[0_0_26px_#48f5ff33] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80">
-              <div className="space-y-4 text-base font-medium leading-8 text-zinc-700 dark:text-zinc-200">
+          <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-start lg:gap-14">
+            {/* Left: heading + bio */}
+            <div className="space-y-5">
+              <h2 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl lg:text-4xl">
+                Clean engineering with a focus on reliability and delivery.
+              </h2>
+              <div className="space-y-4 text-base font-medium leading-8">
                 <p>
                   I am a Software Engineer with a Computer Engineering
                   background and a strong passion for scalable, maintainable,
@@ -1037,67 +529,60 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-3">
-              {aboutCards.map((card, index) => (
-                <article
-                  className="animated-card scroll-reveal about-tile quirk-card motion-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-4 shadow-[0_0_24px_#48f5ff2e] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 sm:p-5"
-                  key={card.title}
-                  style={{
-                    ...cardDelay(index),
-                    ...customStyle({
-                      "--motion-accent":
-                        index === 0 ? "#48f5ff" : index === 1 ? "#ff4fd8" : "#b8ff5c",
-                    }),
-                  }}
-                >
-                  <p className="font-mono text-xs font-black uppercase text-zinc-500 dark:text-zinc-300">
-                    {card.title}
-                  </p>
-                  <h3 className="mt-3 text-xl font-black">{card.value}</h3>
-                  <p className="mt-3 text-sm font-medium leading-6 text-zinc-650 dark:text-zinc-300">
-                    {card.copy}
-                  </p>
-                </article>
-              ))}
-            </div>
-
-            <div className="temperament-card quirk-card scroll-reveal rounded-lg border-2 border-[#78e5ff]/55 bg-[#061329]/90 p-5 text-white shadow-[0_0_26px_#ff4fd833] dark:border-[#78e5ff]/55">
-              <p className="font-mono text-xs font-black uppercase text-[#ffe66d]">
-                Work approach
-              </p>
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                {labNotes.map((note, index) => (
-                  <div key={note.label}>
-                    <div className="flex items-center justify-between gap-3 text-sm font-black">
-                      <span>{note.label}</span>
-                      <span>{note.value}</span>
-                    </div>
-                    <span
-                      className="meter-bar mt-2 block h-3 rounded-md border border-white/60 bg-white/10"
-                      style={meterStyle(note.color, note.value, index)}
-                    />
-                  </div>
+            {/* Right: tiles + work approach */}
+            <div className="space-y-4 lg:sticky lg:top-28">
+              <div className="grid gap-3 sm:grid-cols-3">
+                {aboutCards.map((card, index) => (
+                  <article
+                    className="animated-card scroll-reveal about-tile quirk-card motion-card rounded-xl border p-4 sm:p-5"
+                    key={card.title}
+                    style={{
+                      ...cardDelay(index),
+                      ...customStyle({
+                        "--motion-accent": index === 0 ? "#9E6F1E" : index === 1 ? "#3A7DAF" : "#806090",
+                      }),
+                    }}
+                  >
+                    <p className="font-mono text-xs font-bold uppercase tracking-wider">
+                      {card.title}
+                    </p>
+                    <h3 className="mt-3 text-lg font-black leading-tight">{card.value}</h3>
+                    <p className="mt-2 text-sm font-medium leading-6">{card.copy}</p>
+                  </article>
                 ))}
               </div>
-            </div>
 
-          </div>
-
-          <div className="animated-card scroll-reveal stack-console lg:col-span-2">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="font-mono text-xs font-black uppercase text-zinc-500 dark:text-zinc-300">
-                  Stack
+              <div className="temperament-card quirk-card scroll-reveal rounded-xl border p-5">
+                <p className="font-mono text-xs font-bold uppercase tracking-wider text-(--accent)">
+                  Work approach
                 </p>
+                <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                  {labNotes.map((note, index) => (
+                    <div key={note.label}>
+                      <div className="flex items-center justify-between gap-3 text-sm font-bold">
+                        <span>{note.label}</span>
+                        <span className="font-mono">{note.value}</span>
+                      </div>
+                      <span
+                        className="meter-bar mt-2 block h-2.5 rounded-full border"
+                        style={meterStyle(note.color, note.value, index)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="stack-layout mt-5">
+        {/* ── Stack ──────────────────────────────────────────────────────── */}
+        <section className="scroll-reveal border-t py-16 sm:py-20">
+          <SectionHead num="02" title="Stack" />
+
+          <div className="animated-card scroll-reveal stack-console">
+            <div className="stack-layout">
               {stackGroups.map((group) => {
-                const groupItems = coreStack.filter(
-                  (item) => item.group === group.id,
-                );
-
+                const groupItems = coreStack.filter((item) => item.group === group.id);
                 return (
                   <section
                     aria-labelledby={`stack-${group.id}`}
@@ -1112,18 +597,12 @@ export default function Home() {
                         {group.label}
                       </h4>
                     </div>
-                    <ul
-                      aria-label={`${group.label} stack`}
-                      className="stack-grid mt-5"
-                    >
+                    <ul aria-label={`${group.label} stack`} className="stack-grid mt-5">
                       {groupItems.map((item, index) => (
                         <li
                           className="stack-item group text-center"
                           key={item.name}
-                          style={{
-                            ...stackAccent(item.color),
-                            ...cardDelay(index, 200),
-                          }}
+                          style={{ ...stackAccent(item.color), ...cardDelay(index, 200) }}
                         >
                           <span
                             aria-label={item.name}
@@ -1134,9 +613,7 @@ export default function Home() {
                           >
                             <StackIcon icon={item.icon} />
                           </span>
-                          <span className="stack-label">
-                            {item.name}
-                          </span>
+                          <span className="stack-label">{item.name}</span>
                         </li>
                       ))}
                     </ul>
@@ -1147,21 +624,19 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── Projects ───────────────────────────────────────────────────── */}
         <section
-          className="scroll-reveal scroll-mt-28 gap-8 border-b-2 border-[#78e5ff]/45 py-14 dark:border-[#78e5ff]/45"
+          className="scroll-reveal scroll-mt-28 border-t py-16 sm:py-20"
           id="projects"
         >
-          <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="section-label inline-flex rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80">
-                Projects
-              </p>
-              <h2 className="mt-5 text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-4xl">
-                Things I&apos;ve built.
-              </h2>
-            </div>
-            <p className="max-w-sm text-base font-medium leading-7 text-zinc-700 dark:text-zinc-200">
-              A selection of projects spanning IoT systems, real-time dashboards, and full-stack web applications.
+          <SectionHead num="03" title="Projects" />
+
+          <div className="mb-8 grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+            <h2 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl lg:text-4xl">
+              Things I&apos;ve built.
+            </h2>
+            <p className="max-w-xs text-sm font-medium leading-6">
+              IoT systems, real-time dashboards, and full-stack web applications.
             </p>
           </div>
 
@@ -1172,112 +647,114 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── Experience ─────────────────────────────────────────────────── */}
         <section
-          className="scroll-reveal grid scroll-mt-28 gap-8 py-14 lg:grid-cols-[0.65fr_1.35fr]"
+          className="scroll-reveal scroll-mt-28 border-t py-16 sm:py-20"
           id="experience"
         >
-          <div className="space-y-5">
-            <div>
-              <p className="section-label inline-flex rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80">
-                Experience
-              </p>
-              <h2 className="mt-5 text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-4xl">
-                Healthcare reliability, enterprise workflow thinking.
-              </h2>
-            </div>
-            <p className="text-base font-medium leading-8 text-zinc-700 dark:text-zinc-200">
-              The through-line is practical software: dashboards, APIs,
-              automation, user management, queues, tests, and clean workflows
-              that support real teams.
+          <SectionHead num="04" title="Experience" />
+
+          <div className="mb-10 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+            <h2 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl lg:text-4xl">
+              Healthcare reliability,<br className="hidden sm:block" /> enterprise workflow thinking.
+            </h2>
+            <p className="max-w-xs text-sm font-medium leading-6">
+              Practical software: dashboards, APIs, automation, and clean
+              workflows that support real teams.
             </p>
           </div>
 
-          <div className="space-y-5">
+          <div>
             {experience.map((job, index) => (
-              <article
-                className="animated-card scroll-reveal timeline-card motion-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-4 shadow-[0_0_24px_#48f5ff2e] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 sm:p-5"
+              <div
+                className="exp-item relative border-t pl-5 py-7"
                 key={`${job.company}-${job.role}`}
-                style={{
-                  ...cardDelay(index),
-                  ...customStyle({
-                    "--motion-accent":
-                      index % 3 === 0 ? "#ff4fd8" : index % 3 === 1 ? "#48f5ff" : "#b8ff5c",
-                  }),
-                }}
               >
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <div className="timeline-index flex h-12 w-12 shrink-0 items-center justify-center rounded-md border-2 border-[#78e5ff]/60 bg-[#061329]/90 font-mono text-sm font-black text-[#eaf6ff] shadow-[0_0_18px_#48f5ff33] dark:border-[#78e5ff]/60">
-                    {String(index + 1).padStart(2, "0")}
-                  </div>
+                <div className="grid gap-5 sm:grid-cols-[220px_1fr] sm:gap-8">
+                  {/* Left: index + company + meta */}
                   <div>
-                    <h3 className="text-lg font-black">{job.role}</h3>
-                    <p className="mt-1 text-sm font-bold text-zinc-600 dark:text-zinc-300">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-mono text-[0.6rem] font-black tracking-[0.18em] text-(--accent)">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {job.meta.includes("Present") && (
+                        <span className="rounded-full bg-(--accent) px-2 py-0.5 font-mono text-[0.58rem] font-bold text-white tracking-wide">
+                          Current
+                        </span>
+                      )}
+                    </div>
+                    <span className="mt-2 block text-sm font-black leading-snug">
                       {job.company}
-                    </p>
-                    <p className="mt-2 text-sm font-medium text-zinc-500 dark:text-zinc-300">
-                      {job.meta}
-                    </p>
+                    </span>
+                    <span className="mt-1.5 block font-mono text-xs leading-5 text-(--muted)">
+                      {job.meta.replace(/ \| /g, " · ")}
+                    </span>
+                  </div>
+
+                  {/* Right: role + bullets */}
+                  <div>
+                    <h3 className="text-xl font-black leading-tight sm:text-2xl">
+                      {job.role}
+                    </h3>
+                    <ul className="mt-4 space-y-2.5">
+                      {job.points.map((point) => (
+                        <li className="flex gap-3 text-sm leading-6" key={point}>
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-(--accent)" />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
-                <ul className="mt-5 space-y-3 text-sm font-medium leading-6 text-zinc-650 dark:text-zinc-300">
-                  {job.points.map((point) => (
-                    <li className="flex gap-3" key={point}>
-                      <span className="mt-2 h-2 w-2 shrink-0 rounded-full border border-[#eaf6ff]/70 bg-[#48f5ff] dark:border-[#eaf6ff]/70" />
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </article>
+              </div>
             ))}
+            <div className="border-t" />
           </div>
         </section>
 
+        {/* ── Contact ────────────────────────────────────────────────────── */}
         <section
-          className="contact-section grid scroll-mt-28 gap-8 border-t-2 border-[#78e5ff]/45 py-14 dark:border-[#78e5ff]/45 lg:grid-cols-[0.85fr_1.15fr]"
+          className="scroll-reveal scroll-mt-28 border-t py-16 sm:py-20"
           id="contact"
         >
-          <div className="space-y-5">
-            <p className="section-label inline-flex rounded-md border-2 border-[#eaf6ff]/80 bg-[linear-gradient(90deg,#48f5ff,#b8ff5c)] px-3 py-2 font-mono text-sm font-black uppercase text-[#03111f] shadow-[4px_4px_0_#ff4fd866] dark:border-[#eaf6ff]/80">
-              Contact
-            </p>
-            <h2 className="text-2xl font-black leading-tight tracking-normal sm:text-3xl lg:text-4xl">
-              Have an idea, role, or project in mind? I&apos;d be glad to hear
-              it.
-            </h2>
-            <p className="max-w-xl text-base font-medium leading-8 text-zinc-700 dark:text-zinc-200">
-              Share your name, email, and a short note about what you&apos;re
-              looking for. I&apos;ll read it carefully and reply with a clear
-              next step.
-            </p>
-            <div className="contact-meter quirk-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-4 text-[#eaf6ff] shadow-[0_0_26px_#48f5ff33] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 dark:text-white dark:shadow-[0_0_26px_#48f5ff33]">
-              <p className="font-mono text-xs font-black uppercase text-[#ffe66d] dark:text-[#ffe66d]">
-                Signal board
+          <SectionHead num="05" title="Contact" />
+
+          <div className="grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:items-start">
+            {/* Left: heading + info */}
+            <div>
+              <h2 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl lg:text-4xl">
+                Have an idea, role, or project in mind? I&apos;d be glad to hear it.
+              </h2>
+              <p className="mt-4 max-w-md text-base font-medium leading-8">
+                Share your name, email, and a short note about what you&apos;re
+                looking for. I&apos;ll read it carefully and reply with a clear next step.
               </p>
-              <div className="mt-4 grid gap-3">
-                {contactDetails.map((detail, index) => (
-                  <div
-                    className="animated-card contact-row motion-card flex items-center gap-3 rounded-md border-2 border-[#78e5ff]/45 bg-[#030916]/75 px-4 py-3 text-sm text-[#eaf6ff] shadow-[0_0_18px_#48f5ff2e] dark:border-[#78e5ff]/45 dark:bg-[#030916]/75 dark:text-white dark:shadow-[0_0_18px_#48f5ff2e]"
-                    key={detail.label}
-                    style={cardDelay(index)}
-                  >
-                    <ContactDetailIcon icon={detail.icon} />
-                    <span className="min-w-0">
-                      <span className="block text-xs font-black uppercase text-slate-600 dark:text-zinc-300">
+
+              <div className="mt-8 space-y-5">
+                {contactDetails.map((detail) => (
+                  <div key={detail.label} className="flex items-start gap-4">
+                    <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-(--accent-light) text-(--accent)">
+                      <ContactDetailIcon icon={detail.icon} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest">
                         {detail.label}
-                      </span>
-                      <span className="mt-1 block wrap-break-word font-bold">
+                      </p>
+                      <span className="mt-0.5 block text-sm font-semibold wrap-break-word">
                         {detail.value}
                       </span>
-                    </span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
+
+            {/* Right: form */}
+            <DeferredContactForm />
           </div>
-          <DeferredContactForm />
         </section>
 
-        <footer className="border-t-2 border-[#78e5ff]/45 py-6 text-center text-sm font-medium text-[#c8d8ee] dark:border-[#78e5ff]/45 dark:text-[#b9ecff]">
+        <footer className="border-t py-6 text-center text-sm font-medium text-(--muted)">
           &copy; <CurrentYear /> Jimuel Dave Rodado. All rights reserved.
         </footer>
       </div>

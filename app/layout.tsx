@@ -26,17 +26,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full bg-[#edf8ff] text-[#0f172a] antialiased selection:bg-[#48f5ff]/35 selection:text-[#061329] dark:bg-[#02040d] dark:text-[#eaf6ff] dark:selection:text-white">
-        <script
-          id="theme-bootstrap"
-          dangerouslySetInnerHTML={{
-            __html:
-              "try{localStorage.removeItem('theme')}catch(e){}document.documentElement.classList.add('dark')",
-          }}
-        />
+      <body className="min-h-full antialiased"
+      >
         {children}
       </body>
     </html>
