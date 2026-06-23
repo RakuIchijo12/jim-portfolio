@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import AudioControl from "./audio-control";
 import DeferredContactForm from "./deferred-contact-form";
 import ProjectCard from "./project-card";
 import ThemeToggle from "./theme-toggle";
@@ -823,8 +822,7 @@ function ContactDetailIcon({
 export default function Home() {
   return (
     <main className="geometry-theme space-theme min-h-screen overflow-hidden bg-[#edf8ff] text-[#0f172a] transition-colors duration-300 dark:bg-[#02040d] dark:text-[#eaf6ff]">
-      <div className="scroll-progress fixed left-0 top-0 z-50 h-1.5 w-full bg-[linear-gradient(90deg,#48f5ff,#b8ff5c,#ff4fd8,#ffe66d)]" />
-      <div className="ambient-grid pointer-events-none fixed inset-0" />
+<div className="ambient-grid pointer-events-none fixed inset-0" />
       <div className="noise-panel pointer-events-none fixed inset-0" />
       <div aria-hidden="true" className="space-effect-field pointer-events-none fixed inset-0">
         {twinkleStars.map((star) => (
@@ -874,7 +872,6 @@ export default function Home() {
 
           <div className="control-shell relative z-10 flex items-center justify-self-end rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 p-1 shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80 sm:gap-1">
             <ThemeToggle />
-            <AudioControl />
             <a
               className="motion-card action-link action-link-primary accent-contact inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] px-3 py-2 text-sm font-black text-white transition focus:outline-none focus:ring-4 focus:ring-[#48f5ff]/35 dark:bg-[linear-gradient(135deg,#ff4fd8,#7c5cff)] sm:px-4"
               href="#contact"
@@ -1000,7 +997,7 @@ export default function Home() {
           <div className="portrait-stage relative z-10 mx-auto w-full max-w-[18rem] sm:max-w-88 md:ml-auto lg:max-w-[24rem]">
 
             <div
-              className="portrait-frame animated-card motion-card accent-contact relative overflow-hidden rounded-md border-2 border-[#78e5ff]/60 bg-[#07172c]/80 p-2 shadow-[0_0_32px_#48f5ff33] dark:border-[#78e5ff]/60 dark:bg-[#07172c]/80 dark:shadow-[0_0_32px_#48f5ff33]"
+              className="portrait-frame animated-card relative overflow-hidden rounded-md border border-slate-700/40 bg-[#07172c]/90 p-2 shadow-lg dark:border-slate-700/40 dark:bg-[#07172c]/90"
               style={cardDelay(2)}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- Already compressed local WebP; raw img avoids next/image runtime for this static page. */}

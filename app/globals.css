@@ -572,7 +572,6 @@ a {
     0 18px 42px -30px rgba(14, 116, 144, 0.34),
     6px 6px 0 rgba(99, 102, 241, 0.14) !important;
   color: #0f172a !important;
-  backdrop-filter: blur(8px);
 }
 
 .dark .space-theme header,
@@ -2375,12 +2374,6 @@ a {
 
 /* Performance pass: reduce constant paint work while keeping the space feel. */
 
-/* Remove backdrop-filter from sticky header — biggest scroll-jank source. */
-header {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
 /* Let fixed overlay layers live in their own GPU textures.
    mix-blend-mode prevents compositing isolation, so drop it. */
 .noise-panel,
@@ -2470,6 +2463,49 @@ header {
 .metric-burst:focus-within::after,
 .stack-console:hover::after,
 .stack-console:focus-within::after {
+  animation: none !important;
+}
+
+/* Hide the space-effect-field entirely — 12 concurrent infinite animations on a fixed layer. */
+.space-effect-field {
+  display: none !important;
+}
+
+/* Remove spacey decorations from portrait card. */
+.portrait-stage::before,
+.portrait-stage::after,
+.portrait-frame::before,
+.portrait-frame::after {
+  display: none !important;
+}
+
+.portrait-frame {
+  background: rgba(7, 23, 44, 0.9) !important;
+  border: 1px solid rgba(100, 116, 139, 0.3) !important;
+  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Stop remaining continuous infinite animations — main jank sources. */
+.portrait-frame {
+  animation-name: card-in !important;
+  animation-duration: 680ms !important;
+}
+
+.portrait-frame::after,
+.mini-terminal,
+.contact-meter::after,
+.desk-preview::after {
+  animation: none !important;
+}
+
+.hero-kicker {
+  animation: card-in 680ms cubic-bezier(0.22, 1, 0.36, 1) both !important;
+}
+
+.wiggle-word,
+.signal-dot,
+.spark-line,
+.ticker-track {
   animation: none !important;
 }
 
