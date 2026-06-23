@@ -1,7 +1,10 @@
 import type { CSSProperties } from "react";
+import CurrentYear from "./current-year";
 import DeferredContactForm from "./deferred-contact-form";
 import ProjectCard from "./project-card";
 import ThemeToggle from "./theme-toggle";
+
+export const dynamic = "force-static";
 
 const navLinks = [
   { href: "#home", label: "Home" },
@@ -216,16 +219,6 @@ const heroStats = [
   { value: "3", label: "industries", accent: "#b8ff5c" },
 ];
 
-const rhythmStrips = [
-  "Laravel",
-  "healthcare systems",
-  "queues",
-  "dashboards",
-  "REST APIs",
-  "role-based access",
-  "testing",
-  "automation",
-];
 
 const labNotes = [
   { label: "Reliability", value: "97%", color: "#48f5ff" },
@@ -268,8 +261,8 @@ function customStyle(properties: Record<string, string>): CSSProperties {
   return properties as CSSProperties;
 }
 
-function cardDelay(index: number): CSSProperties {
-  return customStyle({ "--delay": `${index * 45}ms` });
+function cardDelay(index: number, max = 300): CSSProperties {
+  return customStyle({ "--delay": `${Math.min(index * 45, max)}ms` });
 }
 
 function stackAccent(color: string): CSSProperties {
@@ -917,18 +910,6 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="ticker-strip animated-card hidden overflow-hidden rounded-md border-2 border-[#78e5ff]/50 bg-[#07172c]/80 py-2 text-[#d9f7ff] shadow-[0_0_22px_#48f5ff2e] dark:border-[#78e5ff]/50 dark:bg-[#07172c]/80 dark:text-[#d9f7ff] sm:block">
-              <div className="ticker-track flex w-max items-center gap-2">
-                {[...rhythmStrips, ...rhythmStrips].map((item, index) => (
-                  <span
-                    className="ticker-chip rounded-md border border-current px-3 py-1 text-xs font-black uppercase"
-                    key={`${item}-${index}`}
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
 
             <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
               {heroStats.map((stat, index) => (
@@ -1112,7 +1093,7 @@ export default function Home() {
             </div>
 
             <div className="stack-layout mt-5">
-              {stackGroups.map((group, groupIndex) => {
+              {stackGroups.map((group) => {
                 const groupItems = coreStack.filter(
                   (item) => item.group === group.id,
                 );
@@ -1141,7 +1122,7 @@ export default function Home() {
                           key={item.name}
                           style={{
                             ...stackAccent(item.color),
-                            ...cardDelay(index + groupIndex * 6),
+                            ...cardDelay(index, 200),
                           }}
                         >
                           <span
@@ -1297,7 +1278,7 @@ export default function Home() {
         </section>
 
         <footer className="border-t-2 border-[#78e5ff]/45 py-6 text-center text-sm font-medium text-[#c8d8ee] dark:border-[#78e5ff]/45 dark:text-[#b9ecff]">
-          &copy; {new Date().getFullYear()} Jimuel Dave Rodado. All rights reserved.
+          &copy; <CurrentYear /> Jimuel Dave Rodado. All rights reserved.
         </footer>
       </div>
     </main>

@@ -19,6 +19,18 @@ const nextConfig: NextConfig = {
         headers: immutableAssetHeaders,
       },
       {
+        source: "/stack-icons/:path*",
+        headers: immutableAssetHeaders,
+      },
+      {
+        source: "/ai-icons/:path*",
+        headers: immutableAssetHeaders,
+      },
+      {
+        source: "/projects/:path*",
+        headers: immutableAssetHeaders,
+      },
+      {
         source: "/:path*.mp3",
         headers: immutableAssetHeaders,
       },

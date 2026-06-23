@@ -56,6 +56,7 @@ body {
   max-width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
+  overscroll-behavior: none;
   background:
     radial-gradient(circle at 8% 12%, color-mix(in srgb, var(--violet) 18%, transparent), transparent 22rem),
     radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--cyan) 18%, transparent), transparent 24rem),
@@ -481,10 +482,7 @@ a {
   position: relative;
   transform: translateZ(0);
   transition:
-    background-color 220ms ease,
     border-color 220ms ease,
-    box-shadow 260ms ease,
-    color 220ms ease,
     transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -509,48 +507,9 @@ a {
   z-index: 1;
 }
 
-.motion-card::before,
-.motion-card::after {
-  border-radius: inherit;
-  content: "";
-  inset: 0;
-  pointer-events: none;
-  position: absolute;
-}
-
-.motion-card::before {
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--motion-accent) 25%, transparent),
-      transparent 46%,
-      rgba(255, 214, 10, 0.18)
-    );
-  opacity: 0;
-  transition:
-    opacity 260ms ease,
-    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
-  z-index: 0;
-}
-
-.motion-card::after {
-  background:
-    linear-gradient(
-      105deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.16) 43%,
-      rgba(255, 255, 255, 0.66) 50%,
-      rgba(255, 255, 255, 0.16) 57%,
-      transparent 100%
-    );
-  opacity: 0;
-  transform: translateX(-120%) skewX(-16deg);
-  z-index: 2;
-}
-
 .motion-card:hover,
 .motion-card:focus-within {
-  border-color: var(--motion-accent);
+  border-color: color-mix(in srgb, var(--motion-accent) 70%, transparent);
 }
 
 .space-theme header,
@@ -1129,7 +1088,6 @@ a {
 .quirk-card {
   position: relative;
   transition:
-    box-shadow 260ms ease,
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1270,10 +1228,7 @@ a {
 }
 
 .stack-icon-img {
-  filter:
-    saturate(1.14)
-    contrast(1.03)
-    drop-shadow(0 0 10px color-mix(in srgb, var(--stack-panel-accent) 32%, transparent));
+  filter: saturate(1.14) contrast(1.03);
   height: 2.4rem;
   object-fit: contain;
   position: relative;
@@ -1282,6 +1237,11 @@ a {
     transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
   width: 2.4rem;
   z-index: 1;
+}
+
+.stack-icon-tile:hover .stack-icon-img,
+.stack-icon-tile:focus-visible .stack-icon-img {
+  filter: saturate(1.22) contrast(1.05) drop-shadow(0 0 8px color-mix(in srgb, var(--stack-panel-accent) 38%, transparent));
 }
 
 .stack-label {
@@ -1339,11 +1299,12 @@ a {
 }
 
 .dark .stack-icon-img {
-  filter:
-    saturate(1.12)
-    contrast(1.05)
-    brightness(1.08)
-    drop-shadow(0 0 13px color-mix(in srgb, var(--stack-panel-accent) 40%, transparent));
+  filter: saturate(1.12) contrast(1.05) brightness(1.08);
+}
+
+.dark .stack-icon-tile:hover .stack-icon-img,
+.dark .stack-icon-tile:focus-visible .stack-icon-img {
+  filter: saturate(1.2) contrast(1.06) brightness(1.1) drop-shadow(0 0 10px color-mix(in srgb, var(--stack-panel-accent) 46%, transparent));
 }
 
 .dark .stack-label {
@@ -1559,8 +1520,8 @@ a {
 
 .metric-burst:hover::before,
 .metric-burst:focus-within::before {
-  opacity: 0.78;
-  transform: scale(1.08) rotate(8deg);
+  opacity: 0.72;
+  transform: scale(1.06);
 }
 
 .metric-burst:hover::after,
@@ -1582,42 +1543,18 @@ a {
   overflow: hidden;
 }
 
-.social-chip::before {
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.62), transparent 62%);
-  transform: scale(0.18);
-}
-
-.social-chip::after {
-  background: none;
-  border: 1px solid color-mix(in srgb, var(--motion-accent) 74%, transparent);
-  display: block;
-  inset: -0.28rem;
-  transform: scale(0.64) rotate(0deg);
-}
-
 .social-chip svg {
-  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .social-chip:hover,
 .social-chip:focus-visible {
-  transform: translateY(-5px) scale(1.06);
-}
-
-.social-chip:hover::before,
-.social-chip:focus-visible::before {
-  opacity: 0.5;
-  transform: scale(1);
-}
-
-.social-chip:hover::after,
-.social-chip:focus-visible::after {
-  animation: chip-pop 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform: translateY(-4px) scale(1.05);
 }
 
 .social-chip:hover svg,
 .social-chip:focus-visible svg {
-  transform: scale(1.12);
+  transform: scale(1.1);
 }
 
 .action-link {
@@ -1625,39 +1562,9 @@ a {
   overflow: hidden;
 }
 
-.action-link::before {
-  background: radial-gradient(circle at 12% 50%, rgba(255, 255, 255, 0.42), transparent 48%);
-  transform: scaleX(0.2);
-  transform-origin: left;
-}
-
-.action-link::after {
-  background: linear-gradient(90deg, transparent, #ffe66d, #48f5ff, transparent);
-  bottom: 0.4rem;
-  display: block;
-  height: 2px;
-  left: 0.6rem;
-  right: 0.6rem;
-  top: auto;
-  transform: scaleX(0);
-  transform-origin: left;
-}
-
 .action-link:hover,
 .action-link:focus-visible {
-  transform: translate3d(0.18rem, -0.18rem, 0);
-}
-
-.action-link:hover::before,
-.action-link:focus-visible::before {
-  opacity: 0.55;
-  transform: scaleX(1);
-}
-
-.action-link:hover::after,
-.action-link:focus-visible::after {
-  opacity: 1;
-  transform: scaleX(1);
+  transform: translateY(-2px);
 }
 
 .action-link-secondary:hover,
@@ -1708,9 +1615,7 @@ a {
 }
 
 .temperament-card:hover .meter-bar::after {
-  animation:
-    meter-fill 1s cubic-bezier(0.22, 1, 0.36, 1) both,
-    meter-scan 1.1s ease-in-out infinite;
+  animation: meter-fill 1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .stack-console {
@@ -1898,10 +1803,7 @@ a {
   box-shadow: 3px 3px 0 rgba(99, 102, 241, 0.12);
   color: #0f172a;
   transition:
-    background-color 180ms ease,
     border-color 180ms ease,
-    box-shadow 220ms ease,
-    color 180ms ease,
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -2194,8 +2096,6 @@ a {
   width: 3.25rem;
 }
 
-.motion-card::before,
-.motion-card::after,
 .about-tile::after,
 .metric-burst::after,
 .timeline-card::before,
@@ -2346,10 +2246,7 @@ a {
 .quirk-icon-button,
 .quirk-submit {
   transition:
-    background-color 220ms ease,
     border-color 220ms ease,
-    box-shadow 260ms ease,
-    color 220ms ease,
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -2375,18 +2272,17 @@ a {
 /* Performance pass: reduce constant paint work while keeping the space feel. */
 
 /* Let fixed overlay layers live in their own GPU textures.
-   mix-blend-mode prevents compositing isolation, so drop it. */
+   mix-blend-mode prevents compositing isolation, so drop it.
+   Fixed elements are already composited by browsers — skip will-change. */
 .noise-panel,
 .dark .noise-panel {
   mix-blend-mode: normal;
   contain: strict;
-  will-change: transform;
 }
 
 .ambient-grid {
   animation: none;
   contain: strict;
-  will-change: transform;
 }
 
 .space-effect-field {
@@ -2509,26 +2405,6 @@ a {
   animation: none !important;
 }
 
-@supports (content-visibility: auto) {
-  .space-theme section:not(.home-level),
-  .site-footer {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 900px;
-  }
-
-  #about {
-    contain-intrinsic-size: 1px 1200px;
-  }
-
-  #experience {
-    contain-intrinsic-size: 1px 900px;
-  }
-
-  #contact {
-    contain-intrinsic-size: 1px 760px;
-  }
-}
-
 @supports (animation-timeline: view()) {
   .scroll-reveal {
     animation: var(--reveal-enter, reveal-up) both;
@@ -2547,28 +2423,28 @@ a {
 @keyframes card-in {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.97) rotate(-1deg);
+    transform: translateY(20px) scale(0.97);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1) rotate(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes stat-pop-in {
   from {
     opacity: 0;
-    transform: translateY(18px) scale(0.82) rotate(-2deg);
+    transform: translateY(16px) scale(0.86);
   }
 
   70% {
-    transform: translateY(-4px) scale(1.04) rotate(0.8deg);
+    transform: translateY(-3px) scale(1.03);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1) rotate(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -2581,16 +2457,16 @@ a {
 @keyframes chip-drop-in {
   from {
     opacity: 0;
-    transform: translateY(-18px) rotate(-12deg) scale(0.78);
+    transform: translateY(-14px) scale(0.82);
   }
 
   72% {
-    transform: translateY(3px) rotate(5deg) scale(1.08);
+    transform: translateY(2px) scale(1.06);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) rotate(0) scale(1);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -2614,36 +2490,36 @@ a {
 @keyframes action-boost-in {
   from {
     opacity: 0;
-    transform: translateX(-14px) scale(0.96);
+    transform: translateX(-10px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateX(0);
   }
 }
 
 @keyframes tile-fold-in {
   from {
     opacity: 0;
-    transform: perspective(700px) rotateX(16deg) translateY(24px);
+    transform: translateY(18px) scale(0.97);
   }
 
   to {
     opacity: 1;
-    transform: perspective(700px) rotateX(0deg) translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes gauge-slide-in {
   from {
     opacity: 0;
-    transform: translateX(-24px) scaleX(0.94);
+    transform: translateX(-20px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0) scaleX(1);
+    transform: translateX(0);
   }
 }
 
@@ -2661,17 +2537,12 @@ a {
 @keyframes console-boot-in {
   from {
     opacity: 0;
-    transform: translateY(18px) scaleY(0.92);
-  }
-
-  55% {
-    opacity: 1;
-    transform: translateY(0) scaleY(1.04);
+    transform: translateY(16px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scaleY(1);
+    transform: translateY(0);
   }
 }
 
@@ -2688,23 +2559,19 @@ a {
 @keyframes timeline-dock-in {
   from {
     opacity: 0;
-    transform: translateX(28px) skewX(-2deg);
+    transform: translateX(22px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(0) skewX(0);
+    transform: translateX(0);
   }
 }
 
 @keyframes signal-row-in {
   from {
     opacity: 0;
-    transform: translateX(-20px);
-  }
-
-  64% {
-    transform: translateX(4px);
+    transform: translateX(-16px);
   }
 
   to {
@@ -2716,24 +2583,24 @@ a {
 @keyframes form-dock-in {
   from {
     opacity: 0;
-    transform: translateY(28px) scale(0.98);
+    transform: translateY(22px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translateY(36px) scale(0.98) rotate(-0.4deg);
+    transform: translateY(28px) scale(0.98);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1) rotate(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -2876,12 +2743,12 @@ a {
 @keyframes title-pop {
   from {
     opacity: 0;
-    transform: translateY(18px) rotate(-1.4deg);
+    transform: translateY(14px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) rotate(0);
+    transform: translateY(0);
   }
 }
 
@@ -3036,12 +2903,12 @@ a {
 @keyframes tile-pop {
   from {
     opacity: 0;
-    transform: scale(0.78) rotate(-8deg);
+    transform: scale(0.82);
   }
 
   to {
     opacity: 1;
-    transform: scale(1) rotate(0);
+    transform: scale(1);
   }
 }
 
@@ -3164,7 +3031,6 @@ a {
     box-shadow: 0 0 7px color-mix(in srgb, var(--twinkle-color) 42%, transparent);
     opacity: 0.56;
     transform: rotate(0deg) scale(0.72);
-    will-change: opacity, transform, translate;
   }
 
   .twinkle-star::before,
@@ -3176,7 +3042,6 @@ a {
   .rolling-falling-star {
     animation-duration: 8.8s;
     box-shadow: 0 0 9px color-mix(in srgb, var(--rolling-star-color) 34%, transparent);
-    will-change: opacity, transform;
   }
 
   .rolling-falling-star::before,
@@ -3190,7 +3055,6 @@ a {
     height: 0.5rem;
     top: -7rem;
     width: clamp(4.5rem, 22vw, 5.8rem);
-    will-change: opacity, transform;
   }
 
   .comet::before {
@@ -3222,7 +3086,6 @@ a {
       animation: mobile-reveal-up both;
       animation-range: entry 10% cover 28%;
       animation-timeline: view();
-      will-change: opacity, transform;
     }
   }
 

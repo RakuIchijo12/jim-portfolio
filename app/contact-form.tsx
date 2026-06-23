@@ -113,7 +113,7 @@ export default function ContactForm() {
             className={`text-sm font-bold ${
               status === "sent"
                 ? "text-[#0f766e] dark:text-[#b8ff5c]"
-                : "text-[#be185d] dark:text-[#ff4fd8]"
+                : "text-[#be185d] dark:text-coral"
             }`}
           >
             {statusMessage}

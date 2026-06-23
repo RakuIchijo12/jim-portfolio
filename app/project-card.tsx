@@ -245,7 +245,7 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
                 >
                   {iconFile ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img alt={tech} className={`h-4 w-4 object-contain${DARK_ICONS.has(tech) ? " dark:invert" : ""}`} src={`/stack-icons/${iconFile}`} />
+                    <img alt={tech} className={`h-4 w-4 object-contain${DARK_ICONS.has(tech) ? " dark:invert" : ""}`} height={16} src={`/stack-icons/${iconFile}`} width={16} />
                   ) : (
                     <span className="px-1 text-[9px] font-bold leading-tight text-slate-600 dark:text-[#a8d8f0]">{tech}</span>
                   )}
@@ -455,7 +455,7 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
                               <div className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 bg-slate-100 p-1.5 dark:border-[#78e5ff]/35 dark:bg-[#030916]/80">
                                 {iconFile ? (
                                   // eslint-disable-next-line @next/next/no-img-element
-                                  <img alt={tech} className={`h-full w-full object-contain${DARK_ICONS.has(tech) ? " dark:invert" : ""}`} src={`/stack-icons/${iconFile}`} />
+                                  <img alt={tech} className={`h-full w-full object-contain${DARK_ICONS.has(tech) ? " dark:invert" : ""}`} height={36} src={`/stack-icons/${iconFile}`} width={36} />
                                 ) : (
                                   <span className="text-center text-[9px] font-bold leading-tight text-slate-600 dark:text-[#d4f0ff]">{tech}</span>
                                 )}
