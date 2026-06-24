@@ -25,7 +25,7 @@ export default function ProjectsSection() {
     <section
       id="projects"
       ref={sectionRef}
-      className="relative py-24 sm:py-32"
+      className="relative py-16 sm:py-24 lg:py-32"
       style={{
         background: "var(--surface)",
         borderTop: "1px solid var(--border)",
@@ -47,7 +47,7 @@ export default function ProjectsSection() {
 
         {/* Heading row */}
         <motion.div
-          className="mb-12 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
+          className="mb-8 sm:mb-12 grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease, delay: 0.1 }}

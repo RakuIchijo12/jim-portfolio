@@ -50,14 +50,11 @@ export default function NavBar() {
 
   function smoothScroll(href: string) {
     setMenuOpen(false);
-    const el = document.querySelector(href);
-    if (!el) return;
-    // Skip the section's own top padding so the first visible content
-    // (eyebrow/heading) lands 30px below the 64px navbar.
-    const paddingTop = parseFloat(getComputedStyle(el).paddingTop) || 0;
-    const targetFromTop = 94; // 64px navbar + 30px gap
-    const top = el.getBoundingClientRect().top + window.scrollY - targetFromTop + paddingTop;
-    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    setTimeout(() => {
+      const el = document.querySelector(href);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 350);
   }
 
   return (
@@ -87,25 +84,25 @@ export default function NavBar() {
             backdropFilter: scrolled ? "blur(20px) saturate(1.5)" : "none",
           }}
         >
-          <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-x-4 px-4 sm:px-6 lg:gap-x-8 lg:px-8">
 
             {/* Logo — left */}
             <a
               href="#"
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-              className="font-display text-xl font-700 italic tracking-wide justify-self-start"
+              className="font-display text-lg font-700 italic tracking-wide lg:text-xl"
               style={{ color: "var(--gold)", fontWeight: 700 }}
             >
               JDR
             </a>
 
             {/* Desktop nav — truly centered */}
-            <nav className="hidden items-center gap-6 md:flex">
+            <nav className="hidden items-center justify-center gap-3 md:flex lg:gap-5">
               {navLinks.map((link) => (
                 <button
                   key={link.href}
                   onClick={() => smoothScroll(link.href)}
-                  className="nav-link text-sm font-medium tracking-wide transition-colors"
+                  className="nav-link text-xs font-medium tracking-wide transition-colors lg:text-sm"
                   style={{
                     color: activeHash === link.href ? "var(--gold)" : "var(--muted)",
                   }}
@@ -116,19 +113,19 @@ export default function NavBar() {
             </nav>
 
             {/* Desktop CTAs — right */}
-            <div className="hidden items-center gap-3 justify-self-end md:flex">
+            <div className="hidden items-center gap-2 justify-self-end md:flex lg:gap-3">
               <ThemeToggle />
               <a
                 href={resumeHref}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-ghost rounded px-4 py-2 text-sm"
+                className="btn-ghost rounded px-3 py-2 text-sm lg:px-4"
               >
                 Résumé
               </a>
               <button
                 onClick={() => smoothScroll("#contact")}
-                className="btn-gold rounded px-5 py-2 text-sm"
+                className="btn-gold whitespace-nowrap rounded px-4 py-2 text-sm lg:px-5"
               >
                 Hire Me
               </button>
@@ -136,31 +133,20 @@ export default function NavBar() {
 
             {/* Mobile hamburger */}
             <button
-              className="col-start-3 flex h-10 w-10 flex-col items-center justify-center gap-1.5 justify-self-end rounded md:hidden"
+              className="col-start-3 ml-auto grid h-10 w-10 place-items-center rounded transition-colors duration-200 md:hidden"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
+              style={{ color: "var(--fg)" }}
             >
-              <span
-                className="block h-px w-5 origin-center transition-all duration-300"
-                style={{
-                  background: "var(--fg)",
-                  transform: menuOpen ? "rotate(45deg) translate(2px, 2px)" : "none",
-                }}
-              />
-              <span
-                className="block h-px w-5 transition-all duration-300"
-                style={{
-                  background: "var(--fg)",
-                  opacity: menuOpen ? 0 : 1,
-                }}
-              />
-              <span
-                className="block h-px w-5 origin-center transition-all duration-300"
-                style={{
-                  background: "var(--fg)",
-                  transform: menuOpen ? "rotate(-45deg) translate(2px, -2px)" : "none",
-                }}
-              />
+              {menuOpen ? (
+                <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                </svg>
+              ) : (
+                <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+                  <line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -175,6 +161,7 @@ export default function NavBar() {
             borderColor: "var(--border)",
             background: "var(--surface)",
             backdropFilter: "blur(20px)",
+            pointerEvents: menuOpen ? "auto" : "none",
           }}
         >
           <nav className="flex flex-col gap-1 px-4 pb-4 pt-2">

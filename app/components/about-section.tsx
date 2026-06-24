@@ -34,7 +34,7 @@ export default function AboutSection() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-24 sm:py-32"
+      className="relative py-16 sm:py-24 lg:py-32"
       style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}
     >
       <div aria-hidden="true" className="gold-rule absolute inset-x-0 top-0 opacity-50" />
@@ -42,7 +42,7 @@ export default function AboutSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* ── Eyebrow + heading (full width) ── */}
-        <div ref={headingRef} className="mb-14">
+        <div ref={headingRef} className="mb-10 sm:mb-14">
           <motion.div
             className="section-eyebrow mb-6"
             initial={{ opacity: 0, x: -20 }}
@@ -158,7 +158,7 @@ export default function AboutSection() {
             {/* About cards */}
             <motion.div
               ref={cardsRef}
-              className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4"
+              className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4"
               variants={stagger}
               initial="hidden"
               animate={cardsInView ? "visible" : "hidden"}
@@ -167,7 +167,7 @@ export default function AboutSection() {
                 <motion.article
                   key={card.title}
                   variants={fadeUp}
-                  className="group relative overflow-hidden rounded-sm p-5 transition-all duration-300"
+                  className="group relative overflow-hidden rounded-sm p-4 sm:p-5 transition-all duration-300"
                   style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
                   whileHover={{
                     y: -4,

@@ -53,9 +53,7 @@ export default function HeroSection() {
   function scrollTo(href: string) {
     const el = document.querySelector(href);
     if (!el) return;
-    const paddingTop = parseFloat(getComputedStyle(el).paddingTop) || 0;
-    const top = el.getBoundingClientRect().top + window.scrollY - 94 + paddingTop;
-    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   return (
@@ -78,20 +76,20 @@ export default function HeroSection() {
 
       {/* Centered content */}
       <motion.div
-        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-4 pt-24 pb-20 text-center sm:px-6 sm:pt-20 lg:px-8"
+        className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-4 pt-20 pb-20 text-center sm:px-6 sm:pt-24 sm:pb-20 lg:px-8"
         variants={container}
         initial="hidden"
         animate="visible"
       >
         {/* Eyebrow */}
-        <motion.div variants={item} className="section-eyebrow mb-5 justify-center">
+        <motion.div variants={item} className="section-eyebrow mb-3 sm:mb-5 justify-center">
           Computer Engineer · Software Engineer
         </motion.div>
 
         {/* Name */}
         <motion.h1
           variants={item}
-          className="font-display mb-6 leading-none tracking-tight"
+          className="font-display mb-4 sm:mb-6 leading-none tracking-tight"
           style={{ fontSize: "clamp(1rem, 7.5vw, 5rem)", fontWeight: 700 }}
         >
           JIMUEL DAVE{" "}
@@ -101,12 +99,12 @@ export default function HeroSection() {
         {/* Thin gold rule below name */}
         <motion.div
           variants={item}
-          className="mb-5 h-px w-24"
+          className="mb-3 sm:mb-5 h-px w-24"
           style={{ background: "linear-gradient(90deg, transparent, var(--gold), transparent)" }}
         />
 
         {/* Specialty badge */}
-        <motion.div variants={item} className="mb-5">
+        <motion.div variants={item} className="mb-3 sm:mb-5">
           <span
             className="inline-block text-[0.58rem] font-bold tracking-[0.26em] uppercase px-4 py-1.5"
             style={{ border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "2px" }}
@@ -118,7 +116,7 @@ export default function HeroSection() {
         {/* Description */}
         <motion.p
           variants={item}
-          className="mb-5 max-w-lg text-sm leading-7"
+          className="mb-3 sm:mb-5 max-w-lg text-sm leading-7"
           style={{ color: "var(--muted)" }}
         >
           I architect enterprise software for healthcare and operations teams —
@@ -127,7 +125,7 @@ export default function HeroSection() {
         </motion.p>
 
         {/* Identity tags */}
-        <motion.div variants={item} className="mb-5 flex flex-wrap justify-center gap-1.5">
+        <motion.div variants={item} className="mb-3 sm:mb-5 flex flex-wrap justify-center gap-1.5">
           {identityTags.map((tag) => (
             <span
               key={tag}
@@ -144,7 +142,7 @@ export default function HeroSection() {
         </motion.div>
 
         {/* Stats row */}
-        <motion.div variants={item} className="mb-5 flex items-stretch">
+        <motion.div variants={item} className="mb-3 sm:mb-5 flex items-stretch">
           {heroStats.map((stat, i) => (
             <div
               key={stat.label}
@@ -172,7 +170,7 @@ export default function HeroSection() {
         </motion.div>
 
         {/* CTA buttons */}
-        <motion.div variants={item} className="mb-5 flex flex-wrap justify-center gap-2">
+        <motion.div variants={item} className="mb-4 sm:mb-5 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => scrollTo("#contact")}
             className="btn-gold inline-flex items-center gap-2 rounded px-6 py-2.5 text-sm tracking-wide"
@@ -243,7 +241,7 @@ export default function HeroSection() {
       <motion.button
         aria-label="Scroll to about section"
         onClick={() => scrollTo("#about")}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 grid h-10 w-10 cursor-pointer place-items-center rounded-sm"
+        className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 grid h-10 w-10 cursor-pointer place-items-center rounded-sm"
         style={{ border: "1px solid var(--border-hv)", color: "var(--muted)" }}
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}

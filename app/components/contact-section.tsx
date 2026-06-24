@@ -84,7 +84,7 @@ export default function ContactSection() {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative py-24 sm:py-32"
+      className="relative py-16 sm:py-24 lg:py-32"
       style={{
         background: "var(--surface)",
         borderTop: "1px solid var(--border)",

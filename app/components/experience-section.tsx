@@ -34,7 +34,7 @@ export default function ExperienceSection() {
     <section
       id="experience"
       ref={sectionRef}
-      className="relative py-24 sm:py-32"
+      className="relative py-16 sm:py-24 lg:py-32"
       style={{
         background: "var(--bg)",
         borderTop: "1px solid var(--border)",
@@ -54,7 +54,7 @@ export default function ExperienceSection() {
 
         {/* Heading */}
         <motion.div
-          className="mb-16 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
+          className="mb-10 sm:mb-16 grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease, delay: 0.1 }}
@@ -95,7 +95,7 @@ export default function ExperienceSection() {
               {/* Timeline dot */}
               <div className="timeline-dot" />
 
-              <div className="grid gap-3 pt-1 sm:grid-cols-[180px_1fr] sm:gap-8 lg:grid-cols-[260px_1fr]">
+              <div className="grid gap-4 pt-1 sm:grid-cols-[180px_1fr] sm:gap-8 lg:grid-cols-[260px_1fr]">
 
                 {/* Left: meta */}
                 <div className="space-y-1">

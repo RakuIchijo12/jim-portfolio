@@ -56,7 +56,7 @@ export default function StackSection() {
     <section
       id="stack"
       ref={sectionRef}
-      className="relative py-24 sm:py-32"
+      className="relative py-16 sm:py-24 lg:py-32"
       style={{
         background: "var(--bg)",
         borderTop: "1px solid var(--border)",
@@ -76,7 +76,7 @@ export default function StackSection() {
 
         {/* Heading */}
         <motion.div
-          className="mb-12 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
+          className="mb-8 sm:mb-12 grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease, delay: 0.1 }}
@@ -103,7 +103,7 @@ export default function StackSection() {
             <button
               key={group.id}
               onClick={() => setActive(group.id as GroupId)}
-              className="relative px-5 py-2.5 text-sm font-600 rounded transition-all duration-240"
+              className="relative px-3.5 py-2 sm:px-5 sm:py-2.5 text-sm font-600 rounded transition-all duration-240"
               style={{
                 fontWeight: 600,
                 background: active === group.id ? "var(--gold-light)" : "transparent",
