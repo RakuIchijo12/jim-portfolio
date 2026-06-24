@@ -17,7 +17,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Jimuel Dave Rodado — Software Engineer",
+  title: "Jimuel Dave Rodado | Software Engineer",
   description:
     "Portfolio of Jimuel Dave Rodado — Computer Engineer, Full-Stack Developer specialising in Laravel, FilamentPHP, React, Next.js, and enterprise healthcare systems.",
   keywords: [
