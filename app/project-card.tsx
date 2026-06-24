@@ -249,7 +249,7 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
           role="dialog"
           aria-modal="true"
           aria-labelledby={`${project.id}-modal-title`}
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5"
+          className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
@@ -263,15 +263,15 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
           />
 
           <motion.div
-            className="relative z-10 flex w-full max-w-5xl flex-col overflow-hidden rounded-sm"
+            className="relative z-10 flex w-full max-w-5xl flex-col overflow-hidden rounded-t-2xl sm:rounded-sm"
             style={{
               background: "var(--bg)",
               border: "1px solid var(--border-hv)",
               boxShadow: "0 0 0 1px rgba(194,168,120,0.2), 0 32px 80px rgba(0,0,0,0.5)",
-              maxHeight: "92vh",
+              maxHeight: "92dvh",
             }}
-            initial={{ scale: 0.96, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
+            initial={{ y: "30%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.3, ease }}
           >
             {/* Gold rule at very top */}
@@ -283,24 +283,24 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
 
             {/* Header */}
             <div
-              className="flex shrink-0 items-start gap-4 px-6 py-5"
+              className="flex shrink-0 items-start gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-5"
               style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)" }}
             >
               <div className="min-w-0 flex-1">
                 <span
-                  className="inline-block mb-2 rounded px-2.5 py-0.5 text-[0.58rem] font-bold uppercase tracking-widest"
+                  className="inline-block mb-1.5 rounded px-2.5 py-0.5 text-[0.58rem] font-bold uppercase tracking-widest"
                   style={{ border: "1px solid var(--gold)", color: "var(--gold)" }}
                 >
                   {project.category}
                 </span>
                 <h2
-                  className="font-display text-2xl sm:text-3xl leading-tight"
+                  className="font-display text-xl leading-tight sm:text-2xl md:text-3xl"
                   id={`${project.id}-modal-title`}
                   style={{ fontWeight: 700 }}
                 >
                   {project.name}
                 </h2>
-                <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
+                <p className="mt-0.5 text-xs sm:text-sm" style={{ color: "var(--muted)" }}>
                   {project.tagline}
                 </p>
               </div>
@@ -332,7 +332,7 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
 
               {/* Gallery */}
               <div
-                className="flex shrink-0 flex-col gap-3 p-4 sm:p-5 sm:w-[42%] sm:overflow-y-auto border-b border-(--border) sm:border-b-0 sm:border-r"
+                className="flex shrink-0 flex-col gap-3 p-3 sm:p-5 sm:w-[42%] sm:overflow-y-auto border-b border-(--border) sm:border-b-0 sm:border-r"
                 style={{ background: "var(--surface)" }}
               >
                 <div
@@ -344,7 +344,7 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
                     alt={project.images[activeImage].alt}
                     src={project.images[activeImage].src}
                     className="w-full object-contain transition-opacity"
-                    style={{ aspectRatio: "16/10", opacity: imgVisible ? 1 : 0, transitionDuration: imgVisible ? "300ms" : "150ms" }}
+                    style={{ aspectRatio: "16/7", opacity: imgVisible ? 1 : 0, transitionDuration: imgVisible ? "300ms" : "150ms" }}
                     decoding="async"
                     loading="lazy"
                   />
@@ -416,7 +416,7 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
               </div>
 
               {/* Details */}
-              <div className="flex-1 overflow-y-auto p-5 sm:p-6" style={{ background: "var(--bg)" }}>
+              <div className="flex-1 p-4 sm:overflow-y-auto sm:p-6" style={{ background: "var(--bg)" }}>
                 <div className="space-y-6">
 
                   {/* Overview */}
@@ -487,11 +487,11 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
 
             {/* Footer */}
             <div
-              className="flex shrink-0 items-center justify-end gap-3 px-6 py-4"
+              className="flex shrink-0 items-center justify-end gap-3 px-4 py-3 sm:px-6 sm:py-4"
               style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}
             >
               <button
-                className="btn-ghost rounded px-5 py-2.5 text-sm"
+                className="btn-ghost rounded px-4 py-2 text-sm sm:px-5 sm:py-2.5"
                 onClick={() => setOpen(false)}
                 type="button"
               >
@@ -501,7 +501,7 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
                 href={project.link}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-gold inline-flex items-center gap-2 rounded px-6 py-2.5 text-sm"
+                className="btn-gold inline-flex items-center gap-2 rounded px-5 py-2 text-sm sm:px-6 sm:py-2.5"
               >
                 {project.linkLabel}
                 <ArrowIcon />
