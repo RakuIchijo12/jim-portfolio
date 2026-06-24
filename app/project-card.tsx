@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { motion } from "framer-motion";
 
 export interface ProjectData {
   id: string;
@@ -17,10 +18,11 @@ export interface ProjectData {
   linkLabel: string;
 }
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 function ArrowIcon() {
   return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor"
-      strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
       <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
     </svg>
   );
@@ -28,8 +30,7 @@ function ArrowIcon() {
 
 function CloseIcon() {
   return (
-    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor"
-      strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
       <path d="M18 6 6 18" /><path d="m6 6 12 12" />
     </svg>
   );
@@ -37,17 +38,15 @@ function CloseIcon() {
 
 function ExpandIcon() {
   return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor"
-      strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M15 3h6v6" /><path d="M9 21H3v-6" /><path d="m21 3-7 7" /><path d="m3 21 7-7" />
+    <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+      <path d="M15 3h6v6M9 21H3v-6m18-12-7 7M3 21l7-7" />
     </svg>
   );
 }
 
 function ChevronIcon({ direction }: { direction: "left" | "right" }) {
   return (
-    <svg aria-hidden="true" className="h-8 w-8 drop-shadow-lg" fill="none" stroke="currentColor"
-      strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
       {direction === "left" ? <path d="m15 18-6-6 6-6" /> : <path d="m9 18 6-6-6-6" />}
     </svg>
   );
@@ -77,14 +76,38 @@ const TECH_ICON_MAP: Record<string, string> = {
   "Alpine.js":     "alpine-js.png",
   "Filament":      "filament.png",
   "Livewire":      "livewire.png",
-  "Composer":      "composer.png",
-  "Figma":         "figma.png",
-  "Postman":       "postman.png",
-  "Docker":        "docker.png",
-  "Git":           "git.png",
 };
 
 const DARK_ICONS = new Set(["Express.js", "GitHub"]);
+
+function TechIcon({ tech, size = 7 }: { tech: string; size?: number }) {
+  const iconFile = TECH_ICON_MAP[tech];
+  const dim = size === 7 ? "h-7 w-7" : "h-10 w-10";
+  const imgDim = size === 7 ? "h-4 w-4" : "h-6 w-6";
+  return (
+    <span
+      key={tech}
+      title={tech}
+      className={`grid ${dim} place-items-center rounded`}
+      style={{ border: "1px solid var(--border-hv)", background: "var(--surface-alt)" }}
+    >
+      {iconFile ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          alt={tech}
+          className={`${imgDim} object-contain${DARK_ICONS.has(tech) ? " dark:invert" : ""}`}
+          src={`/stack-icons/${iconFile}`}
+          width={size === 7 ? 16 : 24}
+          height={size === 7 ? 16 : 24}
+        />
+      ) : (
+        <span className="px-0.5 text-[8px] font-bold leading-tight" style={{ color: "var(--muted)" }}>
+          {tech.slice(0, 3)}
+        </span>
+      )}
+    </span>
+  );
+}
 
 export default function ProjectCard({ project }: { project: ProjectData }) {
   const [open,        setOpen]        = useState(false);
@@ -92,37 +115,34 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
   const [activeImage, setActiveImage] = useState(0);
   const [imgVisible,  setImgVisible]  = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const imageCount = project.images.length;
 
   useEffect(() => {
     if (!open) return;
     const html = document.documentElement;
     const body = document.body;
-    const prevHtml = html.style.overflow;
-    const prevBody = body.style.overflow;
+    const ph = html.style.overflow;
+    const pb = body.style.overflow;
     html.style.overflow = "hidden";
     body.style.overflow = "hidden";
-    return () => { html.style.overflow = prevHtml; body.style.overflow = prevBody; };
+    return () => { html.style.overflow = ph; body.style.overflow = pb; };
   }, [open]);
 
-  useEffect(() => {
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, []);
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
-  const navigate = useCallback((direction: 1 | -1) => {
+  const navigate = useCallback((dir: 1 | -1) => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setImgVisible(false);
     timerRef.current = setTimeout(() => {
-      setActiveImage((prev) => (prev + direction + imageCount) % imageCount);
+      setActiveImage((p) => (p + dir + imageCount) % imageCount);
       setImgVisible(true);
     }, 200);
   }, [imageCount]);
 
-  const goToImage = useCallback((index: number) => {
+  const goToImage = useCallback((idx: number) => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setImgVisible(false);
-    timerRef.current = setTimeout(() => { setActiveImage(index); setImgVisible(true); }, 200);
+    timerRef.current = setTimeout(() => { setActiveImage(idx); setImgVisible(true); }, 200);
   }, []);
 
   const goPrev = useCallback(() => navigate(-1), [navigate]);
@@ -144,279 +164,417 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
   return (
     <>
       {/* ── Card ── */}
-      <article className="animated-card scroll-reveal motion-card flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition dark:bg-[var(--surface)]">
+      <motion.article
+        className="group relative flex h-full flex-col overflow-hidden rounded-sm"
+        style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+        whileHover={{
+          borderColor: "var(--gold)",
+          boxShadow: "0 0 0 1px rgba(194,168,120,0.25), 0 12px 40px rgba(0,0,0,0.15)",
+          y: -4,
+        }}
+        transition={{ duration: 0.25 }}
+      >
+        {/* Gold top accent */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-px z-10"
+          style={{ background: "linear-gradient(90deg, transparent, var(--gold), transparent)", opacity: 0.6 }}
+        />
+
         {/* Thumbnail */}
-        <div className="relative overflow-hidden">
-          <span className="project-badge absolute left-3 top-3 z-10 rounded-md px-2.5 py-1 font-mono text-xs font-bold uppercase tracking-wider">
+        <div className="relative overflow-hidden" style={{ height: "15rem" }}>
+          <span
+            className="absolute left-3 top-3 z-10 rounded px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-widest"
+            style={{ background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)" }}
+          >
             {project.category}
           </span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt={project.images[0].alt}
-            className="h-48 w-full object-cover"
+            src={project.images[0].src}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             decoding="async"
             loading="lazy"
-            src={project.images[0].src}
           />
-          <div className="absolute inset-x-0 bottom-0 h-12 bg-linear-to-b from-transparent to-white dark:to-[var(--surface)]" />
+          <div
+            className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
+            style={{ background: "linear-gradient(to top, var(--bg), transparent)" }}
+          />
         </div>
 
         {/* Body */}
-        <div className="flex flex-1 flex-col gap-4 p-5">
+        <div className="flex flex-1 flex-col gap-4 p-6">
           <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{project.name}</h3>
-            <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+            <h3
+              className="font-display text-xl leading-tight mb-2"
+              style={{ fontWeight: 700 }}
+            >
+              {project.name}
+            </h3>
+            <p className="line-clamp-3 text-sm leading-6" style={{ color: "var(--muted)" }}>
               {project.overview}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-1.5">
-            {project.technologies.slice(0, 6).map((tech) => {
-              const iconFile = TECH_ICON_MAP[tech];
-              return (
-                <span
-                  className="grid h-7 w-7 place-items-center rounded border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/60"
-                  key={tech}
-                  title={tech}
-                >
-                  {iconFile ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img alt={tech}
-                      className={`h-4 w-4 object-contain${DARK_ICONS.has(tech) ? " dark:invert" : ""}`}
-                      height={16} src={`/stack-icons/${iconFile}`} width={16} />
-                  ) : (
-                    <span className="px-1 text-[9px] font-bold leading-tight text-slate-600 dark:text-slate-400">{tech}</span>
-                  )}
-                </span>
-              );
-            })}
-            {project.technologies.length > 6 && (
-              <span className="grid h-7 w-7 place-items-center rounded border border-slate-200 bg-slate-50 text-[10px] font-medium text-slate-500 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-400">
-                +{project.technologies.length - 6}
+          {/* Tech icons */}
+          <div className="flex flex-wrap gap-2">
+            {project.technologies.slice(0, 7).map((tech) => (
+              <TechIcon key={tech} tech={tech} size={7} />
+            ))}
+            {project.technologies.length > 7 && (
+              <span
+                className="grid h-7 px-2 place-items-center rounded text-[10px] font-bold"
+                style={{ border: "1px solid var(--border-hv)", background: "var(--surface-alt)", color: "var(--muted)" }}
+              >
+                +{project.technologies.length - 7}
               </span>
             )}
           </div>
 
           <button
-            className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-(--accent)/30"
+            className="btn-gold mt-auto inline-flex w-full items-center justify-center gap-2 rounded py-3 text-sm"
             onClick={openModal}
             type="button"
           >
-            View Details
+            View Case Study
             <ArrowIcon />
           </button>
         </div>
-      </article>
+      </motion.article>
 
       {/* ── Modal ── */}
       {open && createPortal(
-        <div
-          aria-labelledby={`${project.id}-modal-title`}
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6"
+        <motion.div
           role="dialog"
+          aria-modal="true"
+          aria-labelledby={`${project.id}-modal-title`}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
         >
-          <div aria-hidden="true" className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          {/* Backdrop */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{ background: "rgba(0,0,0,0.78)", backdropFilter: "blur(6px)" }}
+            onClick={() => setOpen(false)}
+          />
 
-          <div className="relative z-10 flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl max-h-[95vh] sm:max-h-[90vh] dark:border-slate-700 dark:bg-[var(--surface)]">
+          <motion.div
+            className="relative z-10 flex w-full max-w-5xl flex-col overflow-hidden rounded-sm"
+            style={{
+              background: "var(--bg)",
+              border: "1px solid var(--border-hv)",
+              boxShadow: "0 0 0 1px rgba(194,168,120,0.2), 0 32px 80px rgba(0,0,0,0.5)",
+              maxHeight: "92vh",
+            }}
+            initial={{ scale: 0.96, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease }}
+          >
+            {/* Gold rule at very top */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 top-0 h-px z-20"
+              style={{ background: "linear-gradient(90deg, transparent, var(--gold), transparent)" }}
+            />
+
             {/* Header */}
-            <div className="flex shrink-0 items-start gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4 dark:border-slate-700 dark:bg-[var(--surface-muted)]">
+            <div
+              className="flex shrink-0 items-start gap-4 px-6 py-5"
+              style={{ background: "var(--surface)", borderBottom: "1px solid var(--border)" }}
+            >
               <div className="min-w-0 flex-1">
-                <span className="project-badge inline-block rounded-md px-2.5 py-0.5 font-mono text-xs font-bold uppercase tracking-widest">
+                <span
+                  className="inline-block mb-2 rounded px-2.5 py-0.5 text-[0.58rem] font-bold uppercase tracking-widest"
+                  style={{ border: "1px solid var(--gold)", color: "var(--gold)" }}
+                >
                   {project.category}
                 </span>
-                <h2 className="mt-1.5 text-xl font-bold text-slate-900 dark:text-slate-100" id={`${project.id}-modal-title`}>
+                <h2
+                  className="font-display text-2xl sm:text-3xl leading-tight"
+                  id={`${project.id}-modal-title`}
+                  style={{ fontWeight: 700 }}
+                >
                   {project.name}
                 </h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{project.tagline}</p>
+                <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
+                  {project.tagline}
+                </p>
               </div>
               <button
                 aria-label="Close dialog"
-                className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition hover:border-slate-500 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400/50 dark:border-slate-600 dark:text-slate-400 dark:hover:border-slate-400"
+                className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded transition-all duration-200"
+                style={{ border: "1px solid var(--border-hv)", color: "var(--muted)" }}
                 onClick={() => setOpen(false)}
                 type="button"
+                onMouseEnter={(e) => {
+                  const t = e.currentTarget as HTMLButtonElement;
+                  t.style.borderColor = "var(--gold)";
+                  t.style.color = "var(--gold)";
+                  t.style.background = "var(--gold-light)";
+                }}
+                onMouseLeave={(e) => {
+                  const t = e.currentTarget as HTMLButtonElement;
+                  t.style.borderColor = "var(--border-hv)";
+                  t.style.color = "var(--muted)";
+                  t.style.background = "transparent";
+                }}
               >
                 <CloseIcon />
               </button>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain sm:overflow-hidden sm:flex-row">
-              {/* Left: gallery */}
-              <div className="flex shrink-0 flex-col gap-3 border-b border-slate-200 p-4 sm:w-[42%] sm:border-b-0 sm:border-r sm:p-5 dark:border-slate-700">
-                <div className="group relative overflow-hidden rounded-xl bg-slate-100 dark:bg-[var(--surface-muted)]">
+            {/* Body */}
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto sm:overflow-hidden sm:flex-row">
+
+              {/* Gallery */}
+              <div
+                className="flex shrink-0 flex-col gap-3 p-4 sm:p-5 sm:w-[42%] sm:overflow-y-auto border-b border-(--border) sm:border-b-0 sm:border-r"
+                style={{ background: "var(--surface)" }}
+              >
+                <div
+                  className="group relative overflow-hidden rounded-sm"
+                  style={{ background: "var(--surface-alt)" }}
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     alt={project.images[activeImage].alt}
-                    className={`h-44 w-full object-contain transition-opacity sm:h-auto sm:aspect-video ${
-                      imgVisible ? "opacity-100 duration-300" : "opacity-0 duration-150"
-                    }`}
-                    decoding="async" loading="lazy" src={project.images[activeImage].src}
+                    src={project.images[activeImage].src}
+                    className="w-full object-contain transition-opacity"
+                    style={{ aspectRatio: "16/10", opacity: imgVisible ? 1 : 0, transitionDuration: imgVisible ? "300ms" : "150ms" }}
+                    decoding="async"
+                    loading="lazy"
                   />
                   <button
                     aria-label="View full size"
-                    className="absolute right-2 top-2 z-10 grid h-8 w-8 place-items-center rounded-lg bg-black/50 text-white opacity-70 backdrop-blur-sm transition-opacity duration-200 hover:bg-black/70 hover:opacity-100 focus:opacity-100 focus:outline-none sm:opacity-0 sm:group-hover:opacity-100"
-                    onClick={() => setLightbox(true)} type="button"
+                    className="absolute right-2 top-2 grid h-8 w-8 place-items-center rounded opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                    style={{ background: "rgba(0,0,0,0.6)", color: "#fff", backdropFilter: "blur(4px)" }}
+                    onClick={() => setLightbox(true)}
+                    type="button"
                   >
                     <ExpandIcon />
                   </button>
-
                   {imageCount > 1 && (
                     <>
-                      <button aria-label="Previous image"
-                        className="absolute inset-y-0 left-0 flex w-1/2 cursor-pointer items-center justify-start pl-4 text-white opacity-60 transition-opacity duration-200 hover:opacity-100 focus:opacity-100 focus:outline-none sm:opacity-0 sm:hover:opacity-100"
-                        onClick={goPrev} style={{ background: "linear-gradient(to right, rgba(0,0,0,0.5), transparent)" }} type="button"
+                      <button
+                        aria-label="Previous image"
+                        className="absolute inset-y-0 left-0 flex w-1/3 cursor-pointer items-center justify-start pl-2 text-white opacity-0 transition-opacity hover:opacity-100 focus:opacity-100"
+                        style={{ background: "linear-gradient(to right, rgba(0,0,0,0.5), transparent)" }}
+                        onClick={goPrev} type="button"
                       >
                         <ChevronIcon direction="left" />
                       </button>
-                      <button aria-label="Next image"
-                        className="absolute inset-y-0 right-0 flex w-1/2 cursor-pointer items-center justify-end pr-4 text-white opacity-60 transition-opacity duration-200 hover:opacity-100 focus:opacity-100 focus:outline-none sm:opacity-0 sm:hover:opacity-100"
-                        onClick={goNext} style={{ background: "linear-gradient(to left, rgba(0,0,0,0.5), transparent)" }} type="button"
+                      <button
+                        aria-label="Next image"
+                        className="absolute inset-y-0 right-0 flex w-1/3 cursor-pointer items-center justify-end pr-2 text-white opacity-0 transition-opacity hover:opacity-100 focus:opacity-100"
+                        style={{ background: "linear-gradient(to left, rgba(0,0,0,0.5), transparent)" }}
+                        onClick={goNext} type="button"
                       >
                         <ChevronIcon direction="right" />
                       </button>
-                      <div aria-live="polite" className="absolute bottom-2 right-2 rounded-md bg-black/60 px-2.5 py-1 text-xs font-bold text-white backdrop-blur-sm">
+                      <div
+                        aria-live="polite"
+                        className="absolute bottom-2 right-2 rounded px-2 py-0.5 text-xs font-bold text-white"
+                        style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(4px)" }}
+                      >
                         {activeImage + 1} / {imageCount}
                       </div>
                     </>
                   )}
                 </div>
 
+                {/* Thumbnails */}
                 {imageCount > 1 && (
                   <div className="hidden flex-wrap gap-2 sm:flex">
-                    {project.images.map((image, index) => (
+                    {project.images.map((img, idx) => (
                       <button
-                        aria-current={activeImage === index}
-                        aria-label={`Show image ${index + 1}`}
-                        className={`overflow-hidden rounded-lg border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-(--accent)/40 ${
-                          activeImage === index
-                            ? "border-(--accent) opacity-100"
-                            : "border-slate-300/60 opacity-50 hover:opacity-80 dark:border-slate-600/40 dark:opacity-40"
-                        }`}
-                        key={image.src} onClick={() => goToImage(index)} type="button"
+                        key={img.src}
+                        aria-label={`Show image ${idx + 1}`}
+                        aria-current={activeImage === idx}
+                        className="overflow-hidden rounded-sm transition-all duration-200"
+                        style={{
+                          border: activeImage === idx ? "2px solid var(--gold)" : "2px solid var(--border-hv)",
+                          opacity: activeImage === idx ? 1 : 0.5,
+                        }}
+                        onClick={() => goToImage(idx)}
+                        type="button"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img alt={image.alt} className="h-12 w-16 object-cover" decoding="async" loading="lazy" src={image.src} />
+                        <img
+                          alt={img.alt} src={img.src}
+                          className="block object-cover"
+                          style={{ width: "4rem", height: "3rem" }}
+                          decoding="async" loading="lazy"
+                        />
                       </button>
                     ))}
                   </div>
                 )}
               </div>
 
-              {/* Right: details */}
-              <div className="flex-1 p-4 sm:overflow-y-auto sm:overscroll-contain sm:p-5">
-                <div className="space-y-4">
+              {/* Details */}
+              <div className="flex-1 overflow-y-auto p-5 sm:p-6" style={{ background: "var(--bg)" }}>
+                <div className="space-y-6">
+
+                  {/* Overview */}
                   <div>
-                    <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-(--accent)">Overview</p>
-                    <div className="space-y-1.5 text-sm leading-6 text-slate-700 dark:text-slate-300">
+                    <p className="font-mono text-[0.58rem] font-bold uppercase tracking-widest mb-3" style={{ color: "var(--gold)" }}>
+                      Overview
+                    </p>
+                    <div className="space-y-2.5 text-sm leading-7" style={{ color: "var(--muted)" }}>
                       <p>{project.overview}</p>
-                      {project.details.map((detail) => <p key={detail}>{detail}</p>)}
+                      {project.details.map((d) => <p key={d.slice(0, 20)}>{d}</p>)}
                     </div>
                   </div>
 
-                  <div className="border-t border-slate-200 pt-4 dark:border-slate-700">
-                    <p className="mb-1.5 text-xs font-bold uppercase tracking-widest text-(--accent)">Key Features</p>
-                    <ul className="space-y-1.5">
-                      {project.features.map((feature) => (
-                        <li className="flex items-start gap-2.5 text-sm text-slate-700 dark:text-slate-300" key={feature}>
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-(--accent)" />
-                          {feature}
+                  {/* Features */}
+                  <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1.25rem" }}>
+                    <p className="font-mono text-[0.58rem] font-bold uppercase tracking-widest mb-3" style={{ color: "var(--gold)" }}>
+                      Key Features
+                    </p>
+                    <ul className="space-y-2.5">
+                      {project.features.map((f) => (
+                        <li key={f} className="flex items-start gap-3 text-sm" style={{ color: "var(--muted)" }}>
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "var(--gold)" }} />
+                          {f}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="border-t border-slate-200 pt-4 dark:border-slate-700">
-                    <p className="mb-2 text-xs font-bold uppercase tracking-widest text-(--accent)">Technologies</p>
+                  {/* Technologies */}
+                  <div style={{ borderTop: "1px solid var(--border)", paddingTop: "1.25rem" }}>
+                    <p className="font-mono text-[0.58rem] font-bold uppercase tracking-widest mb-4" style={{ color: "var(--gold)" }}>
+                      Technologies
+                    </p>
                     <div className="flex flex-wrap gap-3">
                       {project.technologies.map((tech) => {
                         const iconFile = TECH_ICON_MAP[tech];
                         return (
-                          <div className="flex flex-col items-center gap-1" key={tech} title={tech}>
-                            <div className="grid h-9 w-9 place-items-center rounded-lg border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-800/60">
+                          <div key={tech} className="flex flex-col items-center gap-1.5" title={tech}>
+                            <div
+                              className="grid h-10 w-10 place-items-center rounded p-1.5"
+                              style={{ border: "1px solid var(--border-hv)", background: "var(--surface)" }}
+                            >
                               {iconFile ? (
                                 // eslint-disable-next-line @next/next/no-img-element
-                                <img alt={tech}
+                                <img
+                                  alt={tech}
                                   className={`h-full w-full object-contain${DARK_ICONS.has(tech) ? " dark:invert" : ""}`}
-                                  height={36} src={`/stack-icons/${iconFile}`} width={36} />
+                                  src={`/stack-icons/${iconFile}`}
+                                />
                               ) : (
-                                <span className="text-center text-[9px] font-bold leading-tight text-slate-600 dark:text-slate-300">{tech}</span>
+                                <span className="text-[8px] font-bold text-center" style={{ color: "var(--muted)" }}>
+                                  {tech.slice(0, 3)}
+                                </span>
                               )}
                             </div>
-                            <span className="max-w-14 text-center text-[10px] font-medium leading-tight text-slate-500 dark:text-slate-400">{tech}</span>
+                            <span className="max-w-14 text-center text-[0.58rem] leading-tight" style={{ color: "var(--muted)" }}>
+                              {tech}
+                            </span>
                           </div>
                         );
                       })}
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="flex shrink-0 items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:gap-3 sm:px-6 sm:py-4 dark:border-slate-700 dark:bg-[var(--surface-muted)]">
+            <div
+              className="flex shrink-0 items-center justify-end gap-3 px-6 py-4"
+              style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}
+            >
               <button
-                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-500 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400/50 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-400"
-                onClick={() => setOpen(false)} type="button"
+                className="btn-ghost rounded px-5 py-2.5 text-sm"
+                onClick={() => setOpen(false)}
+                type="button"
               >
                 Close
               </button>
               <a
-                className="inline-flex items-center gap-2 rounded-lg bg-(--accent) px-4 py-2 text-sm font-bold text-white transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-(--accent)/40"
-                href={project.link} rel="noreferrer" target="_blank"
+                href={project.link}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-gold inline-flex items-center gap-2 rounded px-6 py-2.5 text-sm"
               >
                 {project.linkLabel}
                 <ArrowIcon />
               </a>
             </div>
-          </div>
-        </div>,
+          </motion.div>
+        </motion.div>,
         document.body,
       )}
 
       {/* ── Lightbox ── */}
       {lightbox && createPortal(
-        <div aria-label="Full-size image view" aria-modal="true"
-          className="fixed inset-0 z-60 flex items-center justify-center" role="dialog"
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Full-size image"
+          className="fixed inset-0 z-60 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
         >
-          <div aria-hidden="true" className="absolute inset-0 bg-black/92 backdrop-blur-sm" onClick={() => setLightbox(false)} />
-          <button aria-label="Close fullscreen"
-            className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus:outline-none"
-            onClick={() => setLightbox(false)} type="button"
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{ background: "rgba(0,0,0,0.94)", backdropFilter: "blur(8px)" }}
+            onClick={() => setLightbox(false)}
+          />
+          <button
+            aria-label="Close fullscreen"
+            className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded transition-all duration-200"
+            style={{ border: "1px solid rgba(194,168,120,0.4)", color: "var(--gold)", background: "rgba(15,23,42,0.8)" }}
+            onClick={() => setLightbox(false)}
+            type="button"
           >
             <CloseIcon />
           </button>
-          <div className="relative z-10 flex items-center justify-center p-4 sm:p-12">
+          <div className="relative z-10 p-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               alt={project.images[activeImage].alt}
-              className={`max-h-[88vh] max-w-[88vw] rounded-xl object-contain shadow-2xl transition-opacity ${
-                imgVisible ? "opacity-100 duration-300" : "opacity-0 duration-150"
-              }`}
-              decoding="async" src={project.images[activeImage].src}
+              src={project.images[activeImage].src}
+              className="max-h-[88vh] max-w-[90vw] rounded-sm object-contain shadow-2xl transition-opacity"
+              style={{ opacity: imgVisible ? 1 : 0 }}
+              decoding="async"
             />
           </div>
           {imageCount > 1 && (
             <>
-              <button aria-label="Previous image"
-                className="absolute left-4 z-10 grid h-12 w-12 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus:outline-none"
+              <button
+                aria-label="Previous image"
+                className="absolute left-4 z-10 grid h-11 w-11 place-items-center rounded transition-all duration-200"
+                style={{ border: "1px solid rgba(194,168,120,0.3)", color: "var(--gold)", background: "rgba(15,23,42,0.7)" }}
                 onClick={goPrev} type="button"
               >
                 <ChevronIcon direction="left" />
               </button>
-              <button aria-label="Next image"
-                className="absolute right-4 z-10 grid h-12 w-12 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20 focus:outline-none"
+              <button
+                aria-label="Next image"
+                className="absolute right-4 z-10 grid h-11 w-11 place-items-center rounded transition-all duration-200"
+                style={{ border: "1px solid rgba(194,168,120,0.3)", color: "var(--gold)", background: "rgba(15,23,42,0.7)" }}
                 onClick={goNext} type="button"
               >
                 <ChevronIcon direction="right" />
               </button>
-              <div aria-live="polite"
-                className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/60 px-4 py-1.5 text-sm font-bold text-white backdrop-blur-sm"
+              <div
+                aria-live="polite"
+                className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded px-4 py-1.5 text-sm font-bold"
+                style={{ background: "rgba(15,23,42,0.8)", color: "var(--gold)", border: "1px solid rgba(194,168,120,0.3)", backdropFilter: "blur(4px)" }}
               >
                 {activeImage + 1} / {imageCount}
               </div>
             </>
           )}
-        </div>,
+        </motion.div>,
         document.body,
       )}
     </>

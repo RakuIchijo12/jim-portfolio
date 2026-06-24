@@ -4,25 +4,35 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
 const ContactForm = dynamic(() => import("./contact-form"), {
-  loading: () => <ContactFormPlaceholder />,
+  loading: () => <ContactFormSkeleton />,
   ssr: false,
 });
 
-function ContactFormPlaceholder() {
+function ContactFormSkeleton() {
   return (
     <div
-      aria-hidden="true"
-      className="contact-form-card quirk-card rounded-lg border-2 border-[#78e5ff]/55 bg-[#07172c]/80 p-5 shadow-[0_0_20px_#48f5ff24] dark:border-[#78e5ff]/55 dark:bg-[#07172c]/80 sm:p-6"
+      className="rounded-sm p-6 sm:p-8"
+      style={{
+        background: "var(--bg)",
+        border: "1px solid var(--border-hv)",
+      }}
     >
+      <div className="h-px w-12 mb-6 skeleton" />
       <div className="grid gap-5">
-        <span className="form-skeleton h-5 w-24 rounded-md" />
-        <span className="form-skeleton h-12 rounded-md" />
-        <span className="form-skeleton h-5 w-24 rounded-md" />
-        <span className="form-skeleton h-12 rounded-md" />
-        <span className="form-skeleton h-5 w-32 rounded-md" />
-        <span className="form-skeleton h-44 rounded-md" />
+        <div className="grid gap-2">
+          <div className="skeleton h-3 w-20 rounded" />
+          <div className="skeleton h-12 w-full rounded" />
+        </div>
+        <div className="grid gap-2">
+          <div className="skeleton h-3 w-28 rounded" />
+          <div className="skeleton h-12 w-full rounded" />
+        </div>
+        <div className="grid gap-2">
+          <div className="skeleton h-3 w-16 rounded" />
+          <div className="skeleton h-40 w-full rounded" />
+        </div>
         <div className="flex justify-end">
-          <span className="form-skeleton h-12 w-32 rounded-md" />
+          <div className="skeleton h-12 w-36 rounded" />
         </div>
       </div>
     </div>
@@ -30,39 +40,25 @@ function ContactFormPlaceholder() {
 }
 
 export default function DeferredContactForm() {
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const [shouldLoad, setShouldLoad] = useState(false);
+  const wrapperRef  = useRef<HTMLDivElement | null>(null);
+  const [load, setLoad] = useState(false);
 
   useEffect(() => {
-    if (shouldLoad) {
-      return;
-    }
-
-    const wrapper = wrapperRef.current;
-
-    if (!wrapper || !("IntersectionObserver" in window)) {
-      setShouldLoad(true);
-      return;
-    }
+    if (load) return;
+    const el = wrapperRef.current;
+    if (!el || !("IntersectionObserver" in window)) { setLoad(true); return; }
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setLoad(true); observer.disconnect(); } },
       { rootMargin: "600px 0px" },
     );
-
-    observer.observe(wrapper);
-
+    observer.observe(el);
     return () => observer.disconnect();
-  }, [shouldLoad]);
+  }, [load]);
 
   return (
     <div ref={wrapperRef}>
-      {shouldLoad ? <ContactForm /> : <ContactFormPlaceholder />}
+      {load ? <ContactForm /> : <ContactFormSkeleton />}
     </div>
   );
 }

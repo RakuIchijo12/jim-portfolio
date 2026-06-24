@@ -1,21 +1,36 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Jimuel Rodado | Software Engineer",
+  title: "Jimuel Dave Rodado — Software Engineer",
   description:
-    "Portfolio of Jimuel Dave Rodado, a Software Engineer focused on healthcare and enterprise web applications.",
+    "Portfolio of Jimuel Dave Rodado — Computer Engineer, Full-Stack Developer specialising in Laravel, FilamentPHP, React, Next.js, and enterprise healthcare systems.",
+  keywords: [
+    "Jimuel Dave Rodado",
+    "Full-Stack Developer",
+    "Laravel Developer",
+    "FilamentPHP",
+    "React Developer",
+    "Next.js Developer",
+    "Healthcare Systems",
+    "Enterprise Software",
+    "Davao Philippines",
+  ],
 };
 
 export default function RootLayout({
@@ -26,13 +41,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`dark ${inter.variable} ${playfair.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-full antialiased"
-      >
-        {children}
-      </body>
+      <body className="min-h-full antialiased">{children}</body>
     </html>
   );
 }
