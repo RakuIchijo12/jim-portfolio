@@ -20,6 +20,10 @@ export const metadata: Metadata = {
   title: "Jimuel Dave Rodado | Software Engineer",
   description:
     "Portfolio of Jimuel Dave Rodado — Computer Engineer, Full-Stack Developer specialising in Laravel, FilamentPHP, React, Next.js, and enterprise healthcare systems.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+  },
   keywords: [
     "Jimuel Dave Rodado",
     "Full-Stack Developer",
