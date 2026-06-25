@@ -1,28 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
 
+function subscribe(cb: () => void): () => void {
+  const obs = new MutationObserver(cb);
+  obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => obs.disconnect();
+}
+
+const getSnapshot = (): Theme =>
+  document.documentElement.classList.contains("dark") ? "dark" : "light";
+
+const getServerSnapshot = (): Theme => "dark";
+
 export default function ThemeToggle({ className = "h-9 w-9" }: { className?: string }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const isDark = theme === "dark";
 
-  /* Sync the class with state on mount; default is dark (matches layout.tsx) */
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const initial: Theme = mq.matches ? "dark" : "light";
-    setTheme(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDark);
+  const toggle = useCallback(() => {
+    const next: Theme = isDark ? "light" : "dark";
+    localStorage.setItem("theme", next);
+    document.documentElement.classList.toggle("dark", !isDark);
   }, [isDark]);
-
-  function toggle() {
-    setTheme((t) => (t === "dark" ? "light" : "dark"));
-  }
 
   return (
     <button
@@ -51,6 +52,7 @@ export default function ThemeToggle({ className = "h-9 w-9" }: { className?: str
       }}
     >
       <svg
+        suppressHydrationWarning
         aria-hidden="true"
         className="h-4 w-4"
         fill="none"
@@ -61,13 +63,11 @@ export default function ThemeToggle({ className = "h-9 w-9" }: { className?: str
         viewBox="0 0 24 24"
       >
         {isDark ? (
-          /* Sun icon for light mode switch */
           <>
             <circle cx="12" cy="12" r="4" />
             <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
           </>
         ) : (
-          /* Moon icon for dark mode switch */
           <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z" />
         )}
       </svg>

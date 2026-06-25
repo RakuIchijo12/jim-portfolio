@@ -62,8 +62,8 @@ export default async function ProjectCaseStudyPage(
       <header
         className="sticky top-0 z-40 flex items-center justify-between px-5 py-3.5 sm:px-8"
         style={{
-          background: "rgba(var(--bg-rgb, 15 23 42) / 0.92)",
-          backdropFilter: "blur(14px)",
+          background: "var(--surface)",
+          backdropFilter: "blur(20px) saturate(1.5)",
           borderBottom: "1px solid var(--border)",
           boxShadow: "0 1px 0 rgba(194,168,120,0.1)",
         }}

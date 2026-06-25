@@ -48,6 +48,13 @@ export default function RootLayout({
       className={`dark ${inter.variable} ${playfair.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('theme');if(t==='light')document.documentElement.classList.remove('dark');else document.documentElement.classList.add('dark');}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-full antialiased">{children}</body>
     </html>
   );
