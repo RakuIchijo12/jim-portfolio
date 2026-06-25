@@ -178,8 +178,8 @@ export default function NavBar() {
                 {link.label}
               </button>
             ))}
-            <div className="mt-2 flex gap-2">
-              <ThemeToggle />
+            <div className="mt-2 flex items-stretch gap-2">
+              <ThemeToggle className="h-full" />
               <a
                 href={resumeHref}
                 target="_blank"
