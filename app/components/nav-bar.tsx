@@ -84,7 +84,7 @@ export default function NavBar() {
             backdropFilter: scrolled ? "blur(20px) saturate(1.5)" : "none",
           }}
         >
-          <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-x-4 px-4 sm:px-6 lg:gap-x-8 lg:px-8">
+          <div className="relative mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
 
             {/* Logo — left */}
             <a
@@ -97,7 +97,7 @@ export default function NavBar() {
             </a>
 
             {/* Desktop nav — truly centered */}
-            <nav className="hidden items-center justify-center gap-3 md:flex lg:gap-5">
+            <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-3 xl:flex xl:gap-5">
               {navLinks.map((link) => (
                 <button
                   key={link.href}
@@ -113,7 +113,7 @@ export default function NavBar() {
             </nav>
 
             {/* Desktop CTAs — right */}
-            <div className="hidden items-center gap-2 justify-self-end md:flex lg:gap-3">
+            <div className="ml-auto hidden items-center gap-2 xl:flex xl:gap-3">
               <ThemeToggle />
               <a
                 href={resumeHref}
@@ -133,7 +133,7 @@ export default function NavBar() {
 
             {/* Mobile hamburger */}
             <button
-              className="col-start-3 ml-auto grid h-10 w-10 place-items-center rounded transition-colors duration-200 md:hidden"
+              className="ml-auto grid h-10 w-10 place-items-center rounded transition-colors duration-200 xl:hidden"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               style={{ color: "var(--fg)" }}
@@ -156,7 +156,7 @@ export default function NavBar() {
           initial={false}
           animate={{ height: menuOpen ? "auto" : 0, opacity: menuOpen ? 1 : 0 }}
           transition={{ duration: 0.35, ease }}
-          className="overflow-hidden border-b md:hidden"
+          className="overflow-hidden border-b xl:hidden"
           style={{
             borderColor: "var(--border)",
             background: "var(--surface)",
