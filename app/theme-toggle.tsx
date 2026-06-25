@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 type Theme = "light" | "dark";
 
-export default function ThemeToggle({ className = "" }: { className?: string }) {
+export default function ThemeToggle({ className = "h-9 w-9" }: { className?: string }) {
   const [theme, setTheme] = useState<Theme>("dark");
   const isDark = theme === "dark";
 
@@ -31,7 +31,7 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       onClick={toggle}
       suppressHydrationWarning
       type="button"
-      className={`grid h-9 w-9 place-items-center rounded transition-all duration-220 ${className}`}
+      className={`grid place-items-center rounded transition-all duration-220 ${className}`}
       style={{
         border: "1px solid var(--border-hv)",
         color: "var(--muted)",
