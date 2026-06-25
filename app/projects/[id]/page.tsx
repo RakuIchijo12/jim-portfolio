@@ -264,48 +264,6 @@ export default async function ProjectCaseStudyPage(
         </div>
       </section>
 
-      {/* ── Footer CTA ── */}
-      <footer
-        className="px-5 py-10 sm:px-8 sm:py-12"
-        style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}
-      >
-        {/* Gold rule */}
-        <div
-          aria-hidden="true"
-          className="mb-8 mx-auto h-px max-w-4xl"
-          style={{ background: "linear-gradient(90deg, transparent, var(--gold), transparent)" }}
-        />
-
-        <div className="mx-auto flex max-w-4xl items-center justify-between gap-4">
-          <Link
-            href="/#projects"
-            className="group inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
-            style={{ color: "var(--muted)" }}
-          >
-            <svg
-              aria-hidden="true"
-              className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5"
-              fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path d="m12 19-7-7 7-7" /><path d="M19 12H5" />
-            </svg>
-            Back to Portfolio
-          </Link>
-
-          <a
-            href={project.link}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-gold inline-flex items-center gap-2 rounded px-6 py-2.5 text-sm font-bold"
-          >
-            {project.linkLabel}
-            <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
-            </svg>
-          </a>
-        </div>
-      </footer>
     </div>
   );
 }
