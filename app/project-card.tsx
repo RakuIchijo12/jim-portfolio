@@ -15,6 +15,54 @@ export interface ProjectData {
   images: readonly { src: string; alt: string }[];
   link: string;
   linkLabel: string;
+  caseStudy?: boolean;
+}
+
+function RealEstateIcon() {
+  return (
+    <div className="relative flex h-full w-full flex-col items-center justify-center gap-3" style={{ minHeight: "13rem" }}>
+      {/* Dot grid texture */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage: "radial-gradient(circle, rgba(194,168,120,0.2) 1px, transparent 1px)",
+          backgroundSize: "18px 18px",
+        }}
+      />
+      {/* Ambient glow */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{ background: "radial-gradient(circle at 50% 55%, rgba(194,168,120,0.07) 0%, transparent 65%)" }}
+      />
+      {/* Building SVG */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 72 72"
+        fill="none"
+        stroke="var(--gold)"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ width: "3.75rem", height: "3.75rem", opacity: 0.88, position: "relative" }}
+      >
+        <rect x="10" y="30" width="52" height="34" />
+        <polyline points="6,30 36,10 66,30" />
+        <rect x="29" y="46" width="14" height="18" rx="1" />
+        <rect x="14" y="38" width="10" height="8" rx="0.5" />
+        <rect x="48" y="38" width="10" height="8" rx="0.5" />
+        <rect x="14" y="52" width="10" height="8" rx="0.5" />
+        <rect x="48" y="52" width="10" height="8" rx="0.5" />
+      </svg>
+      <span
+        className="relative font-mono text-[0.47rem] font-bold uppercase tracking-[0.28em]"
+        style={{ color: "var(--gold)", opacity: 0.6 }}
+      >
+        Enterprise ERP
+      </span>
+    </div>
+  );
 }
 
 function ArrowIcon() {
@@ -26,29 +74,30 @@ function ArrowIcon() {
 }
 
 const TECH_ICON_MAP: Record<string, string> = {
-  "HTML":          "html5.png",
-  "CSS":           "css3.png",
-  "JavaScript":    "javascript.png",
-  "TypeScript":    "typescript.png",
-  "Node.js":       "Node.js.png",
-  "Express.js":    "Express.png",
-  "Firebase":      "Firebase.png",
-  "GitHub":        "GitHub.png",
-  "Angular":       "angular.png",
-  "NestJS":        "nestjs.png",
-  "PostgreSQL":    "postgresql.png",
-  "MySQL":         "mysql.png",
-  "React":         "react.png",
-  "Next.js":       "next-js.png",
-  "Vue.js":        "vue-js.png",
-  "Laravel":       "laravel.png",
-  "PHP":           "php.png",
-  "Python":        "python.png",
-  "Django":        "django.png",
-  "Tailwind CSS":  "tailwind-css.png",
-  "Alpine.js":     "alpine-js.png",
-  "Filament":      "filament.png",
-  "Livewire":      "livewire.png",
+  "HTML":          "frontend/html5.png",
+  "CSS":           "frontend/css3.png",
+  "JavaScript":    "frontend/javascript.png",
+  "TypeScript":    "frontend/typescript.png",
+  "Node.js":       "backend/Node.js.png",
+  "Express.js":    "backend/Express.png",
+  "Firebase":      "database/Firebase.png",
+  "GitHub":        "tools/GitHub.png",
+  "Angular":       "frontend/angular.png",
+  "NestJS":        "backend/nestjs.png",
+  "PostgreSQL":    "database/postgresql.png",
+  "MySQL":         "database/mysql.png",
+  "React":         "frontend/react.png",
+  "Next.js":       "frontend/next-js.png",
+  "Vue.js":        "frontend/vue-js.png",
+  "Laravel":       "backend/laravel.png",
+  "PHP":           "backend/php.png",
+  "Python":        "backend/python.png",
+  "Django":        "backend/django.png",
+  "Tailwind CSS":  "frontend/tailwind-css.png",
+  "Alpine.js":     "frontend/alpine-js.png",
+  "Filament":      "backend/filament.png",
+  "Livewire":      "frontend/livewire.png",
+  "Supabase":      "database/supabase.png",
 };
 
 const DARK_ICONS = new Set(["Express.js", "GitHub"]);
@@ -109,15 +158,19 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
         >
           {project.category}
         </span>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt={project.images[0].alt}
-          src={project.images[0].src}
-          className="w-full rounded-sm object-cover transition-transform duration-500 group-hover:scale-105"
-          style={{ height: "13rem" }}
-          decoding="async"
-          loading="lazy"
-        />
+        {project.images.length > 0 ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            alt={project.images[0].alt}
+            src={project.images[0].src}
+            className="w-full rounded-sm object-cover transition-transform duration-500 group-hover:scale-105"
+            style={{ height: "13rem" }}
+            decoding="async"
+            loading="lazy"
+          />
+        ) : (
+          <RealEstateIcon />
+        )}
       </div>
 
       {/* Body */}
@@ -149,13 +202,27 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
           )}
         </div>
 
-        <Link
-          href={`/projects/${project.id}`}
-          className="btn-gold mt-auto inline-flex w-full items-center justify-center gap-2 rounded py-3 text-sm"
-        >
-          View Case Study
-          <ArrowIcon />
-        </Link>
+        {project.caseStudy !== false ? (
+          <Link
+            href={`/projects/${project.id}`}
+            className="btn-gold mt-auto inline-flex w-full items-center justify-center gap-2 rounded py-3 text-sm"
+          >
+            View Case Study
+            <ArrowIcon />
+          </Link>
+        ) : (
+          <div
+            className="mt-auto flex items-center justify-between pt-3"
+            style={{ borderTop: "1px solid var(--border)" }}
+          >
+            <span className="text-[0.68rem] font-medium" style={{ color: "var(--subtle)" }}>
+              Built at DevbeansPH
+            </span>
+            <span className="font-mono text-[0.62rem]" style={{ color: "var(--subtle)", opacity: 0.7 }}>
+              2024 – 2025
+            </span>
+          </div>
+        )}
       </div>
     </motion.article>
   );

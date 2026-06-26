@@ -36,13 +36,17 @@ type GroupId = (typeof stackGroups)[number]["id"];
 const groupLabels: Record<GroupId, string> = {
   frontend: "Frontend",
   backend:  "Backend",
+  database: "Database",
   ai:       "AI Tools",
+  tools:    "Other Tools",
 };
 
 const groupColors: Record<GroupId, string> = {
   frontend: "#3A6A8F",
   backend:  "#C2A878",
+  database: "#2D8D6F",
   ai:       "#6B5B8A",
+  tools:    "#7A7A8C",
 };
 
 export default function StackSection() {
@@ -88,7 +92,7 @@ export default function StackSection() {
             Tools I build with.
           </h2>
           <p className="max-w-xs text-sm leading-6" style={{ color: "var(--muted)" }}>
-            35+ technologies across frontend, backend, and AI tooling.
+            35+ technologies across frontend, backend, database, and AI tooling.
           </p>
         </motion.div>
 
@@ -205,7 +209,7 @@ export default function StackSection() {
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 0.5, duration: 0.6, ease }}
         >
-          Switch tabs to explore Frontend, Backend, and AI tools.
+          Switch tabs to explore Frontend, Backend, Database, AI tools, and more.
         </motion.p>
       </div>
     </section>
