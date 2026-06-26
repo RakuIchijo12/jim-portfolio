@@ -23,8 +23,9 @@ export default function ProjectsSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
+    const rawEl = scrollRef.current;
+    if (!rawEl) return;
+    const el: HTMLDivElement = rawEl;
 
     let isDown    = false;
     let startX    = 0;
