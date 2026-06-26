@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 export interface ProjectData {
   id: string;
@@ -130,7 +130,7 @@ function TechIcon({ tech }: { tech: string }) {
 
 export default function ProjectCard({ project }: { project: ProjectData }) {
   return (
-    <motion.article
+    <m.article
       className="group relative flex h-full flex-col overflow-hidden rounded-sm"
       style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
       whileHover={{
@@ -224,6 +224,6 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
           </div>
         )}
       </div>
-    </motion.article>
+    </m.article>
   );
 }

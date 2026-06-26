@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   heroStats,
   identityTags,
@@ -75,46 +75,46 @@ export default function HeroSection() {
       </div>
 
       {/* Centered content */}
-      <motion.div
+      <m.div
         className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-4 pt-20 pb-20 text-center sm:px-6 sm:pt-24 sm:pb-20 lg:px-8"
         variants={container}
         initial="hidden"
         animate="visible"
       >
         {/* Eyebrow */}
-        <motion.div variants={item} className="section-eyebrow mb-3 sm:mb-5 justify-center">
+        <m.div variants={item} className="section-eyebrow mb-3 sm:mb-5 justify-center">
           Computer Engineer · Software Engineer
-        </motion.div>
+        </m.div>
 
         {/* Name */}
-        <motion.h1
+        <m.h1
           variants={item}
           className="font-display mb-4 sm:mb-6 leading-none tracking-tight"
           style={{ fontSize: "clamp(1rem, 7.5vw, 5rem)", fontWeight: 700 }}
         >
           JIMUEL DAVE{" "}
           <span style={{ color: "var(--gold)" }}>RODADO</span>
-        </motion.h1>
+        </m.h1>
 
         {/* Thin gold rule below name */}
-        <motion.div
+        <m.div
           variants={item}
           className="mb-3 sm:mb-5 h-px w-24"
           style={{ background: "linear-gradient(90deg, transparent, var(--gold), transparent)" }}
         />
 
         {/* Specialty badge */}
-        <motion.div variants={item} className="mb-3 sm:mb-5">
+        <m.div variants={item} className="mb-3 sm:mb-5">
           <span
             className="inline-block text-[0.58rem] font-bold tracking-[0.26em] uppercase px-4 py-1.5"
             style={{ border: "1px solid var(--gold)", color: "var(--gold)", borderRadius: "2px" }}
           >
             Healthcare · Enterprise · SaaS
           </span>
-        </motion.div>
+        </m.div>
 
         {/* Description */}
-        <motion.p
+        <m.p
           variants={item}
           className="mb-3 sm:mb-5 max-w-lg text-sm leading-7"
           style={{ color: "var(--muted)" }}
@@ -122,10 +122,10 @@ export default function HeroSection() {
           I architect enterprise software for healthcare and operations teams —
           hospital management systems, business platforms, and mission-critical
           applications built for reliability at scale.
-        </motion.p>
+        </m.p>
 
         {/* Identity tags */}
-        <motion.div variants={item} className="mb-3 sm:mb-5 flex flex-wrap justify-center gap-1.5">
+        <m.div variants={item} className="mb-3 sm:mb-5 flex flex-wrap justify-center gap-1.5">
           {identityTags.map((tag) => (
             <span
               key={tag}
@@ -139,10 +139,10 @@ export default function HeroSection() {
               {tag}
             </span>
           ))}
-        </motion.div>
+        </m.div>
 
         {/* Stats row */}
-        <motion.div variants={item} className="mb-3 sm:mb-5 flex items-stretch">
+        <m.div variants={item} className="mb-3 sm:mb-5 flex items-stretch">
           {heroStats.map((stat, i) => (
             <div
               key={stat.label}
@@ -167,10 +167,10 @@ export default function HeroSection() {
               </span>
             </div>
           ))}
-        </motion.div>
+        </m.div>
 
         {/* CTA buttons */}
-        <motion.div variants={item} className="mb-4 sm:mb-5 flex flex-wrap justify-center gap-2">
+        <m.div variants={item} className="mb-4 sm:mb-5 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => scrollTo("#contact")}
             className="btn-gold inline-flex items-center gap-2 rounded px-6 py-2.5 text-sm tracking-wide"
@@ -198,10 +198,10 @@ export default function HeroSection() {
               <path d="M14 2v5h5M12 11v6m-3-3 3 3 3-3" />
             </svg>
           </a>
-        </motion.div>
+        </m.div>
 
         {/* Social links */}
-        <motion.div variants={item} className="flex items-center justify-center gap-2">
+        <m.div variants={item} className="flex items-center justify-center gap-2">
           {socialLinks.map((link) => (
             <a
               key={link.label}
@@ -234,11 +234,11 @@ export default function HeroSection() {
               <SocialIcon icon={link.icon} />
             </a>
           ))}
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
 
       {/* Arrow scroll button */}
-      <motion.button
+      <m.button
         aria-label="Scroll to about section"
         onClick={() => scrollTo("#about")}
         className="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 z-20 grid h-10 w-10 cursor-pointer place-items-center rounded-sm"
@@ -252,7 +252,7 @@ export default function HeroSection() {
           background: "var(--gold-light)",
         }}
       >
-        <motion.svg
+        <m.svg
           aria-hidden="true"
           className="h-4 w-4"
           fill="none"
@@ -265,8 +265,8 @@ export default function HeroSection() {
           transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
         >
           <path d="M12 5v14" /><path d="m7 14 5 5 5-5" />
-        </motion.svg>
-      </motion.button>
+        </m.svg>
+      </m.button>
     </section>
   );
 }

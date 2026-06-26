@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
 import { navLinks, resumeHref } from "@/app/lib/data";
 import ThemeToggle from "@/app/theme-toggle";
 
@@ -60,13 +60,13 @@ export default function NavBar() {
   return (
     <>
       {/* ── Scroll progress bar ── */}
-      <motion.div
+      <m.div
         className="scroll-progress"
         style={{ scaleX }}
       />
 
       {/* ── Main nav ── */}
-      <motion.header
+      <m.header
         className="fixed inset-x-0 top-0 z-50"
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -152,7 +152,7 @@ export default function NavBar() {
         </div>
 
         {/* ── Mobile menu ── */}
-        <motion.div
+        <m.div
           initial={false}
           animate={{ height: menuOpen ? "auto" : 0, opacity: menuOpen ? 1 : 0 }}
           transition={{ duration: 0.35, ease }}
@@ -196,8 +196,8 @@ export default function NavBar() {
               </button>
             </div>
           </nav>
-        </motion.div>
-      </motion.header>
+        </m.div>
+      </m.header>
     </>
   );
 }

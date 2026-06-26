@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { m, useInView, AnimatePresence } from "framer-motion";
 import { stackGroups } from "@/app/lib/data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -69,17 +69,17 @@ export default function StackSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Eyebrow */}
-        <motion.div
+        <m.div
           className="section-eyebrow mb-6"
           initial={{ opacity: 0, x: -20 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.6, ease }}
         >
           02 / Stack
-        </motion.div>
+        </m.div>
 
         {/* Heading */}
-        <motion.div
+        <m.div
           className="mb-8 sm:mb-12 grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -94,10 +94,10 @@ export default function StackSection() {
           <p className="max-w-xs text-sm leading-6" style={{ color: "var(--muted)" }}>
             35+ technologies across frontend, backend, database, and AI tooling.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Tab buttons */}
-        <motion.div
+        <m.div
           className="mb-8 flex flex-wrap gap-2"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
@@ -126,10 +126,10 @@ export default function StackSection() {
               </span>
             </button>
           ))}
-        </motion.div>
+        </m.div>
 
         {/* Icon grid */}
-        <motion.div
+        <m.div
           className="rounded-sm p-6 sm:p-8"
           style={{
             background: "var(--surface)",
@@ -154,7 +154,7 @@ export default function StackSection() {
           </div>
 
           <AnimatePresence mode="wait">
-            <motion.ul
+            <m.ul
               key={active}
               className="grid gap-4"
               style={{
@@ -166,7 +166,7 @@ export default function StackSection() {
               transition={{ duration: 0.35, ease }}
             >
               {activeGroup.items.map((item, i) => (
-                <motion.li
+                <m.li
                   key={item.name}
                   initial={{ opacity: 0, scale: 0.88 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -195,14 +195,14 @@ export default function StackSection() {
                       }}
                     />
                   </div>
-                </motion.li>
+                </m.li>
               ))}
-            </motion.ul>
+            </m.ul>
           </AnimatePresence>
-        </motion.div>
+        </m.div>
 
         {/* All-groups compact view below on mobile */}
-        <motion.p
+        <m.p
           className="mt-6 text-center text-xs"
           style={{ color: "var(--subtle)" }}
           initial={{ opacity: 0 }}
@@ -210,7 +210,7 @@ export default function StackSection() {
           transition={{ delay: 0.5, duration: 0.6, ease }}
         >
           Switch tabs to explore Frontend, Backend, Database, AI tools, and more.
-        </motion.p>
+        </m.p>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { experience } from "@/app/lib/data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -43,17 +43,17 @@ export default function ExperienceSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Eyebrow */}
-        <motion.div
+        <m.div
           className="section-eyebrow mb-6"
           initial={{ opacity: 0, x: -20 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.6, ease }}
         >
           04 / Experience
-        </motion.div>
+        </m.div>
 
         {/* Heading */}
-        <motion.div
+        <m.div
           className="mb-10 sm:mb-16 grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -71,23 +71,23 @@ export default function ExperienceSection() {
             Healthcare systems, ERP platforms, APIs,
             and workflows built for reliability.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Timeline */}
-        <motion.div
+        <m.div
           className="relative pl-6 sm:pl-8"
           variants={stagger}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
         >
           {/* Vertical timeline line */}
-          <motion.div
+          <m.div
             className="timeline-line"
             variants={lineVariants}
           />
 
           {experience.map((job, i) => (
-            <motion.article
+            <m.article
               key={`${job.company}-${i}`}
               variants={entryVariants}
               className="relative pb-8 sm:pb-12 last:pb-0"
@@ -141,12 +141,12 @@ export default function ExperienceSection() {
                     {job.role}
                   </h3>
 
-                  <motion.ul
+                  <m.ul
                     className="space-y-2.5"
                     variants={stagger}
                   >
                     {job.points.map((point) => (
-                      <motion.li
+                      <m.li
                         key={point.slice(0, 30)}
                         variants={bulletVariant}
                         className="flex items-start gap-3 text-sm leading-7"
@@ -157,14 +157,14 @@ export default function ExperienceSection() {
                           style={{ background: "var(--gold)" }}
                         />
                         <span>{point}</span>
-                      </motion.li>
+                      </m.li>
                     ))}
-                  </motion.ul>
+                  </m.ul>
                 </div>
               </div>
-            </motion.article>
+            </m.article>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

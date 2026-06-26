@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { contactEmail, contactPhone, socialLinks } from "@/app/lib/data";
 import DeferredContactForm from "@/app/deferred-contact-form";
 
@@ -95,24 +95,24 @@ export default function ContactSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Eyebrow */}
-        <motion.div
+        <m.div
           className="section-eyebrow mb-6"
           initial={{ opacity: 0, x: -20 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.6, ease }}
         >
           05 / Contact
-        </motion.div>
+        </m.div>
 
         <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-14 lg:items-start">
 
           {/* Left — info */}
-          <motion.div
+          <m.div
             variants={stagger}
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
           >
-            <motion.h2
+            <m.h2
               variants={fadeUp}
               className="font-display text-2xl font-700 leading-tight sm:text-4xl lg:text-5xl mb-5 sm:mb-6"
               style={{ fontWeight: 700 }}
@@ -121,19 +121,19 @@ export default function ContactSection() {
               role, or{" "}
               <em style={{ color: "var(--gold)", fontStyle: "italic" }}>opportunity</em>{" "}
               in mind?
-            </motion.h2>
+            </m.h2>
 
-            <motion.p
+            <m.p
               variants={fadeUp}
               className="mb-10 max-w-md text-base leading-8"
               style={{ color: "var(--muted)" }}
             >
               Share your name, email, and a brief note about what you&apos;re
               looking for. I will read it carefully and respond with a clear next step.
-            </motion.p>
+            </m.p>
 
             {/* Contact details */}
-            <motion.div variants={fadeUp} className="mb-10 space-y-5">
+            <m.div variants={fadeUp} className="mb-10 space-y-5">
               {contactDetails.map((detail) => (
                 <div key={detail.label} className="flex items-start gap-4">
                   <div
@@ -171,10 +171,10 @@ export default function ContactSection() {
                   </div>
                 </div>
               ))}
-            </motion.div>
+            </m.div>
 
             {/* Social links */}
-            <motion.div variants={fadeUp}>
+            <m.div variants={fadeUp}>
               <p
                 className="font-mono text-[0.58rem] font-700 uppercase tracking-widest mb-4"
                 style={{ color: "var(--subtle)", fontWeight: 700 }}
@@ -215,17 +215,17 @@ export default function ContactSection() {
                   </a>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
           {/* Right — form */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 40 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.9, ease, delay: 0.2 }}
           >
             <DeferredContactForm />
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>

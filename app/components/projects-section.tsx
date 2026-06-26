@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { projects } from "@/app/lib/data";
 import ProjectCard from "@/app/project-card";
 
@@ -101,17 +101,17 @@ export default function ProjectsSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Eyebrow */}
-        <motion.div
+        <m.div
           className="section-eyebrow mb-6"
           initial={{ opacity: 0, x: -20 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.6, ease }}
         >
           03 / Selected Works
-        </motion.div>
+        </m.div>
 
         {/* Heading row */}
-        <motion.div
+        <m.div
           className="mb-8 sm:mb-12 grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -128,13 +128,13 @@ export default function ProjectsSection() {
             IoT systems, real-time dashboards,
             and full-stack web applications.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Project scroll row */}
         <div className="-mx-4 sm:-mx-6 lg:-mx-8">
-          <motion.div
+          <m.div
             ref={scrollRef}
-            className="flex gap-6 overflow-x-auto px-4 sm:px-6 lg:px-8 pb-4"
+            className="flex gap-6 overflow-x-auto px-4 sm:px-6 lg:px-8 pt-4 pb-4"
             style={{
               scrollSnapType: "x mandatory",
               WebkitOverflowScrolling: "touch",
@@ -147,20 +147,20 @@ export default function ProjectsSection() {
             animate={inView ? "visible" : "hidden"}
           >
             {projects.map((project) => (
-              <motion.div
+              <m.div
                 key={project.id}
                 variants={fadeUp}
                 className="shrink-0 w-[85vw] sm:w-80 lg:w-96"
                 style={{ scrollSnapAlign: "start" }}
               >
                 <ProjectCard project={project} />
-              </motion.div>
+              </m.div>
             ))}
-          </motion.div>
+          </m.div>
         </div>
 
         {/* More projects note */}
-        <motion.div
+        <m.div
           className="mt-10 flex items-center justify-center gap-4"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
@@ -171,7 +171,7 @@ export default function ProjectsSection() {
             More works available on request
           </span>
           <div className="h-px flex-1 max-w-24" style={{ background: "var(--border-hv)" }} />
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

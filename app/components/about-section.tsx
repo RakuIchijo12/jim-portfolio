@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { m, useInView, useScroll, useTransform } from "framer-motion";
 import { aboutBio, aboutCards, labNotes } from "@/app/lib/data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -43,16 +43,16 @@ export default function AboutSection() {
 
         {/* ── Eyebrow + heading (full width) ── */}
         <div ref={headingRef} className="mb-10 sm:mb-14">
-          <motion.div
+          <m.div
             className="section-eyebrow mb-6"
             initial={{ opacity: 0, x: -20 }}
             animate={headingInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, ease }}
           >
             01 / About
-          </motion.div>
+          </m.div>
 
-          <motion.h2
+          <m.h2
             className="font-display text-3xl font-700 leading-tight sm:text-4xl lg:text-5xl"
             style={{ fontWeight: 700 }}
             initial={{ opacity: 0, y: 32 }}
@@ -61,14 +61,14 @@ export default function AboutSection() {
           >
             Engineering software for institutions that cannot afford to{" "}
             <em style={{ color: "var(--gold)", fontStyle: "italic" }}>fail.</em>
-          </motion.h2>
+          </m.h2>
         </div>
 
         {/* ── Two-column body ── */}
         <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 lg:items-start">
 
           {/* Left — avatar + name + bio */}
-          <motion.div
+          <m.div
             ref={portraitRef}
             className="flex flex-col items-center gap-6"
             initial={{ opacity: 0, x: -30 }}
@@ -77,7 +77,7 @@ export default function AboutSection() {
             transition={{ duration: 0.9, ease }}
           >
             {/* Gold ring + circle crop */}
-            <motion.div
+            <m.div
               className="relative"
               style={{ y: portraitY }}
               whileHover={{ scale: 1.02 }}
@@ -101,7 +101,7 @@ export default function AboutSection() {
               </div>
 
               {/* Availability badge */}
-              <motion.div
+              <m.div
                 className="absolute bottom-2 right-2 flex items-center gap-2 rounded-full px-3 py-1.5"
                 style={{
                   background: "var(--surface)",
@@ -117,11 +117,11 @@ export default function AboutSection() {
                 <span className="text-[0.6rem] font-bold uppercase tracking-wider" style={{ color: "var(--fg)" }}>
                   Available
                 </span>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
 
             {/* Name + role */}
-            <motion.div
+            <m.div
               className="text-center"
               initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -134,10 +134,10 @@ export default function AboutSection() {
               <p className="mt-1 text-[0.65rem] uppercase tracking-widest" style={{ color: "var(--gold)", fontWeight: 700 }}>
                 Software Engineer · Computer Engineer
               </p>
-            </motion.div>
+            </m.div>
 
             {/* Bio */}
-            <motion.div
+            <m.div
               className="space-y-3 text-center lg:text-left"
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -149,14 +149,14 @@ export default function AboutSection() {
                   {para}
                 </p>
               ))}
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
 
           {/* Right — cards + meters */}
           <div className="space-y-5">
 
             {/* About cards */}
-            <motion.div
+            <m.div
               ref={cardsRef}
               className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4"
               variants={stagger}
@@ -164,7 +164,7 @@ export default function AboutSection() {
               animate={cardsInView ? "visible" : "hidden"}
             >
               {aboutCards.map((card) => (
-                <motion.article
+                <m.article
                   key={card.title}
                   variants={fadeUp}
                   className="group relative overflow-hidden rounded-sm p-4 sm:p-5 transition-all duration-300"
@@ -185,12 +185,12 @@ export default function AboutSection() {
                   <p className="text-sm leading-6" style={{ color: "var(--muted)" }}>
                     {card.copy}
                   </p>
-                </motion.article>
+                </m.article>
               ))}
-            </motion.div>
+            </m.div>
 
             {/* Work approach meters */}
-            <motion.div
+            <m.div
               ref={metersRef}
               className="rounded-sm p-5 sm:p-6"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
@@ -224,7 +224,7 @@ export default function AboutSection() {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </m.div>
           </div>
 
         </div>
