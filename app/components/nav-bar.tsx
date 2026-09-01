@@ -96,16 +96,22 @@ export default function NavBar() {
               JDR
             </a>
 
-            {/* Desktop nav — truly centered */}
-            <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-3 xl:flex xl:gap-5">
+            {/* Desktop nav — floating pill rail, truly centered */}
+            <nav
+              className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full px-1.5 py-1 xl:flex"
+              style={{
+                border: "1px solid var(--border)",
+                background: "var(--surface-alt)",
+                backdropFilter: "blur(10px)",
+              }}
+            >
               {navLinks.map((link) => (
                 <button
                   key={link.href}
                   onClick={() => smoothScroll(link.href)}
-                  className="nav-link text-xs font-medium tracking-wide transition-colors lg:text-sm"
-                  style={{
-                    color: activeHash === link.href ? "var(--gold)" : "var(--muted)",
-                  }}
+                  className="nav-pill"
+                  data-on={activeHash === link.href ? "true" : undefined}
+                  aria-current={activeHash === link.href ? "true" : undefined}
                 >
                   {link.label}
                 </button>
