@@ -21,10 +21,8 @@ export const metadata: Metadata = {
   title: "Jimuel Dave Rodado | Software Engineer",
   description:
     "Portfolio of Jimuel Dave Rodado — Computer Engineer, Full-Stack Developer specialising in Laravel, FilamentPHP, React, Next.js, and enterprise healthcare systems.",
-  icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
-  },
+  // No `icons` override: app/icon.svg and app/apple-icon.png are picked up by
+  // the file convention, which emits type/sizes and a content hash for cache busting.
   keywords: [
     "Jimuel Dave Rodado",
     "Full-Stack Developer",
