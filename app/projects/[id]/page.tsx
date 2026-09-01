@@ -52,14 +52,26 @@ export default async function ProjectCaseStudyPage(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const project = projects.find((p) => p.id === id);
-  if (!project) notFound();
+  const index = projects.findIndex((p) => p.id === id);
+  if (index === -1) notFound();
+
+  const project = projects[index];
+
+  /** Wrap around so the case studies read as a continuous set. */
+  const sibling = (i: number) => {
+    const p = projects[(i + projects.length) % projects.length];
+    return { id: p.id, name: p.name, category: p.category };
+  };
 
   return (
     <ProjectView
       project={project}
       techIconMap={TECH_ICON_MAP}
       darkIcons={DARK_ICONS}
+      index={index + 1}
+      total={projects.length}
+      prev={projects.length > 1 ? sibling(index - 1) : null}
+      next={projects.length > 1 ? sibling(index + 1) : null}
     />
   );
 }
