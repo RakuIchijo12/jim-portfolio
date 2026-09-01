@@ -8,13 +8,13 @@ import DeferredContactForm from "@/app/deferred-contact-form";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const stagger = {
-  hidden:   {},
-  visible:  { transition: { staggerChildren: 0.12 } },
+  hidden:  {},
+  visible: { transition: { staggerChildren: 0.12 } },
 };
 
 const fadeUp = {
-  hidden:   { opacity: 0, y: 32 },
-  visible:  { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
+  hidden:  { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
 };
 
 function SocialIcon({ icon }: { icon: string }) {
@@ -85,10 +85,7 @@ export default function ContactSection() {
       id="contact"
       ref={sectionRef}
       className="relative py-16 sm:py-24 lg:py-32"
-      style={{
-        background: "var(--surface)",
-        borderTop: "1px solid var(--border)",
-      }}
+      style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}
     >
       <div aria-hidden="true" className="gold-rule absolute inset-x-0 top-0 opacity-50" />
 
@@ -104,84 +101,101 @@ export default function ContactSection() {
           05 / Contact
         </m.div>
 
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:gap-14 lg:items-start">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-start lg:gap-14">
 
           {/* Left — info */}
-          <m.div
-            variants={stagger}
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
-          >
+          <m.div variants={stagger} initial="hidden" animate={inView ? "visible" : "hidden"}>
             <m.h2
               variants={fadeUp}
-              className="font-display text-2xl font-700 leading-tight sm:text-4xl lg:text-5xl mb-5 sm:mb-6"
+              className="font-display mb-5 text-2xl font-700 leading-tight sm:mb-6 sm:text-4xl lg:text-5xl"
               style={{ fontWeight: 700 }}
             >
-              Have a project,
-              role, or{" "}
+              Have a project, role, or{" "}
               <em style={{ color: "var(--gold)", fontStyle: "italic" }}>opportunity</em>{" "}
               in mind?
             </m.h2>
 
             <m.p
               variants={fadeUp}
-              className="mb-10 max-w-md text-base leading-8"
+              className="mb-6 max-w-md text-base leading-8"
               style={{ color: "var(--muted)" }}
             >
               Share your name, email, and a brief note about what you&apos;re
               looking for. I will read it carefully and respond with a clear next step.
             </m.p>
 
+            {/* Availability strip */}
+            <m.div
+              variants={fadeUp}
+              className="mb-8 inline-flex items-center gap-3 rounded-full px-4 py-2"
+              style={{
+                background: "var(--gold-light)",
+                border: "1px solid rgba(194,168,120,0.3)",
+              }}
+            >
+              <span aria-hidden="true" className="live-dot" />
+              <span className="lux-label" style={{ color: "var(--fg)" }}>
+                Usually replies within 24 hours
+              </span>
+            </m.div>
+
             {/* Contact details */}
-            <m.div variants={fadeUp} className="mb-10 space-y-5">
-              {contactDetails.map((detail) => (
-                <div key={detail.label} className="flex items-start gap-4">
-                  <div
-                    className="grid h-10 w-10 shrink-0 place-items-center rounded"
-                    style={{
-                      background: "var(--gold-light)",
-                      border: "1px solid rgba(194,168,120,0.25)",
-                      color: "var(--gold)",
-                    }}
-                  >
-                    <ContactDetailIcon icon={detail.icon} />
-                  </div>
-                  <div>
-                    <p
-                      className="font-mono text-[0.58rem] font-700 uppercase tracking-widest mb-0.5"
-                      style={{ color: "var(--subtle)", fontWeight: 700 }}
+            <m.div variants={fadeUp} className="mb-10 space-y-3">
+              {contactDetails.map((detail) => {
+                const inner = (
+                  <>
+                    <span
+                      className="grid h-10 w-10 shrink-0 place-items-center rounded"
+                      style={{
+                        background: "var(--gold-light)",
+                        border: "1px solid rgba(194,168,120,0.25)",
+                        color: "var(--gold)",
+                      }}
                     >
-                      {detail.label}
-                    </p>
-                    {detail.href ? (
-                      <a
-                        href={detail.href}
-                        className="text-sm font-600 break-all transition-colors"
+                      <ContactDetailIcon icon={detail.icon} />
+                    </span>
+                    <span className="min-w-0">
+                      <span
+                        className="lux-label mb-0.5 block"
+                        style={{ color: "var(--subtle)" }}
+                      >
+                        {detail.label}
+                      </span>
+                      <span
+                        className="block break-all text-sm font-600"
                         style={{ color: "var(--fg)", fontWeight: 600 }}
-                        onMouseEnter={(e) => ((e.target as HTMLAnchorElement).style.color = "var(--gold)")}
-                        onMouseLeave={(e) => ((e.target as HTMLAnchorElement).style.color = "var(--fg)")}
                       >
                         {detail.value}
-                      </a>
-                    ) : (
-                      <span className="text-sm font-600" style={{ color: "var(--fg)", fontWeight: 600 }}>
-                        {detail.value}
                       </span>
-                    )}
+                    </span>
+                  </>
+                );
+
+                return detail.href ? (
+                  <a
+                    key={detail.label}
+                    href={detail.href}
+                    className="lux-card flex items-center gap-4 p-3.5"
+                  >
+                    {inner}
+                  </a>
+                ) : (
+                  <div key={detail.label} className="lux-card flex items-center gap-4 p-3.5">
+                    {inner}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </m.div>
 
             {/* Social links */}
             <m.div variants={fadeUp}>
-              <p
-                className="font-mono text-[0.58rem] font-700 uppercase tracking-widest mb-4"
-                style={{ color: "var(--subtle)", fontWeight: 700 }}
-              >
-                Find me on
-              </p>
-              <div className="flex gap-2">
+              <div className="mb-4 flex items-center gap-4">
+                <p className="lux-label" style={{ color: "var(--subtle)" }}>
+                  Find me on
+                </p>
+                <span aria-hidden="true" className="h-px flex-1" style={{ background: "var(--border-hv)" }} />
+              </div>
+              <div className="flex gap-2.5">
                 {socialLinks.map((link) => (
                   <a
                     key={link.label}
@@ -190,26 +204,7 @@ export default function ContactSection() {
                     rel={link.icon === "mail" ? undefined : "noreferrer"}
                     aria-label={link.label}
                     title={link.label}
-                    className="grid h-10 w-10 place-items-center rounded transition-all duration-200"
-                    style={{
-                      border: "1px solid var(--border-hv)",
-                      color: "var(--muted)",
-                      background: "var(--bg)",
-                    }}
-                    onMouseEnter={(e) => {
-                      const t = e.currentTarget as HTMLAnchorElement;
-                      t.style.borderColor = "var(--gold)";
-                      t.style.color = "var(--gold)";
-                      t.style.background = "var(--gold-light)";
-                      t.style.transform = "translateY(-2px)";
-                    }}
-                    onMouseLeave={(e) => {
-                      const t = e.currentTarget as HTMLAnchorElement;
-                      t.style.borderColor = "var(--border-hv)";
-                      t.style.color = "var(--muted)";
-                      t.style.background = "var(--bg)";
-                      t.style.transform = "none";
-                    }}
+                    className="icon-btn h-10 w-10"
                   >
                     <SocialIcon icon={link.icon} />
                   </a>

@@ -54,12 +54,18 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-sm p-6 sm:p-8"
+      className="relative rounded-sm p-6 sm:p-8"
       style={{
-        background: "var(--bg)",
+        background: "var(--card)",
         border: "1px solid var(--border-hv)",
+        boxShadow: "var(--shadow-md)",
       }}
     >
+      <span aria-hidden="true" className="lux-corner lux-corner--tl" />
+      <span aria-hidden="true" className="lux-corner lux-corner--tr" />
+      <span aria-hidden="true" className="lux-corner lux-corner--bl" />
+      <span aria-hidden="true" className="lux-corner lux-corner--br" />
+
       {/* Gold top accent */}
       <div
         aria-hidden="true"
