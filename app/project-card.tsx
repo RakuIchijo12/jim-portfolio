@@ -128,15 +128,15 @@ function TechIcon({ tech }: { tech: string }) {
   );
 }
 
-export default function ProjectCard({ project }: { project: ProjectData }) {
+export default function ProjectCard({ project, index }: { project: ProjectData; index?: number }) {
   return (
     <m.article
       className="group relative flex h-full flex-col overflow-hidden rounded-sm"
-      style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+      style={{ background: "var(--card)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}
       whileHover={{
         borderColor: "var(--gold)",
         boxShadow: "0 0 0 1px rgba(194,168,120,0.25), 0 12px 40px rgba(0,0,0,0.15)",
-        y: -4,
+        y: -6,
       }}
       transition={{ duration: 0.25 }}
     >
@@ -158,6 +158,19 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
         >
           {project.category}
         </span>
+        {index !== undefined && (
+          <span
+            aria-hidden="true"
+            className="absolute right-3 top-3 z-10 rounded px-2 py-1 font-mono text-[0.6rem] font-bold tracking-widest"
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border-hv)",
+              color: "var(--muted)",
+            }}
+          >
+            {String(index).padStart(2, "0")}
+          </span>
+        )}
         {project.images.length > 0 ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -205,10 +218,12 @@ export default function ProjectCard({ project }: { project: ProjectData }) {
         {project.caseStudy !== false ? (
           <Link
             href={`/projects/${project.id}`}
-            className="btn-gold mt-auto inline-flex w-full items-center justify-center gap-2 rounded py-3 text-sm"
+            className="btn-gold-outline group/cta mt-auto inline-flex w-full items-center justify-center gap-2 rounded py-3 text-sm"
           >
             View Case Study
-            <ArrowIcon />
+            <span className="transition-transform duration-300 group-hover/cta:translate-x-1">
+              <ArrowIcon />
+            </span>
           </Link>
         ) : (
           <div
