@@ -18,12 +18,6 @@ export const navLinks = [
   { href: "#contact",    label: "Contact"    },
 ];
 
-export const heroStats = [
-  { value: "2+",  label: "Years Experience" },
-  { value: "35+", label: "Technologies"     },
-  { value: "3",   label: "Industries"       },
-];
-
 export const identityTags = [
   "Laravel & FilamentPHP",
   "React & Next.js",
@@ -133,6 +127,15 @@ export const stackGroups = [
     ],
   },
 ] as const;
+
+/** Kept in step with stackGroups so the hero counter cannot drift. */
+export const totalTechnologies = stackGroups.reduce((n, g) => n + g.items.length, 0);
+
+export const heroStats = [
+  { value: "2+",                        label: "Years Experience" },
+  { value: `${totalTechnologies}`,      label: "Technologies"     },
+  { value: "3",                         label: "Industries"       },
+];
 
 export const projects = [
   {
