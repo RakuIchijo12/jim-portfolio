@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { m, useInView, AnimatePresence } from "framer-motion";
 import { stackGroups } from "@/app/lib/data";
 
@@ -12,18 +12,29 @@ const AI_ICON_PATHS: Record<string, string> = {
   openai: "/ai-icons/openai.png",
 };
 
-function StackIcon({ icon, ai }: { icon: string; ai?: boolean }) {
-  const src = ai ? (AI_ICON_PATHS[icon] ?? `/stack-icons/${icon}.png`) : `/stack-icons/${icon}.png`;
+/** #rrggbb to rgba() so per-tech colors can drive tints and glows. */
+function alpha(hex: string, a: number) {
+  const h = hex.replace("#", "");
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const n = parseInt(full, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
+
+function iconSrc(icon: string, ai?: boolean) {
+  return ai ? (AI_ICON_PATHS[icon] ?? `/stack-icons/${icon}.png`) : `/stack-icons/${icon}.png`;
+}
+
+function StackIcon({ icon, ai, size = 40 }: { icon: string; ai?: boolean; size?: number }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       alt=""
       aria-hidden="true"
-      src={src}
-      width={40}
-      height={40}
+      src={iconSrc(icon, ai)}
+      width={size}
+      height={size}
       className="object-contain"
-      style={{ width: "2.5rem", height: "2.5rem" }}
+      style={{ width: size, height: size }}
       loading="lazy"
       decoding="async"
       draggable={false}
@@ -41,6 +52,14 @@ const groupLabels: Record<GroupId, string> = {
   tools:    "Other Tools",
 };
 
+const groupBlurbs: Record<GroupId, string> = {
+  frontend: "Interfaces, design systems, and the browser runtime.",
+  backend:  "APIs, services, and the languages behind them.",
+  database: "Storage, querying, and managed data platforms.",
+  ai:       "Assistants and models woven into the daily workflow.",
+  tools:    "Version control, containers, editors, and delivery.",
+};
+
 const groupColors: Record<GroupId, string> = {
   frontend: "#3A6A8F",
   backend:  "#C2A878",
@@ -49,26 +68,67 @@ const groupColors: Record<GroupId, string> = {
   tools:    "#7A7A8C",
 };
 
+const groupIds = stackGroups.map((g) => g.id as GroupId);
+const totalCount = stackGroups.reduce((n, g) => n + g.items.length, 0);
+
+/** Flat list for the marquee: every logo in the stack, one pass. */
+const marqueeItems = stackGroups.flatMap((g) =>
+  g.items.map((it) => ({
+    name:  it.name,
+    icon:  it.icon,
+    color: it.color as string,
+    ai:    "ai" in it ? Boolean((it as { ai?: boolean }).ai) : false,
+  })),
+);
+
 export default function StackSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const inView     = useInView(sectionRef, { once: true, amount: 0.1 });
   const [active, setActive] = useState<GroupId>("frontend");
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const activeGroup = stackGroups.find((g) => g.id === active)!;
+  const accent      = groupColors[active];
+
+  /** Roving-focus arrow key navigation across the category rail. */
+  const onTabKeyDown = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
+    const keys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Home", "End"];
+    if (!keys.includes(e.key)) return;
+    e.preventDefault();
+
+    const i = groupIds.indexOf(active);
+    const next =
+      e.key === "Home" ? 0
+      : e.key === "End" ? groupIds.length - 1
+      : e.key === "ArrowRight" || e.key === "ArrowDown"
+        ? (i + 1) % groupIds.length
+        : (i - 1 + groupIds.length) % groupIds.length;
+
+    const id = groupIds[next];
+    setActive(id);
+    tabRefs.current[id]?.focus();
+  }, [active]);
 
   return (
     <section
       id="stack"
       ref={sectionRef}
-      className="relative py-16 sm:py-24 lg:py-32"
-      style={{
-        background: "var(--bg)",
-        borderTop: "1px solid var(--border)",
-      }}
+      className="relative overflow-hidden py-16 sm:py-24 lg:py-32"
+      style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Accent wash that shifts with the active category */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse 55% 45% at 78% 12%, ${alpha(accent, 0.07)} 0%, transparent 62%)`,
+          transition: "background 700ms ease",
+        }}
+      />
 
-        {/* Eyebrow */}
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+        {/* ── Eyebrow ── */}
         <m.div
           className="section-eyebrow mb-6"
           initial={{ opacity: 0, x: -20 }}
@@ -78,140 +138,202 @@ export default function StackSection() {
           02 / Stack
         </m.div>
 
-        {/* Heading */}
+        {/* ── Heading + counters ── */}
         <m.div
-          className="mb-8 sm:mb-12 grid gap-4 sm:gap-6 lg:grid-cols-[1fr_auto] lg:items-end"
+          className="mb-10 grid gap-6 sm:mb-14 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16"
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease, delay: 0.1 }}
         >
-          <h2
-            className="font-display text-3xl font-700 leading-tight sm:text-4xl lg:text-5xl"
-            style={{ fontWeight: 700 }}
-          >
-            Tools I build with.
-          </h2>
-          <p className="max-w-xs text-sm leading-6" style={{ color: "var(--muted)" }}>
-            35+ technologies across frontend, backend, database, and AI tooling.
-          </p>
-        </m.div>
-
-        {/* Tab buttons */}
-        <m.div
-          className="mb-8 flex flex-wrap gap-2"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, ease, delay: 0.2 }}
-        >
-          {stackGroups.map((group) => (
-            <button
-              key={group.id}
-              onClick={() => setActive(group.id as GroupId)}
-              className="relative px-3.5 py-2 sm:px-5 sm:py-2.5 text-sm font-600 rounded transition-all duration-240"
-              style={{
-                fontWeight: 600,
-                background: active === group.id ? "var(--gold-light)" : "transparent",
-                border: active === group.id
-                  ? `1px solid ${groupColors[group.id as GroupId]}`
-                  : "1px solid var(--border-hv)",
-                color: active === group.id ? groupColors[group.id as GroupId] : "var(--muted)",
-              }}
+          <div>
+            <h2
+              className="font-display text-3xl font-700 leading-tight sm:text-4xl lg:text-5xl"
+              style={{ fontWeight: 700 }}
             >
-              {groupLabels[group.id as GroupId]}
-              <span
-                className="ml-2 font-mono text-[0.6rem]"
-                style={{ opacity: 0.7 }}
-              >
-                {group.items.length}
-              </span>
-            </button>
-          ))}
-        </m.div>
-
-        {/* Icon grid */}
-        <m.div
-          className="rounded-sm p-6 sm:p-8"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, ease, delay: 0.3 }}
-        >
-          {/* Group heading */}
-          <div className="flex items-center gap-3 mb-6">
-            <div
-              className="h-px w-6"
-              style={{ background: groupColors[active] }}
-            />
-            <span
-              className="font-mono text-xs font-700 uppercase tracking-[0.22em]"
-              style={{ color: groupColors[active], fontWeight: 700 }}
-            >
-              {groupLabels[active]}
-            </span>
+              Tools I{" "}
+              <em style={{ color: "var(--gold)", fontStyle: "italic" }}>build</em>{" "}
+              with.
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-7" style={{ color: "var(--muted)" }}>
+              A working toolkit spanning frontend, backend, database, and AI tooling.
+            </p>
           </div>
 
-          <AnimatePresence mode="wait">
-            <m.ul
-              key={active}
-              className="grid gap-4"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(6rem, 1fr))",
-              }}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease }}
-            >
-              {activeGroup.items.map((item, i) => (
-                <m.li
-                  key={item.name}
-                  initial={{ opacity: 0, scale: 0.88 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.04, duration: 0.4, ease }}
-                >
-                  <div
-                    className="stack-tile group relative"
-                    title={item.name}
-                    tabIndex={0}
-                  >
-                    <div className="flex items-center justify-center" style={{ height: "2.8rem" }}>
-                      <StackIcon icon={item.icon} ai={"ai" in item ? (item as { ai?: boolean }).ai : false} />
-                    </div>
-                    <span
-                      className="text-center text-[0.68rem] font-600 leading-tight"
-                      style={{ color: "var(--muted)", fontWeight: 600 }}
-                    >
-                      {item.name}
-                    </span>
-
-                    {/* Hover color glow */}
-                    <div
-                      className="pointer-events-none absolute inset-0 rounded-[7px] opacity-0 transition-opacity duration-240 group-hover:opacity-100 group-focus:opacity-100"
-                      style={{
-                        background: `radial-gradient(circle at center, ${item.color}14, transparent 70%)`,
-                      }}
-                    />
-                  </div>
-                </m.li>
-              ))}
-            </m.ul>
-          </AnimatePresence>
+          <div className="flex items-end gap-6 sm:gap-8">
+            <Counter value={String(totalCount)} label="Technologies" />
+            <div className="h-12 w-px self-center" style={{ background: "var(--border-hv)" }} />
+            <Counter value={String(stackGroups.length).padStart(2, "0")} label="Disciplines" />
+          </div>
         </m.div>
 
-        {/* All-groups compact view below on mobile */}
-        <m.p
-          className="mt-6 text-center text-xs"
-          style={{ color: "var(--subtle)" }}
+        {/* ── Category rail + panel ── */}
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] lg:gap-8">
+
+          {/* Rail: horizontal scroller on mobile, vertical list from lg up */}
+          <m.div
+            role="tablist"
+            aria-label="Technology categories"
+            className="stack-rail -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0 lg:pb-0"
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, ease, delay: 0.2 }}
+          >
+            {stackGroups.map((group) => {
+              const id    = group.id as GroupId;
+              const on    = active === id;
+              const color = groupColors[id];
+
+              return (
+                <button
+                  key={id}
+                  ref={(el) => { tabRefs.current[id] = el; }}
+                  role="tab"
+                  id={`stack-tab-${id}`}
+                  aria-selected={on}
+                  aria-controls={`stack-panel-${id}`}
+                  tabIndex={on ? 0 : -1}
+                  onClick={() => setActive(id)}
+                  onKeyDown={onTabKeyDown}
+                  className="stack-cat shrink-0 lg:w-full"
+                  data-on={on ? "true" : undefined}
+                  style={{
+                    "--cat":      color,
+                    "--cat-soft": alpha(color, 0.12),
+                  } as React.CSSProperties}
+                >
+                  <span aria-hidden="true" className="stack-cat__bar" />
+                  <span aria-hidden="true" className="stack-cat__dot" />
+                  <span className="stack-cat__label">{groupLabels[id]}</span>
+                  <span className="stack-cat__count">
+                    {String(group.items.length).padStart(2, "0")}
+                  </span>
+                </button>
+              );
+            })}
+          </m.div>
+
+          {/* Panel */}
+          <m.div
+            className="stack-panel relative flex flex-col rounded-sm p-5 sm:p-7 lg:p-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, ease, delay: 0.3 }}
+          >
+            {/* Corner brackets */}
+            <span aria-hidden="true" className="lux-corner lux-corner--tl" />
+            <span aria-hidden="true" className="lux-corner lux-corner--tr" />
+            <span aria-hidden="true" className="lux-corner lux-corner--bl" />
+            <span aria-hidden="true" className="lux-corner lux-corner--br" />
+
+            {/* Panel header */}
+            <div className="mb-6 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+              <span
+                className="font-mono text-xs font-700 uppercase tracking-[0.22em]"
+                style={{ color: accent, fontWeight: 700 }}
+              >
+                {groupLabels[active]}
+              </span>
+              <span
+                aria-hidden="true"
+                className="hidden h-px flex-1 sm:block"
+                style={{ background: `linear-gradient(90deg, ${alpha(accent, 0.4)}, transparent)` }}
+              />
+              <span className="text-xs leading-5" style={{ color: "var(--subtle)" }}>
+                {groupBlurbs[active]}
+              </span>
+            </div>
+
+            <div
+              role="tabpanel"
+              id={`stack-panel-${active}`}
+              aria-labelledby={`stack-tab-${active}`}
+              tabIndex={0}
+              className="flex flex-1 items-center outline-none"
+            >
+              <AnimatePresence mode="wait">
+                <m.ul
+                  key={active}
+                  className="flex w-full flex-wrap justify-center gap-3 sm:gap-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25, ease }}
+                >
+                  {activeGroup.items.map((item, i) => (
+                    <m.li
+                      key={item.name}
+                      className="stack-cell"
+                      initial={{ opacity: 0, y: 10, scale: 0.94 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ delay: Math.min(i, 12) * 0.03, duration: 0.38, ease }}
+                    >
+                      <div
+                        className="stack-tile"
+                        style={{
+                          "--tech":      item.color,
+                          "--tech-soft": alpha(item.color, 0.16),
+                          "--tech-glow": alpha(item.color, 0.26),
+                        } as React.CSSProperties}
+                      >
+                        <span aria-hidden="true" className="stack-tile__edge" />
+                        <span className="stack-tile__plate">
+                          <StackIcon
+                            icon={item.icon}
+                            ai={"ai" in item ? (item as { ai?: boolean }).ai : false}
+                          />
+                        </span>
+                        <span className="stack-tile__name">{item.name}</span>
+                      </div>
+                    </m.li>
+                  ))}
+                </m.ul>
+              </AnimatePresence>
+            </div>
+          </m.div>
+        </div>
+
+        {/* ── Everything, scrolling ── */}
+        <m.div
+          className="stack-marquee mt-10 sm:mt-14"
+          aria-hidden="true"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.5, duration: 0.6, ease }}
+          transition={{ delay: 0.5, duration: 0.8, ease }}
         >
-          Switch tabs to explore Frontend, Backend, Database, AI tools, and more.
-        </m.p>
+          <div className="stack-marquee__track">
+            {[0, 1].map((pass) => (
+              <div className="stack-marquee__set" key={pass}>
+                {marqueeItems.map((item) => (
+                  <span
+                    key={`${pass}-${item.name}`}
+                    className="stack-marquee__item"
+                    style={{ "--tech": item.color } as React.CSSProperties}
+                  >
+                    <StackIcon icon={item.icon} ai={item.ai} size={22} />
+                    {item.name}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </m.div>
       </div>
     </section>
+  );
+}
+
+function Counter({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <p className="font-display text-4xl leading-none sm:text-5xl" style={{ fontWeight: 700 }}>
+        {value}
+      </p>
+      <p
+        className="mt-2 font-mono text-[0.58rem] font-700 uppercase tracking-[0.22em]"
+        style={{ color: "var(--gold)", fontWeight: 700 }}
+      >
+        {label}
+      </p>
+    </div>
   );
 }
