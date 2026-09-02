@@ -8,31 +8,31 @@ const ContactForm = dynamic(() => import("./contact-form"), {
   ssr: false,
 });
 
+/** Mirrors the real form's metrics so nothing shifts when it hydrates. */
 function ContactFormSkeleton() {
   return (
     <div
-      className="rounded-sm p-6 sm:p-8"
+      className="p-6 sm:p-8"
       style={{
-        background: "var(--bg)",
+        borderRadius: "var(--r-md)",
+        background: "var(--card)",
         border: "1px solid var(--border-hv)",
+        boxShadow: "var(--shadow-md)",
       }}
     >
-      <div className="h-px w-12 mb-6 skeleton" />
-      <div className="grid gap-5">
-        <div className="grid gap-2">
-          <div className="skeleton h-3 w-20 rounded" />
-          <div className="skeleton h-12 w-full rounded" />
-        </div>
-        <div className="grid gap-2">
-          <div className="skeleton h-3 w-28 rounded" />
-          <div className="skeleton h-12 w-full rounded" />
-        </div>
-        <div className="grid gap-2">
-          <div className="skeleton h-3 w-16 rounded" />
-          <div className="skeleton h-40 w-full rounded" />
-        </div>
-        <div className="flex justify-end">
-          <div className="skeleton h-12 w-36 rounded" />
+      <div className="mb-6 flex items-center gap-3">
+        <span aria-hidden="true" className="h-px w-10" style={{ background: "var(--gold)" }} />
+        <div className="skeleton h-2.5 w-28" />
+      </div>
+
+      <div className="grid gap-4">
+        <div className="skeleton h-14 w-full" style={{ borderRadius: "var(--r-sm)" }} />
+        <div className="skeleton h-14 w-full" style={{ borderRadius: "var(--r-sm)" }} />
+        <div className="skeleton h-40 w-full" style={{ borderRadius: "var(--r-sm)" }} />
+
+        <div className="flex items-center justify-between">
+          <div className="skeleton h-3 w-28" />
+          <div className="skeleton h-12 w-40" style={{ borderRadius: "var(--r-sm)" }} />
         </div>
       </div>
     </div>
@@ -40,7 +40,7 @@ function ContactFormSkeleton() {
 }
 
 export default function DeferredContactForm() {
-  const wrapperRef  = useRef<HTMLDivElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [load, setLoad] = useState(false);
 
   useEffect(() => {

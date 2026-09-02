@@ -4,26 +4,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { m, useInView } from "framer-motion";
 import { projects } from "@/app/lib/data";
 import ProjectCard from "@/app/project-card";
+import SectionHead from "@/app/components/ui/section-head";
+import { ChevronIcon } from "@/app/components/ui/icons";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const stagger = {
   hidden:  {},
-  visible: { transition: { staggerChildren: 0.15 } },
+  visible: { transition: { staggerChildren: 0.13 } },
 };
 
 const fadeUp = {
-  hidden:  { opacity: 0, y: 48 },
+  hidden:  { opacity: 0, y: 44 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease } },
 };
-
-function Chevron({ dir }: { dir: "left" | "right" }) {
-  return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      {dir === "left" ? <path d="m14 6-6 6 6 6" /> : <path d="m10 6 6 6-6 6" />}
-    </svg>
-  );
-}
 
 export default function ProjectsSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -31,6 +25,7 @@ export default function ProjectsSection() {
   const scrollRef  = useRef<HTMLDivElement>(null);
 
   const [progress, setProgress] = useState(0);
+  const [nearest,  setNearest]  = useState(0);
   const [atStart,  setAtStart]  = useState(true);
   const [atEnd,    setAtEnd]    = useState(false);
 
@@ -42,6 +37,12 @@ export default function ProjectsSection() {
     setProgress(max > 0 ? el.scrollLeft / max : 0);
     setAtStart(el.scrollLeft <= 2);
     setAtEnd(max > 0 ? el.scrollLeft >= max - 2 : true);
+
+    const first = el.firstElementChild as HTMLElement | null;
+    if (first) {
+      const step = first.offsetWidth + 24;
+      setNearest(Math.min(projects.length - 1, Math.round(el.scrollLeft / step)));
+    }
   }, []);
 
   /** Advance by one card plus the flex gap. */
@@ -53,6 +54,16 @@ export default function ProjectsSection() {
     el.scrollBy({ left: dir * step, behavior: "smooth" });
   }, []);
 
+  /** Jump straight to a card from the segmented progress rail. */
+  const goToCard = useCallback((idx: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const first = el.firstElementChild as HTMLElement | null;
+    const step = first ? first.offsetWidth + 24 : el.clientWidth * 0.8;
+    el.scrollTo({ left: idx * step, behavior: "smooth" });
+  }, []);
+
+  /* Pointer drag with inertia, plus arrow-key navigation. */
   useEffect(() => {
     const rawEl = scrollRef.current;
     if (!rawEl) return;
@@ -123,6 +134,11 @@ export default function ProjectsSection() {
     };
   }, [syncScrollState]);
 
+  const onRailKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowRight") { e.preventDefault(); nudge(1); }
+    if (e.key === "ArrowLeft")  { e.preventDefault(); nudge(-1); }
+  }, [nudge]);
+
   return (
     <section
       id="projects"
@@ -134,61 +150,42 @@ export default function ProjectsSection() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-        {/* Eyebrow */}
-        <m.div
-          className="section-eyebrow mb-6"
-          initial={{ opacity: 0, x: -20 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, ease }}
-        >
-          03 / Selected Works
-        </m.div>
-
-        {/* Heading + controls */}
-        <m.div
-          className="mb-8 grid gap-6 sm:mb-12 lg:grid-cols-[1fr_auto] lg:items-end"
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease, delay: 0.1 }}
-        >
-          <div>
-            <h2
-              className="font-display text-3xl font-700 leading-tight sm:text-4xl lg:text-5xl"
-              style={{ fontWeight: 700 }}
-            >
-              Built to solve{" "}
-              <em style={{ color: "var(--gold)", fontStyle: "italic" }}>real problems.</em>
-            </h2>
-            <p className="mt-4 max-w-md text-sm leading-7" style={{ color: "var(--muted)" }}>
-              IoT systems, real-time dashboards, and full-stack web applications.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="lux-label hidden sm:block" style={{ color: "var(--subtle)" }}>
-              {String(projects.length).padStart(2, "0")} Projects
-            </span>
-            <span aria-hidden="true" className="hidden h-px w-6 sm:block" style={{ background: "var(--border-hv)" }} />
-            <button
-              type="button"
-              onClick={() => nudge(-1)}
-              disabled={atStart}
-              aria-label="Previous project"
-              className="icon-btn h-10 w-10"
-            >
-              <Chevron dir="left" />
-            </button>
-            <button
-              type="button"
-              onClick={() => nudge(1)}
-              disabled={atEnd}
-              aria-label="Next project"
-              className="icon-btn h-10 w-10"
-            >
-              <Chevron dir="right" />
-            </button>
-          </div>
-        </m.div>
+        <SectionHead
+          eyebrow="03 / Selected Works"
+          heading={<>Built to solve <em className="t-em">real problems.</em></>}
+          lead="IoT systems, real-time dashboards, and full-stack web applications."
+          aside={
+            <div className="flex items-center gap-3">
+              <span className="lux-label hidden sm:block" style={{ color: "var(--subtle)" }}>
+                {String(projects.length).padStart(2, "0")} Projects
+              </span>
+              <span
+                aria-hidden="true"
+                className="hidden h-px w-6 sm:block"
+                style={{ background: "var(--border-hv)" }}
+              />
+              <button
+                type="button"
+                onClick={() => nudge(-1)}
+                disabled={atStart}
+                aria-label="Previous project"
+                className="icon-btn h-10 w-10"
+              >
+                <ChevronIcon dir="left" />
+              </button>
+              <button
+                type="button"
+                onClick={() => nudge(1)}
+                disabled={atEnd}
+                aria-label="Next project"
+                className="icon-btn h-10 w-10"
+              >
+                <ChevronIcon dir="right" />
+              </button>
+            </div>
+          }
+          className="mb-8 sm:mb-12"
+        />
 
         {/* Project rail */}
         <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
@@ -212,6 +209,10 @@ export default function ProjectsSection() {
 
           <m.div
             ref={scrollRef}
+            role="region"
+            aria-label="Project carousel"
+            tabIndex={0}
+            onKeyDown={onRailKeyDown}
             className="no-bar flex gap-6 overflow-x-auto px-4 pb-4 pt-4 sm:px-6 lg:px-8"
             style={{
               scrollSnapType: "x mandatory",
@@ -236,27 +237,32 @@ export default function ProjectsSection() {
           </m.div>
         </div>
 
-        {/* Progress rail + drag hint */}
+        {/* Segmented progress — one clickable segment per project */}
         <m.div
           className="mt-6 flex items-center gap-5"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 0.6, duration: 0.6, ease }}
         >
-          <div
-            className="h-0.5 flex-1 overflow-hidden rounded-full"
-            style={{ background: "var(--border-hv)" }}
-            aria-hidden="true"
-          >
-            <div
-              className="h-full origin-left"
-              style={{
-                background: "linear-gradient(90deg, var(--gold-dark), var(--gold))",
-                width: "35%",
-                transform: `translateX(${progress * (100 / 0.35 - 100)}%)`,
-                transition: "transform 120ms linear",
-              }}
-            />
+          <div className="flex flex-1 items-center gap-1.5">
+            {projects.map((project, i) => {
+              // The nearest card fills proportionally; the rest read binary.
+              const fill = i < nearest ? 1 : i === nearest ? Math.max(0.25, progress) : 0;
+              return (
+                <button
+                  key={project.id}
+                  type="button"
+                  className="rail-seg"
+                  aria-label={`Go to ${project.name}`}
+                  onClick={() => goToCard(i)}
+                >
+                  <span
+                    className="rail-seg__fill"
+                    style={{ transform: `scaleX(${fill})` }}
+                  />
+                </button>
+              );
+            })}
           </div>
           <span className="lux-label whitespace-nowrap" style={{ color: "var(--subtle)" }}>
             Drag to explore
