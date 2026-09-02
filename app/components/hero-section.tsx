@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { Fragment, useCallback, useRef } from "react";
 import { m } from "framer-motion";
 import { heroStats, identityTags, resumeHref, socialLinks } from "@/app/lib/data";
 import { RevealWords } from "@/app/components/ui/reveal";
@@ -47,7 +47,7 @@ export default function HeroSection() {
       id="home"
       ref={sectionRef}
       onPointerMove={onPointerMove}
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden"
+      className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden"
       style={{ background: "var(--bg)" }}
     >
       {/* ── Ground ── */}
@@ -76,7 +76,10 @@ export default function HeroSection() {
         </m.div>
 
         {/* Eyebrow */}
-        <m.div variants={item} className="section-eyebrow section-eyebrow--bare justify-center">
+        <m.div
+          variants={item}
+          className="section-eyebrow section-eyebrow--bare justify-center text-balance tracking-[0.18em] sm:tracking-[0.32em]"
+        >
           Computer Engineer · Software Engineer
         </m.div>
 
@@ -115,16 +118,24 @@ export default function HeroSection() {
           className="hero-identity lux-label max-w-2xl leading-6"
           style={{ color: "var(--subtle)" }}
         >
-          {identityTags.join("  ·  ")}
+          {identityTags.map((tag, i) => (
+            <Fragment key={tag}>
+              {i > 0 && <span aria-hidden="true" style={{ opacity: 0.55 }}>{" · "}</span>}
+              <span className="whitespace-nowrap">{tag}</span>
+            </Fragment>
+          ))}
         </m.p>
 
         {/* CTAs */}
-        <m.div variants={item} className="flex flex-wrap justify-center gap-2.5">
-          <Magnetic strength={0.24}>
+        <m.div
+          variants={item}
+          className="grid w-full max-w-xs grid-cols-2 gap-2.5 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center"
+        >
+          <Magnetic strength={0.24} className="col-span-2 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => scrollTo("#contact")}
-              className="btn-gold group inline-flex items-center gap-2 rounded-md px-6 py-2.5 text-sm tracking-wide"
+              className="btn-gold group inline-flex w-full items-center justify-center gap-2 rounded-md px-6 py-2.5 text-sm tracking-wide sm:w-auto"
             >
               Get in Touch
               <span className="transition-transform duration-300 group-hover:translate-x-1">
@@ -133,22 +144,22 @@ export default function HeroSection() {
             </button>
           </Magnetic>
 
-          <Magnetic strength={0.18}>
+          <Magnetic strength={0.18} className="w-full sm:w-auto">
             <button
               type="button"
               onClick={() => scrollTo("#projects")}
-              className="btn-ghost inline-flex items-center rounded-md px-6 py-2.5 text-sm tracking-wide"
+              className="btn-ghost inline-flex w-full items-center justify-center rounded-md px-4 py-2.5 text-sm tracking-wide sm:w-auto sm:px-6"
             >
               View Work
             </button>
           </Magnetic>
 
-          <Magnetic strength={0.18}>
+          <Magnetic strength={0.18} className="w-full sm:w-auto">
             <a
               href={resumeHref}
               target="_blank"
               rel="noreferrer"
-              className="btn-ghost inline-flex items-center gap-2 rounded-md px-6 py-2.5 text-sm tracking-wide"
+              className="btn-ghost inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm tracking-wide sm:w-auto sm:px-6"
             >
               Résumé
               <DocumentIcon className="h-3.5 w-3.5" />
@@ -168,6 +179,7 @@ export default function HeroSection() {
           {heroStats.map((stat, i) => (
             <div
               key={stat.label}
+              className="px-1"
               style={i > 0 ? { borderLeft: "1px solid var(--border-hv)" } : undefined}
             >
               <CountUp
@@ -176,7 +188,10 @@ export default function HeroSection() {
                 className="hero-stat-value font-display block leading-none"
                 style={{ fontWeight: 700 }}
               />
-              <p className="lux-label mt-1.5" style={{ color: "var(--gold)" }}>
+              <p
+                className="lux-label mt-1.5 text-[0.55rem] tracking-[0.08em] sm:text-[0.58rem] sm:tracking-[0.22em]"
+                style={{ color: "var(--gold)" }}
+              >
                 {stat.label}
               </p>
             </div>
