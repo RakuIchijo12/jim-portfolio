@@ -1,8 +1,11 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { m, useInView, AnimatePresence } from "framer-motion";
+import { AnimatePresence, m, useInView } from "framer-motion";
 import { stackGroups } from "@/app/lib/data";
+import SectionHead from "@/app/components/ui/section-head";
+import CountUp from "@/app/components/ui/count-up";
+import { alpha, useSpotlight } from "@/app/components/ui/spotlight";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -12,29 +15,22 @@ const AI_ICON_PATHS: Record<string, string> = {
   openai: "/ai-icons/openai.png",
 };
 
-/** #rrggbb to rgba() so per-tech colors can drive tints and glows. */
-function alpha(hex: string, a: number) {
-  const h = hex.replace("#", "");
-  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
-  const n = parseInt(full, 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
-}
-
 function iconSrc(icon: string, ai?: boolean) {
   return ai ? (AI_ICON_PATHS[icon] ?? `/stack-icons/${icon}.png`) : `/stack-icons/${icon}.png`;
 }
 
-function StackIcon({ icon, ai, size = 40 }: { icon: string; ai?: boolean; size?: number }) {
+/* `bleed` marks an asset that is a solid tile rather than a transparent
+   mark — it fills the plate and takes its shape instead of floating in it. */
+function StackIcon({ icon, ai, bleed }: { icon: string; ai?: boolean; bleed?: boolean }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       alt=""
       aria-hidden="true"
       src={iconSrc(icon, ai)}
-      width={size}
-      height={size}
-      className="object-contain"
-      style={{ width: size, height: size }}
+      width={40}
+      height={40}
+      className={bleed ? "is-bleed" : undefined}
       loading="lazy"
       decoding="async"
       draggable={false}
@@ -45,47 +41,41 @@ function StackIcon({ icon, ai, size = 40 }: { icon: string; ai?: boolean; size?:
 type GroupId = (typeof stackGroups)[number]["id"];
 
 const groupLabels: Record<GroupId, string> = {
-  frontend: "Frontend",
-  backend:  "Backend",
-  database: "Database",
-  ai:       "AI Tools",
-  tools:    "Other Tools",
+  frontend:  "Frontend",
+  backend:   "Backend",
+  database:  "Database",
+  languages: "Languages",
+  ai:        "AI Tools",
+  tools:     "Other Tools",
 };
 
 const groupBlurbs: Record<GroupId, string> = {
-  frontend: "Interfaces, design systems, and the browser runtime.",
-  backend:  "APIs, services, and the languages behind them.",
-  database: "Storage, querying, and managed data platforms.",
-  ai:       "Assistants and models woven into the daily workflow.",
-  tools:    "Version control, containers, editors, and delivery.",
+  frontend:  "Interfaces, design systems, and the browser runtime.",
+  backend:   "Frameworks and services that run the server side.",
+  database:  "Storage, querying, and managed data platforms.",
+  languages: "The core languages everything else is written in.",
+  ai:        "Assistants and models woven into the daily workflow.",
+  tools:     "Version control, containers, editors, and delivery.",
 };
 
 const groupColors: Record<GroupId, string> = {
-  frontend: "#3A6A8F",
-  backend:  "#C2A878",
-  database: "#2D8D6F",
-  ai:       "#6B5B8A",
-  tools:    "#7A7A8C",
+  frontend:  "#3A6A8F",
+  backend:   "#C2A878",
+  database:  "#2D8D6F",
+  languages: "#A8705E",
+  ai:        "#6B5B8A",
+  tools:     "#7A7A8C",
 };
 
 const groupIds = stackGroups.map((g) => g.id as GroupId);
 const totalCount = stackGroups.reduce((n, g) => n + g.items.length, 0);
-
-/** Flat list for the marquee: every logo in the stack, one pass. */
-const marqueeItems = stackGroups.flatMap((g) =>
-  g.items.map((it) => ({
-    name:  it.name,
-    icon:  it.icon,
-    color: it.color as string,
-    ai:    "ai" in it ? Boolean((it as { ai?: boolean }).ai) : false,
-  })),
-);
 
 export default function StackSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const inView     = useInView(sectionRef, { once: true, amount: 0.1 });
   const [active, setActive] = useState<GroupId>("frontend");
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const { ref: panelRef, onPointerMove: onPanelMove } = useSpotlight<HTMLDivElement>();
 
   const activeGroup = stackGroups.find((g) => g.id === active)!;
   const accent      = groupColors[active];
@@ -121,50 +111,25 @@ export default function StackSection() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse 55% 45% at 78% 12%, ${alpha(accent, 0.07)} 0%, transparent 62%)`,
+          background: `radial-gradient(ellipse 55% 45% at 78% 12%, ${alpha(accent, 0.08)} 0%, transparent 62%)`,
           transition: "background 700ms ease",
         }}
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-        {/* ── Eyebrow ── */}
-        <m.div
-          className="section-eyebrow mb-6"
-          initial={{ opacity: 0, x: -20 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, ease }}
-        >
-          02 / Stack
-        </m.div>
-
-        {/* ── Heading + counters ── */}
-        <m.div
-          className="mb-10 grid gap-6 sm:mb-14 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease, delay: 0.1 }}
-        >
-          <div>
-            <h2
-              className="font-display text-3xl font-700 leading-tight sm:text-4xl lg:text-5xl"
-              style={{ fontWeight: 700 }}
-            >
-              Tools I{" "}
-              <em style={{ color: "var(--gold)", fontStyle: "italic" }}>build</em>{" "}
-              with.
-            </h2>
-            <p className="mt-4 max-w-md text-sm leading-7" style={{ color: "var(--muted)" }}>
-              A working toolkit spanning frontend, backend, database, and AI tooling.
-            </p>
-          </div>
-
-          <div className="flex items-end gap-6 sm:gap-8">
-            <Counter value={String(totalCount)} label="Technologies" />
-            <div className="h-12 w-px self-center" style={{ background: "var(--border-hv)" }} />
-            <Counter value={String(stackGroups.length).padStart(2, "0")} label="Disciplines" />
-          </div>
-        </m.div>
+        <SectionHead
+          eyebrow="02 / Stack"
+          heading={<>Tools I <em className="t-em">build</em> with.</>}
+          lead="A working toolkit spanning frontend, backend, database, and AI tooling."
+          aside={
+            <div className="flex items-end gap-6 sm:gap-8">
+              <Counter value={totalCount} label="Technologies" />
+              <div className="h-12 w-px self-center" style={{ background: "var(--border-hv)" }} />
+              <Counter value={stackGroups.length} label="Disciplines" />
+            </div>
+          }
+        />
 
         {/* ── Category rail + panel ── */}
         <div className="grid gap-6 lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] lg:gap-8">
@@ -214,21 +179,26 @@ export default function StackSection() {
 
           {/* Panel */}
           <m.div
-            className="stack-panel relative flex flex-col rounded-sm p-5 sm:p-7 lg:p-8"
+            ref={panelRef}
+            onPointerMove={onPanelMove}
+            className="stack-panel spotlight relative flex flex-col p-5 sm:p-7 lg:p-8"
+            style={{
+              "--spot-soft": alpha(accent, 0.14),
+              "--spot-line": alpha(accent, 0.7),
+            } as React.CSSProperties}
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease, delay: 0.3 }}
           >
-            {/* Corner brackets */}
             <span aria-hidden="true" className="lux-corner lux-corner--tl" />
             <span aria-hidden="true" className="lux-corner lux-corner--tr" />
             <span aria-hidden="true" className="lux-corner lux-corner--bl" />
             <span aria-hidden="true" className="lux-corner lux-corner--br" />
 
             {/* Panel header */}
-            <div className="mb-6 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+            <div className="relative z-2 mb-6 flex flex-wrap items-baseline gap-x-4 gap-y-2">
               <span
-                className="font-mono text-xs font-700 uppercase tracking-[0.22em]"
+                className="font-mono text-xs uppercase tracking-[0.22em]"
                 style={{ color: accent, fontWeight: 700 }}
               >
                 {groupLabels[active]}
@@ -248,7 +218,7 @@ export default function StackSection() {
               id={`stack-panel-${active}`}
               aria-labelledby={`stack-tab-${active}`}
               tabIndex={0}
-              className="flex flex-1 items-center outline-none"
+              className="relative z-2 flex flex-1 items-center outline-none"
             >
               <AnimatePresence mode="wait">
                 <m.ul
@@ -280,6 +250,7 @@ export default function StackSection() {
                           <StackIcon
                             icon={item.icon}
                             ai={"ai" in item ? (item as { ai?: boolean }).ai : false}
+                            bleed={"bleed" in item ? (item as { bleed?: boolean }).bleed : false}
                           />
                         </span>
                         <span className="stack-tile__name">{item.name}</span>
@@ -291,47 +262,20 @@ export default function StackSection() {
             </div>
           </m.div>
         </div>
-
-        {/* ── Everything, scrolling ── */}
-        <m.div
-          className="stack-marquee mt-10 sm:mt-14"
-          aria-hidden="true"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.5, duration: 0.8, ease }}
-        >
-          <div className="stack-marquee__track">
-            {[0, 1].map((pass) => (
-              <div className="stack-marquee__set" key={pass}>
-                {marqueeItems.map((item) => (
-                  <span
-                    key={`${pass}-${item.name}`}
-                    className="stack-marquee__item"
-                    style={{ "--tech": item.color } as React.CSSProperties}
-                  >
-                    <StackIcon icon={item.icon} ai={item.ai} size={22} />
-                    {item.name}
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </m.div>
       </div>
     </section>
   );
 }
 
-function Counter({ value, label }: { value: string; label: string }) {
+function Counter({ value, label }: { value: number; label: string }) {
   return (
     <div>
-      <p className="font-display text-4xl leading-none sm:text-5xl" style={{ fontWeight: 700 }}>
-        {value}
-      </p>
-      <p
-        className="mt-2 font-mono text-[0.58rem] font-700 uppercase tracking-[0.22em]"
-        style={{ color: "var(--gold)", fontWeight: 700 }}
-      >
+      <CountUp
+        value={value}
+        className="font-display block text-4xl leading-none sm:text-5xl"
+        style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums" }}
+      />
+      <p className="lux-label mt-2" style={{ color: "var(--gold)" }}>
         {label}
       </p>
     </div>
