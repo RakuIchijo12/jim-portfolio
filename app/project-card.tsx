@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { m } from "framer-motion";
+import { useSpotlight } from "@/app/components/ui/spotlight";
+import { ArrowRightIcon } from "@/app/components/ui/icons";
+import { TECH_ICON_MAP, DARK_ICONS } from "@/app/lib/tech-icons";
 
 export interface ProjectData {
   id: string;
@@ -18,10 +20,13 @@ export interface ProjectData {
   caseStudy?: boolean;
 }
 
-function RealEstateIcon() {
+/** Stand-in artwork for the private ERP, which ships no screenshots. */
+function RealEstateMark() {
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center gap-3" style={{ minHeight: "13rem" }}>
-      {/* Dot grid texture */}
+    <div
+      className="relative flex h-full w-full flex-col items-center justify-center gap-3"
+      style={{ minHeight: "13rem" }}
+    >
       <div
         aria-hidden="true"
         className="absolute inset-0"
@@ -30,13 +35,14 @@ function RealEstateIcon() {
           backgroundSize: "18px 18px",
         }}
       />
-      {/* Ambient glow */}
       <div
         aria-hidden="true"
         className="absolute inset-0"
-        style={{ background: "radial-gradient(circle at 50% 55%, rgba(194,168,120,0.07) 0%, transparent 65%)" }}
+        style={{
+          background:
+            "radial-gradient(circle at 50% 55%, rgba(194,168,120,0.08) 0%, transparent 65%)",
+        }}
       />
-      {/* Building SVG */}
       <svg
         aria-hidden="true"
         viewBox="0 0 72 72"
@@ -65,49 +71,12 @@ function RealEstateIcon() {
   );
 }
 
-function ArrowIcon() {
-  return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
-
-const TECH_ICON_MAP: Record<string, string> = {
-  "HTML":          "frontend/html5.png",
-  "CSS":           "frontend/css3.png",
-  "JavaScript":    "frontend/javascript.png",
-  "TypeScript":    "frontend/typescript.png",
-  "Node.js":       "backend/Node.js.png",
-  "Express.js":    "backend/Express.png",
-  "Firebase":      "database/Firebase.png",
-  "GitHub":        "tools/GitHub.png",
-  "Angular":       "frontend/angular.png",
-  "NestJS":        "backend/nestjs.png",
-  "PostgreSQL":    "database/postgresql.png",
-  "MySQL":         "database/mysql.png",
-  "React":         "frontend/react.png",
-  "Next.js":       "frontend/next-js.png",
-  "Vue.js":        "frontend/vue-js.png",
-  "Laravel":       "backend/laravel.png",
-  "PHP":           "backend/php.png",
-  "Python":        "backend/python.png",
-  "Django":        "backend/django.png",
-  "Tailwind CSS":  "frontend/tailwind-css.png",
-  "Alpine.js":     "frontend/alpine-js.png",
-  "Filament":      "backend/filament.png",
-  "Livewire":      "frontend/livewire.png",
-  "Supabase":      "database/supabase.png",
-};
-
-const DARK_ICONS = new Set(["Express.js", "GitHub"]);
-
 function TechIcon({ tech }: { tech: string }) {
   const iconFile = TECH_ICON_MAP[tech];
   return (
     <span
       title={tech}
-      className="grid h-7 w-7 place-items-center rounded"
+      className="grid h-7 w-7 place-items-center rounded transition-transform duration-300 hover:-translate-y-0.5"
       style={{ border: "1px solid var(--border-hv)", background: "var(--surface-alt)" }}
     >
       {iconFile ? (
@@ -118,6 +87,8 @@ function TechIcon({ tech }: { tech: string }) {
           src={`/stack-icons/${iconFile}`}
           width={16}
           height={16}
+          loading="lazy"
+          decoding="async"
         />
       ) : (
         <span className="px-0.5 text-[8px] font-bold leading-tight" style={{ color: "var(--muted)" }}>
@@ -129,39 +100,45 @@ function TechIcon({ tech }: { tech: string }) {
 }
 
 export default function ProjectCard({ project, index }: { project: ProjectData; index?: number }) {
+  const { ref, onPointerMove } = useSpotlight<HTMLElement>();
+  const hasCaseStudy = project.caseStudy !== false;
+
   return (
-    <m.article
-      className="group relative flex h-full flex-col overflow-hidden rounded-sm"
-      style={{ background: "var(--card)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}
-      whileHover={{
-        borderColor: "var(--gold)",
-        boxShadow: "0 0 0 1px rgba(194,168,120,0.25), 0 12px 40px rgba(0,0,0,0.15)",
-        y: -6,
-      }}
-      transition={{ duration: 0.25 }}
+    <article
+      ref={ref}
+      onPointerMove={onPointerMove}
+      className="project-card spotlight group flex h-full flex-col"
     >
       {/* Gold top accent */}
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-px z-10"
-        style={{ background: "linear-gradient(90deg, transparent, var(--gold), transparent)", opacity: 0.6 }}
+        className="absolute inset-x-0 top-0 z-10 h-px"
+        style={{
+          background: "linear-gradient(90deg, transparent, var(--gold), transparent)",
+          opacity: 0.6,
+        }}
       />
 
       {/* Thumbnail */}
       <div
-        className="relative flex items-center justify-center overflow-hidden p-4"
+        className="relative z-2 flex items-center justify-center overflow-hidden p-4"
         style={{ background: "var(--surface-alt)", borderBottom: "1px solid var(--border)" }}
       >
         <span
-          className="absolute left-3 top-3 z-10 rounded px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-widest"
-          style={{ background: "var(--surface)", border: "1px solid var(--gold)", color: "var(--gold)" }}
+          className="absolute left-3 top-3 z-20 rounded px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-widest"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--gold)",
+            color: "var(--gold)",
+          }}
         >
           {project.category}
         </span>
+
         {index !== undefined && (
           <span
             aria-hidden="true"
-            className="absolute right-3 top-3 z-10 rounded px-2 py-1 font-mono text-[0.6rem] font-bold tracking-widest"
+            className="absolute right-3 top-3 z-20 rounded px-2 py-1 font-mono text-[0.6rem] font-bold tracking-widest"
             style={{
               background: "var(--surface)",
               border: "1px solid var(--border-hv)",
@@ -171,28 +148,37 @@ export default function ProjectCard({ project, index }: { project: ProjectData; 
             {String(index).padStart(2, "0")}
           </span>
         )}
+
         {project.images.length > 0 ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            alt={project.images[0].alt}
-            src={project.images[0].src}
-            className="w-full rounded-sm object-cover transition-transform duration-500 group-hover:scale-105"
-            style={{ height: "13rem" }}
-            decoding="async"
-            loading="lazy"
-          />
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt={project.images[0].alt}
+              src={project.images[0].src}
+              className="project-shot w-full rounded-sm object-cover"
+              style={{ height: "13rem" }}
+              decoding="async"
+              loading="lazy"
+            />
+            {/* Scrim that lifts on hover so the shot reads at full contrast */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-10 opacity-100 transition-opacity duration-500 group-hover:opacity-0"
+              style={{
+                background:
+                  "linear-gradient(to top, color-mix(in srgb, var(--surface-alt) 55%, transparent), transparent 55%)",
+              }}
+            />
+          </>
         ) : (
-          <RealEstateIcon />
+          <RealEstateMark />
         )}
       </div>
 
       {/* Body */}
-      <div className="flex flex-1 flex-col gap-4 p-6">
+      <div className="relative z-2 flex flex-1 flex-col gap-4 p-6">
         <div>
-          <h3
-            className="font-display text-xl leading-tight mb-2"
-            style={{ fontWeight: 700 }}
-          >
+          <h3 className="font-display mb-2 text-xl leading-tight" style={{ fontWeight: 700 }}>
             {project.name}
           </h3>
           <p className="line-clamp-3 text-sm leading-6" style={{ color: "var(--muted)" }}>
@@ -207,22 +193,26 @@ export default function ProjectCard({ project, index }: { project: ProjectData; 
           ))}
           {project.technologies.length > 7 && (
             <span
-              className="grid h-7 px-2 place-items-center rounded text-[10px] font-bold"
-              style={{ border: "1px solid var(--border-hv)", background: "var(--surface-alt)", color: "var(--muted)" }}
+              className="grid h-7 place-items-center rounded px-2 text-[10px] font-bold"
+              style={{
+                border: "1px solid var(--border-hv)",
+                background: "var(--surface-alt)",
+                color: "var(--muted)",
+              }}
             >
               +{project.technologies.length - 7}
             </span>
           )}
         </div>
 
-        {project.caseStudy !== false ? (
+        {hasCaseStudy ? (
           <Link
             href={`/projects/${project.id}`}
-            className="btn-gold-outline group/cta mt-auto inline-flex w-full items-center justify-center gap-2 rounded py-3 text-sm"
+            className="btn-gold-outline group/cta mt-auto inline-flex w-full items-center justify-center gap-2 rounded-md py-3 text-sm"
           >
             View Case Study
             <span className="transition-transform duration-300 group-hover/cta:translate-x-1">
-              <ArrowIcon />
+              <ArrowRightIcon />
             </span>
           </Link>
         ) : (
@@ -239,6 +229,6 @@ export default function ProjectCard({ project, index }: { project: ProjectData; 
           </div>
         )}
       </div>
-    </m.article>
+    </article>
   );
 }

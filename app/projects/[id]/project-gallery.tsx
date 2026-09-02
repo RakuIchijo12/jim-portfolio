@@ -3,66 +3,78 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { m, useScroll, useSpring } from "framer-motion";
 import type { projects } from "@/app/lib/data";
+import { useSpotlight } from "@/app/components/ui/spotlight";
+import { RevealWords } from "@/app/components/ui/reveal";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ChevronIcon,
+  ExternalIcon,
+} from "@/app/components/ui/icons";
 
 type Project = (typeof projects)[number];
-type Sibling = { id: string; name: string; category: string } | null;
+type Sibling = {
+  id: string;
+  name: string;
+  category: string;
+  image: string | null;
+} | null;
 
-/* ─── Icons ──────────────────────────────────────────────────────── */
-function ArrowLeft() {
-  return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="m12 19-7-7 7-7" /><path d="M19 12H5" />
-    </svg>
-  );
+const ease = [0.22, 1, 0.36, 1] as const;
+
+/** "Obsentry — Admin Dashboard" → "Admin Dashboard". */
+function screenLabel(alt: string) {
+  return alt.replace(/^.*?\s+[—–-]\s+/, "");
 }
-function ArrowRight() {
-  return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-}
-function ChevronLeft() {
-  return (
-    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="m15 18-6-6 6-6" />
-    </svg>
-  );
-}
-function ChevronRight() {
-  return (
-    <svg aria-hidden="true" className="h-5 w-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="m9 18 6-6-6-6" />
-    </svg>
-  );
-}
+
+/* ─── Small parts ────────────────────────────────────────────────── */
+
 function ExpandIcon() {
   return (
-    <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+    <svg
+      aria-hidden="true"
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
       <path d="M15 3h6v6M9 21H3v-6m18-12-7 7M3 21l7-7" />
     </svg>
   );
 }
+
 function CloseIcon() {
   return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-      <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
     </svg>
   );
 }
 
-/* ─── Section label ──────────────────────────────────────────────── */
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-4 flex items-center gap-3">
+    <div className="mb-5 flex items-center gap-3">
       <span aria-hidden="true" className="h-px w-5 shrink-0" style={{ background: "var(--gold)" }} />
       <span className="lux-label" style={{ color: "var(--gold)" }}>{children}</span>
     </div>
   );
 }
 
-/* ─── Tech badge ─────────────────────────────────────────────────── */
 function TechBadge({
   tech, techIconMap, darkIcons,
 }: {
@@ -73,7 +85,7 @@ function TechBadge({
   const iconFile = techIconMap[tech];
   return (
     <span
-      className="inline-flex items-center gap-2 rounded-full px-3 py-1.5"
+      className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 transition-all duration-300 hover:-translate-y-0.5"
       style={{ border: "1px solid var(--border-hv)", background: "var(--card)" }}
     >
       {iconFile && (
@@ -83,16 +95,18 @@ function TechBadge({
           aria-hidden="true"
           className={`h-3.5 w-3.5 object-contain${darkIcons.has(tech) ? " dark:invert" : ""}`}
           src={`/stack-icons/${iconFile}`}
+          loading="lazy"
+          decoding="async"
         />
       )}
-      <span className="text-[0.7rem] font-600" style={{ color: "var(--fg)", fontWeight: 600 }}>
+      <span className="text-[0.7rem]" style={{ color: "var(--fg)", fontWeight: 600 }}>
         {tech}
       </span>
     </span>
   );
 }
 
-/* ─── Fallback mark for projects with no screenshots ─────────────── */
+/** Fallback mark for projects with no screenshots. */
 function ProjectMark() {
   return (
     <svg
@@ -129,6 +143,7 @@ function Corners() {
 }
 
 /* ─── Main component ─────────────────────────────────────────────── */
+
 export default function ProjectView({
   project,
   techIconMap,
@@ -152,6 +167,16 @@ export default function ProjectView({
   const timerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const imageCount = project.images.length;
   const hasImages  = imageCount > 0;
+
+  const { ref: asideRef, onPointerMove: onAsideMove } = useSpotlight<HTMLDivElement>();
+
+  /* Reading progress for the whole case study */
+  const { scrollYProgress } = useScroll();
+  const readProgress = useSpring(scrollYProgress, {
+    stiffness: 180,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
@@ -195,45 +220,44 @@ export default function ProjectView({
 
   const activeImage = hasImages ? project.images[activeIdx] : null;
 
-  const glanceRows = [
-    { label: "Category", value: project.category },
-    ...(hasImages ? [{ label: "Screens", value: `${imageCount}` }] : []),
-    { label: "Stack",    value: `${project.technologies.length} technologies` },
-    { label: "Features", value: `${project.features.length} shipped` },
+  const facts = [
+    { k: "Category", v: project.category },
+    { k: "Stack",    v: `${project.technologies.length} technologies` },
+    { k: "Features", v: `${project.features.length} shipped` },
+    hasImages
+      ? { k: "Screens", v: `${imageCount} captured` }
+      : { k: "Access",  v: "Private client system" },
   ];
 
   return (
     <div className="ambient-bg min-h-dvh" style={{ color: "var(--fg)" }}>
 
-      {/* ── Sticky header ───────────────────────────────────────── */}
+      {/* ── Reading progress ───────────────────────────────────── */}
+      <m.div className="scroll-progress" style={{ scaleX: readProgress }} />
+
+      {/* ── Sticky header ──────────────────────────────────────── */}
       <header
         className="sticky top-0 z-40 flex h-14 items-center justify-between px-4 sm:px-6 lg:px-8"
         style={{
-          background: "var(--surface)",
+          background: "color-mix(in srgb, var(--bg) 80%, transparent)",
           borderBottom: "1px solid var(--border)",
-          backdropFilter: "blur(20px) saturate(1.5)",
+          backdropFilter: "blur(20px) saturate(1.6)",
         }}
       >
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-px"
-          style={{ background: "linear-gradient(90deg, transparent, var(--gold), transparent)" }}
-        />
-
         <Link
           href="/#projects"
           className="group inline-flex items-center gap-2 text-sm font-medium"
           style={{ color: "var(--muted)" }}
         >
           <span className="transition-transform duration-300 group-hover:-translate-x-1">
-            <ArrowLeft />
+            <ArrowLeftIcon />
           </span>
-          <span className="group-hover:underline underline-offset-4">Portfolio</span>
+          <span className="nav-link">Portfolio</span>
         </Link>
 
         <span
-          className="font-display absolute left-1/2 hidden -translate-x-1/2 text-sm font-bold tracking-tight sm:block"
-          style={{ color: "var(--fg)" }}
+          className="font-display absolute left-1/2 hidden -translate-x-1/2 text-sm tracking-tight sm:block"
+          style={{ color: "var(--fg)", fontWeight: 700 }}
         >
           {project.name}
         </span>
@@ -243,11 +267,11 @@ export default function ProjectView({
             href={project.link}
             target="_blank"
             rel="noreferrer"
-            className="btn-gold group inline-flex items-center gap-2 rounded px-4 py-2 text-xs font-bold"
+            className="btn-gold group inline-flex items-center gap-2 rounded-md px-4 py-2 text-xs"
           >
             {project.linkLabel}
-            <span className="transition-transform duration-300 group-hover:translate-x-1">
-              <ArrowRight />
+            <span className="transition-transform duration-300 group-hover:translate-x-0.5">
+              <ExternalIcon />
             </span>
           </a>
         ) : (
@@ -257,12 +281,15 @@ export default function ProjectView({
         )}
       </header>
 
-      {/* ── Title block ─────────────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-4 pt-10 pb-8 sm:px-6 sm:pt-14 lg:px-8">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+      {/* ── Title block ────────────────────────────────────────── */}
+      <section className="mx-auto max-w-6xl px-4 pt-10 pb-8 sm:px-6 sm:pt-16 lg:px-8">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="section-eyebrow">{project.category}</div>
           <div className="flex items-baseline gap-2">
-            <span className="font-display text-2xl leading-none" style={{ color: "var(--gold)", fontWeight: 700 }}>
+            <span
+              className="font-display text-2xl leading-none"
+              style={{ color: "var(--gold)", fontWeight: 700 }}
+            >
               {String(index).padStart(2, "0")}
             </span>
             <span className="lux-label" style={{ color: "var(--subtle)" }}>
@@ -271,121 +298,142 @@ export default function ProjectView({
           </div>
         </div>
 
-        <h1
-          className="font-display mb-4 leading-[1.05]"
-          style={{ fontWeight: 700, fontSize: "clamp(2.25rem, 6vw, 4rem)" }}
-        >
-          {project.name}
+        <h1 className="font-display t-display t-balance mb-5" style={{ fontWeight: 700 }}>
+          <RevealWords text={project.name} delay={0.12} stagger={0.07} />
         </h1>
 
-        <p className="max-w-2xl text-base leading-8" style={{ color: "var(--muted)" }}>
+        <m.p
+          className="t-pretty mb-9 max-w-2xl text-lg leading-9"
+          style={{ color: "var(--muted)" }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease, delay: 0.4 }}
+        >
           {project.tagline}
-        </p>
+        </m.p>
+
+        {/* Key facts, up front — these used to be buried in a sidebar box */}
+        <m.dl
+          className="fact-strip"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease, delay: 0.52 }}
+        >
+          {facts.map((f) => (
+            <div key={f.k} className="fact">
+              <dt className="lux-label fact__k">{f.k}</dt>
+              <dd className="fact__v">{f.v}</dd>
+            </div>
+          ))}
+        </m.dl>
       </section>
 
-      {/* ── Gallery ─────────────────────────────────────────────── */}
+      {/* ── Gallery ────────────────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {hasImages ? (
           <>
-            <div className="lux-panel group relative aspect-16/10 overflow-hidden sm:aspect-video">
-              <Corners />
-
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 top-0 z-0 h-32"
-                style={{ background: "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(194,168,120,0.08) 0%, transparent 100%)" }}
-              />
-
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt={activeImage!.alt}
-                src={activeImage!.src}
-                className="absolute inset-0 h-full w-full"
-                style={{
-                  objectFit: "contain",
-                  padding: "clamp(1rem, 3vw, 2.5rem)",
-                  opacity: imgVisible ? 1 : 0,
-                  transform: imgVisible ? "scale(1)" : "scale(0.985)",
-                  transition: `opacity ${imgVisible ? 300 : 140}ms ease, transform 420ms cubic-bezier(0.22,1,0.36,1)`,
-                }}
-                decoding="async"
-              />
-
-              <button
-                aria-label="View full size"
-                className="icon-btn absolute right-3 top-3 z-20 h-9 w-9 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-visible:opacity-100"
-                onClick={() => setLightbox(true)}
-                type="button"
-              >
-                <ExpandIcon />
-              </button>
-
-              {imageCount > 1 && (
-                <>
-                  <button
-                    aria-label="Previous image"
-                    className="absolute inset-y-0 left-0 z-10 flex w-14 items-center justify-center text-white opacity-100 transition-opacity focus:opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
-                    style={{ background: "linear-gradient(to right, rgba(0,0,0,0.45), transparent)" }}
-                    onClick={goPrev}
-                    type="button"
-                  >
-                    <ChevronLeft />
-                  </button>
-                  <button
-                    aria-label="Next image"
-                    className="absolute inset-y-0 right-0 z-10 flex w-14 items-center justify-center text-white opacity-100 transition-opacity focus:opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
-                    style={{ background: "linear-gradient(to left, rgba(0,0,0,0.45), transparent)" }}
-                    onClick={goNext}
-                    type="button"
-                  >
-                    <ChevronRight />
-                  </button>
-
-                  <div
-                    aria-live="polite"
-                    className="lux-label absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full px-3 py-1"
-                    style={{
-                      background: "rgba(15,23,42,0.72)",
-                      border: "1px solid rgba(194,168,120,0.28)",
-                      color: "var(--gold)",
-                      backdropFilter: "blur(6px)",
-                    }}
-                  >
-                    {activeIdx + 1} / {imageCount}
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Thumbnails */}
-            {imageCount > 1 && (
-              <div className="no-bar mt-3 flex gap-2.5 overflow-x-auto pb-1">
-                {project.images.map((img, idx) => (
-                  <button
-                    key={img.src}
-                    aria-label={`Show ${img.alt}`}
-                    aria-current={activeIdx === idx}
-                    className="shrink-0 overflow-hidden rounded transition-all duration-240"
-                    style={{
-                      border: activeIdx === idx ? "2px solid var(--gold)" : "2px solid var(--border)",
-                      opacity: activeIdx === idx ? 1 : 0.45,
-                      boxShadow: activeIdx === idx ? "0 4px 16px -6px rgba(194,168,120,0.6)" : "none",
-                    }}
-                    onClick={() => goTo(idx)}
-                    type="button"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={img.alt}
-                      src={img.src}
-                      className="block object-cover"
-                      style={{ width: "5.5rem", height: "3.5rem" }}
-                      decoding="async"
-                      loading="lazy"
-                    />
-                  </button>
-                ))}
+            <m.figure
+              className="window group m-0"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, ease, delay: 0.3 }}
+            >
+              {/* Browser chrome. The screen's own name sits where a URL would —
+                  honest, and it surfaces a caption we already author as alt text. */}
+              <div className="window__bar">
+                <span aria-hidden="true" className="window__dots">
+                  <span className="window__dot" />
+                  <span className="window__dot" />
+                  <span className="window__dot" />
+                </span>
+                <figcaption className="window__label" aria-live="polite">
+                  {screenLabel(activeImage!.alt)}
+                </figcaption>
+                <span className="window__count">
+                  {String(activeIdx + 1).padStart(2, "0")}/{String(imageCount).padStart(2, "0")}
+                </span>
               </div>
+
+              <div className="window__body">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt={activeImage!.alt}
+                  src={activeImage!.src}
+                  className="window__shot"
+                  style={{
+                    opacity: imgVisible ? 1 : 0,
+                    transform: imgVisible ? "scale(1)" : "scale(0.99)",
+                    transition: `opacity ${imgVisible ? 300 : 140}ms ease, transform 460ms cubic-bezier(0.22,1,0.36,1)`,
+                  }}
+                  decoding="async"
+                />
+
+                <button
+                  aria-label="View full size"
+                  className="icon-btn absolute right-3 top-3 z-20 h-9 w-9 opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-visible:opacity-100"
+                  onClick={() => setLightbox(true)}
+                  type="button"
+                >
+                  <ExpandIcon />
+                </button>
+
+                {imageCount > 1 && (
+                  <>
+                    <button
+                      aria-label="Previous image"
+                      className="absolute inset-y-0 left-0 z-10 flex w-14 items-center justify-center text-white transition-opacity focus-visible:opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
+                      style={{ background: "linear-gradient(to right, rgba(0,0,0,0.4), transparent)" }}
+                      onClick={goPrev}
+                      type="button"
+                    >
+                      <ChevronIcon dir="left" className="h-5 w-5" />
+                    </button>
+                    <button
+                      aria-label="Next image"
+                      className="absolute inset-y-0 right-0 z-10 flex w-14 items-center justify-center text-white transition-opacity focus-visible:opacity-100 lg:opacity-0 lg:group-hover:opacity-100"
+                      style={{ background: "linear-gradient(to left, rgba(0,0,0,0.4), transparent)" }}
+                      onClick={goNext}
+                      type="button"
+                    >
+                      <ChevronIcon dir="right" className="h-5 w-5" />
+                    </button>
+                  </>
+                )}
+              </div>
+            </m.figure>
+
+            {/* Filmstrip */}
+            {imageCount > 1 && (
+              <m.div
+                className="mt-4 flex items-center justify-between gap-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, ease, delay: 0.55 }}
+              >
+                <div className="filmstrip no-bar">
+                  {project.images.map((img, idx) => (
+                    <button
+                      key={img.src}
+                      aria-label={`Show ${screenLabel(img.alt)}`}
+                      aria-current={activeIdx === idx}
+                      className="filmstrip__item"
+                      data-on={activeIdx === idx ? "true" : undefined}
+                      onClick={() => goTo(idx)}
+                      type="button"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img alt="" aria-hidden="true" src={img.src} decoding="async" loading="lazy" />
+                    </button>
+                  ))}
+                </div>
+
+                <p
+                  className="lux-label hidden shrink-0 whitespace-nowrap lg:block"
+                  style={{ color: "var(--subtle)" }}
+                >
+                  ← → to browse
+                </p>
+              </m.div>
             )}
           </>
         ) : (
@@ -395,7 +443,8 @@ export default function ProjectView({
               aria-hidden="true"
               className="pointer-events-none absolute inset-0"
               style={{
-                backgroundImage: "radial-gradient(circle, rgba(194,168,120,0.15) 1px, transparent 1px)",
+                backgroundImage:
+                  "radial-gradient(circle, rgba(194,168,120,0.15) 1px, transparent 1px)",
                 backgroundSize: "24px 24px",
               }}
             />
@@ -404,7 +453,7 @@ export default function ProjectView({
               style={{
                 width: "9rem",
                 height: "9rem",
-                border: "1px solid rgba(194,168,120,0.22)",
+                border: "1px solid var(--gold-line)",
                 background: "rgba(194,168,120,0.03)",
               }}
             >
@@ -422,16 +471,16 @@ export default function ProjectView({
         )}
       </section>
 
-      {/* ── Body ────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1.5fr_0.85fr] lg:gap-14">
+      {/* ── Body ───────────────────────────────────────────────── */}
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-[1.55fr_0.8fr] lg:gap-16">
 
           {/* Narrative */}
-          <div className="space-y-10">
+          <div className="space-y-14">
             <div>
               <SectionLabel>Overview</SectionLabel>
               <p
-                className="mb-4 max-w-2xl text-lg leading-9"
+                className="t-pretty mb-5 max-w-2xl text-xl leading-9"
                 style={{ color: "var(--fg)", fontWeight: 500 }}
               >
                 {project.overview}
@@ -439,7 +488,7 @@ export default function ProjectView({
               {project.details.map((d) => (
                 <p
                   key={d.slice(0, 24)}
-                  className="mb-3 max-w-2xl text-sm leading-8"
+                  className="t-pretty mb-3 max-w-2xl text-sm leading-8"
                   style={{ color: "var(--muted)" }}
                 >
                   {d}
@@ -448,89 +497,112 @@ export default function ProjectView({
             </div>
 
             <div>
-              <SectionLabel>Key Features</SectionLabel>
-              <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
-                {project.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="mt-2.5 h-px w-4 shrink-0"
-                      style={{ background: "linear-gradient(to right, var(--gold), rgba(194,168,120,0.2))" }}
-                    />
-                    <span className="text-sm leading-7" style={{ color: "var(--muted)" }}>{f}</span>
-                  </li>
+              <SectionLabel>What shipped</SectionLabel>
+              <m.ul
+                className="grid gap-3 sm:grid-cols-2"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.15 }}
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+              >
+                {project.features.map((f, i) => (
+                  <m.li
+                    key={f}
+                    className="feature-item"
+                    variants={{
+                      hidden:  { opacity: 0, y: 18 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease } },
+                    }}
+                  >
+                    <span aria-hidden="true" className="feature-item__n">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="t-pretty block text-sm leading-7" style={{ color: "var(--muted)" }}>
+                      {f}
+                    </span>
+                  </m.li>
                 ))}
-              </ul>
+              </m.ul>
             </div>
           </div>
 
-          {/* At a glance */}
+          {/* Sticky rail */}
           <aside className="lg:sticky lg:top-20 lg:self-start">
-            <div className="lux-panel p-6">
+            <div
+              ref={asideRef}
+              onPointerMove={onAsideMove}
+              className="lux-panel spotlight p-6"
+            >
               <Corners />
 
-              <p className="lux-label mb-5" style={{ color: "var(--gold)" }}>
-                At a Glance
+              <p className="lux-label mb-4" style={{ color: "var(--gold)" }}>
+                Built with
               </p>
-
-              <dl className="space-y-4">
-                {glanceRows.map((row) => (
-                  <div
-                    key={row.label}
-                    className="flex items-baseline justify-between gap-4 pb-4 last:pb-0"
-                    style={{ borderBottom: "1px solid var(--border)" }}
-                  >
-                    <dt className="lux-label" style={{ color: "var(--subtle)" }}>{row.label}</dt>
-                    <dd className="text-right text-sm font-600" style={{ fontWeight: 600 }}>{row.value}</dd>
-                  </div>
+              <div className="mb-6 flex flex-wrap gap-2">
+                {project.technologies.map((tech) => (
+                  <TechBadge key={tech} tech={tech} techIconMap={techIconMap} darkIcons={darkIcons} />
                 ))}
-              </dl>
+              </div>
 
-              {project.link && (
+              {project.link ? (
                 <a
                   href={project.link}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn-gold-outline group mt-6 inline-flex w-full items-center justify-center gap-2 rounded py-3 text-sm"
+                  className="btn-gold-outline group inline-flex w-full items-center justify-center gap-2 rounded-md py-3 text-sm"
                 >
                   {project.linkLabel}
                   <span className="transition-transform duration-300 group-hover:translate-x-1">
-                    <ArrowRight />
+                    <ArrowRightIcon />
                   </span>
                 </a>
+              ) : (
+                <p
+                  className="rounded-md px-4 py-3 text-center text-xs leading-6"
+                  style={{
+                    border: "1px solid var(--border)",
+                    background: "var(--bg)",
+                    color: "var(--subtle)",
+                  }}
+                >
+                  Source and deployment are private to the client.
+                </p>
               )}
+
+              <Link
+                href="/#contact"
+                className="nav-link mt-5 inline-flex items-center gap-2 text-sm"
+                style={{ color: "var(--muted)" }}
+              >
+                Discuss a project like this
+                <ArrowRightIcon className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </aside>
         </div>
-
-        {/* Technologies */}
-        <div className="mt-12 pt-10" style={{ borderTop: "1px solid var(--border)" }}>
-          <SectionLabel>Technologies</SectionLabel>
-          <div className="flex flex-wrap gap-2">
-            {project.technologies.map((tech) => (
-              <TechBadge key={tech} tech={tech} techIconMap={techIconMap} darkIcons={darkIcons} />
-            ))}
-          </div>
-        </div>
       </section>
 
-      {/* ── Prev / next project ─────────────────────────────────── */}
+      {/* ── Prev / next project ────────────────────────────────── */}
       {(prev || next) && (
         <nav
           aria-label="Other case studies"
           style={{ borderTop: "1px solid var(--border)", background: "var(--surface)" }}
         >
-          <div className="mx-auto grid max-w-6xl gap-px sm:grid-cols-2">
+          <div className="mx-auto grid max-w-6xl sm:grid-cols-2">
             {prev && (
               <Link
                 href={`/projects/${prev.id}`}
-                className="group flex flex-col gap-1.5 px-4 py-8 transition-colors sm:px-6 lg:px-8"
+                className="pager group flex flex-col gap-1.5 px-4 py-12 sm:px-6 lg:px-8"
               >
+                {prev.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img alt="" aria-hidden="true" src={prev.image} className="pager__bg" loading="lazy" />
+                )}
                 <span className="lux-label flex items-center gap-2" style={{ color: "var(--gold)" }}>
                   <span className="transition-transform duration-300 group-hover:-translate-x-1">←</span>
                   Previous
                 </span>
-                <span className="font-display text-xl leading-tight" style={{ fontWeight: 700 }}>
+                <span className="font-display text-2xl leading-tight" style={{ fontWeight: 700 }}>
                   {prev.name}
                 </span>
                 <span className="text-xs" style={{ color: "var(--subtle)" }}>{prev.category}</span>
@@ -539,14 +611,18 @@ export default function ProjectView({
             {next && (
               <Link
                 href={`/projects/${next.id}`}
-                className="group flex flex-col items-end gap-1.5 px-4 py-8 text-right transition-colors sm:px-6 lg:px-8"
+                className="pager group flex flex-col items-end gap-1.5 px-4 py-12 text-right sm:px-6 lg:px-8"
                 style={{ borderLeft: "1px solid var(--border)" }}
               >
+                {next.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img alt="" aria-hidden="true" src={next.image} className="pager__bg" loading="lazy" />
+                )}
                 <span className="lux-label flex items-center gap-2" style={{ color: "var(--gold)" }}>
                   Next
                   <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </span>
-                <span className="font-display text-xl leading-tight" style={{ fontWeight: 700 }}>
+                <span className="font-display text-2xl leading-tight" style={{ fontWeight: 700 }}>
                   {next.name}
                 </span>
                 <span className="text-xs" style={{ color: "var(--subtle)" }}>{next.category}</span>
@@ -556,7 +632,7 @@ export default function ProjectView({
         </nav>
       )}
 
-      {/* ── Lightbox ────────────────────────────────────────────── */}
+      {/* ── Lightbox ───────────────────────────────────────────── */}
       {lightbox && activeImage && createPortal(
         <div
           role="dialog"
@@ -569,8 +645,12 @@ export default function ProjectView({
 
           <button
             aria-label="Close fullscreen"
-            className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded transition-all duration-200"
-            style={{ border: "1px solid rgba(194,168,120,0.4)", color: "var(--gold)", background: "rgba(15,23,42,0.8)" }}
+            className="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-md transition-all duration-200"
+            style={{
+              border: "1px solid var(--gold-line)",
+              color: "var(--gold)",
+              background: "rgba(8,13,24,0.8)",
+            }}
             onClick={() => setLightbox(false)}
             type="button"
           >
@@ -592,28 +672,42 @@ export default function ProjectView({
             <>
               <button
                 aria-label="Previous image"
-                className="absolute left-4 z-10 grid h-11 w-11 place-items-center rounded transition-all duration-200"
-                style={{ border: "1px solid rgba(194,168,120,0.3)", color: "var(--gold)", background: "rgba(15,23,42,0.7)" }}
+                className="absolute left-4 z-10 grid h-11 w-11 place-items-center rounded-md transition-all duration-200"
+                style={{
+                  border: "1px solid var(--gold-line)",
+                  color: "var(--gold)",
+                  background: "rgba(8,13,24,0.7)",
+                }}
                 onClick={goPrev}
                 type="button"
               >
-                <ChevronLeft />
+                <ChevronIcon dir="left" className="h-5 w-5" />
               </button>
               <button
                 aria-label="Next image"
-                className="absolute right-4 z-10 grid h-11 w-11 place-items-center rounded transition-all duration-200"
-                style={{ border: "1px solid rgba(194,168,120,0.3)", color: "var(--gold)", background: "rgba(15,23,42,0.7)" }}
+                className="absolute right-4 z-10 grid h-11 w-11 place-items-center rounded-md transition-all duration-200"
+                style={{
+                  border: "1px solid var(--gold-line)",
+                  color: "var(--gold)",
+                  background: "rgba(8,13,24,0.7)",
+                }}
                 onClick={goNext}
                 type="button"
               >
-                <ChevronRight />
+                <ChevronIcon dir="right" className="h-5 w-5" />
               </button>
               <div
                 aria-live="polite"
-                className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full px-4 py-1.5 text-sm font-bold"
-                style={{ background: "rgba(15,23,42,0.8)", color: "var(--gold)", border: "1px solid rgba(194,168,120,0.3)", backdropFilter: "blur(4px)" }}
+                className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full px-4 py-1.5 text-sm"
+                style={{
+                  background: "rgba(8,13,24,0.8)",
+                  color: "var(--gold)",
+                  border: "1px solid var(--gold-line)",
+                  backdropFilter: "blur(4px)",
+                  fontWeight: 700,
+                }}
               >
-                {activeIdx + 1} / {imageCount}
+                {screenLabel(activeImage.alt)} · {activeIdx + 1} / {imageCount}
               </div>
             </>
           )}
