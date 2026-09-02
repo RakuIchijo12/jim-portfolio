@@ -66,24 +66,19 @@ export const stackGroups = [
       { name: "Alpine.js",    icon: "frontend/alpine-js",    color: "#77c1d2" },
       { name: "Tailwind CSS", icon: "frontend/tailwind-css", color: "#38bdf8" },
       { name: "Livewire",     icon: "frontend/livewire",     color: "#fb70b6" },
+      { name: "Inertia.js",   icon: "frontend/inertia-js",   color: "#9553e9" },
       { name: "HTML5",        icon: "frontend/html5",        color: "#e34f26" },
       { name: "CSS3",         icon: "frontend/css3",         color: "#1572b6" },
-      { name: "JavaScript",   icon: "frontend/javascript",   color: "#f7df1e" },
-      { name: "TypeScript",   icon: "frontend/typescript",   color: "#3178c6" },
     ],
   },
   {
     id: "backend",
     label: "Backend",
     items: [
-      { name: "Laravel",    icon: "backend/laravel",     color: "#ff4d3d" },
-      { name: "Filament",   icon: "backend/filament",    color: "#f6a800" },
-      { name: "PHP",        icon: "backend/php",         color: "#777bb4" },
-      { name: "Python",     icon: "backend/python",      color: "#3776ab" },
-      { name: "Django",     icon: "backend/django",      color: "#0c4b33" },
-      { name: "NestJS",     icon: "backend/nestjs",   color: "#e0234e" },
-      { name: "C",          icon: "backend/c",          color: "#a8b9cc" },
-      { name: "C++",        icon: "backend/cplusplus",  color: "#00599c" },
+      { name: "Laravel",  icon: "backend/laravel",  color: "#ff4d3d" },
+      { name: "Filament", icon: "backend/filament", color: "#f6a800", bleed: true },
+      { name: "Django",   icon: "backend/django",   color: "#0c4b33" },
+      { name: "NestJS",   icon: "backend/nestjs",   color: "#e0234e" },
     ],
   },
   {
@@ -92,8 +87,24 @@ export const stackGroups = [
     items: [
       { name: "MySQL",      icon: "database/mysql",      color: "#00758f" },
       { name: "PostgreSQL", icon: "database/postgresql", color: "#336791" },
+      { name: "SQLite",     icon: "database/sqlite",     color: "#0f80cc" },
+      { name: "Redis",      icon: "database/redis",      color: "#d82c20" },
       { name: "Firebase",   icon: "database/Firebase",   color: "#ffca28" },
       { name: "Supabase",   icon: "database/supabase",   color: "#3ecf8e" },
+    ],
+  },
+  {
+    id: "languages",
+    label: "Languages",
+    items: [
+      { name: "JavaScript",   icon: "languages/javascript",   color: "#f7df1e" },
+      { name: "TypeScript",   icon: "languages/typescript",   color: "#3178c6" },
+      { name: "PHP",          icon: "languages/php",          color: "#777bb4" },
+      { name: "Python",       icon: "languages/python",       color: "#3776ab" },
+      { name: "Java",         icon: "languages/java",         color: "#ea2d2e" },
+      { name: "C++",          icon: "languages/cplusplus",    color: "#00599c" },
+      { name: "C",            icon: "languages/c",            color: "#a8b9cc" },
+      { name: "Visual Basic", icon: "languages/visual-basic", color: "#945db7" },
     ],
   },
   {
@@ -131,10 +142,11 @@ export const stackGroups = [
 /** Kept in step with stackGroups so the hero counter cannot drift. */
 export const totalTechnologies = stackGroups.reduce((n, g) => n + g.items.length, 0);
 
+/** Numeric so the hero can count them up on entry. */
 export const heroStats = [
-  { value: "2+",                        label: "Years Experience" },
-  { value: `${totalTechnologies}`,      label: "Technologies"     },
-  { value: "3",                         label: "Industries"       },
+  { n: 2,                  suffix: "+", label: "Years Experience" },
+  { n: totalTechnologies,  suffix: "",  label: "Technologies"     },
+  { n: 3,                  suffix: "",  label: "Industries"       },
 ];
 
 export const projects = [
@@ -258,30 +270,36 @@ export const projects = [
 
 export const experience = [
   {
-    role: "Computer Programmer",
+    role: "Computer Programmer I",
     company: "Southern Philippines Medical Center (SPMC)",
     period: "Apr 2026 — Present",
     type: "Full-time · On-site",
     location: "Davao, Philippines",
     current: true,
+    stack: ["Laravel", "Inertia.js", "React", "TypeScript", "Django", "MySQL", "SQLite"],
     points: [
-      "Developing and maintaining healthcare systems for critical daily operations.",
-      "Supporting process automation, user management, internal workflows, and system maintenance.",
-      "Turning fast-moving operational requirements into dependable web tools.",
+      "Design, develop, and maintain hospital management systems supporting clinical and administrative operations for healthcare organizations.",
+      "Built comprehensive payroll management systems with role-based access control, user management, and multi-system API integration.",
+      "Developed healthcare workflow systems covering complex referral processes, compliance requirements, and enterprise-level reporting features.",
+      "Led database architecture and migration projects, including legacy system modernization and schema optimization aligned with business requirements.",
+      "Built responsive, scalable UIs with React and TypeScript, resolved critical backend/frontend issues, and produced technical documentation and training materials.",
       "Leveraging AI tools (Claude, OpenAI, Codex) to accelerate development and code review.",
     ],
   },
   {
-    role: "Full Stack Developer",
+    role: "Full Stack Laravel Developer",
     company: "DevbeansPH",
     period: "Nov 2024 — Oct 2025",
     type: "Full-time · On-site",
     location: "Davao, Philippines",
     current: false,
+    stack: ["Laravel", "Filament", "Livewire", "Alpine.js", "Tailwind CSS", "PHP", "MySQL", "Redis", "Git", "Jira"],
     points: [
-      "Built ERP and CRM features using Laravel, Filament PHP, Livewire, Tailwind CSS, and the TALL stack.",
-      "Designed dashboards, CRUD modules, role-based authentication, RESTful APIs, and database workflows.",
-      "Improved reliability with queues, jobs, events, caching, logs, debugging tools, and Pest PHP tests.",
+      "Developed and maintained scalable ERP/CRM features with Laravel, FilamentPHP, and the TALL stack, supporting mission-critical operations across sales, HR, payroll, inventory, and customer management.",
+      "Designed admin dashboards, CRUD modules, role-based authentication, and RESTful APIs following clean architecture and SOLID principles.",
+      "Managed database schemas through migrations and Eloquent ORM, and implemented background processing with Laravel queues, jobs, and events.",
+      "Improved performance and code quality with Redis caching, Telescope and Debugbar, and unit and feature tests in PestPHP.",
+      "Collaborated in an Agile workflow using Git, GitHub, and Jira — sprint planning, code reviews, and requirement gathering to bridge technical solutions with business needs.",
     ],
   },
   {
@@ -291,21 +309,29 @@ export const experience = [
     type: "Contract · On-site",
     location: "Davao, Philippines",
     current: false,
+    stack: ["Angular", "TypeScript", "NestJS", "Node.js", "HTML", "CSS", "Git"],
     points: [
-      "Completed full-stack onboarding with Angular 16 and contributed to application maintenance.",
-      "Strengthened frontend fundamentals across HTML, CSS, components, and team workflows.",
+      "Developed full-stack web applications with Angular 16 and NestJS, delivering features on a fast-paced two-month engagement.",
+      "Built and shipped an Automated Magnetic Lock Admin Website, giving administrators one interface for managing access control systems.",
+      "Implemented responsive Angular frontends and RESTful NestJS APIs, keeping client-server integration seamless.",
+      "Completed structured onboarding in full-stack practices, ramping up quickly on the company tech stack and coding standards.",
+      "Collaborated with the development team through code reviews and version control workflows to deliver against project requirements.",
     ],
   },
   {
-    role: "Back End Developer",
+    role: "Software Engineer Intern",
     company: "Jairosoft Inc.",
     period: "Feb 2024 — May 2024",
     type: "Internship · On-site",
     location: "Davao, Philippines",
     current: false,
+    stack: ["NestJS", "Node.js", "Angular", "TypeScript", "PostgreSQL"],
     points: [
-      "Worked on backend development for an automated magnetic lock system.",
-      "Practiced API design, database handling, and backend implementation in a professional environment.",
+      "Developed the backend of an Automated Magnetic Lock Admin Website in NestJS, building RESTful APIs for access control operations.",
+      "Integrated the web application with physical door lock hardware via Raspberry Pi 4, enabling real-time device communication and remote lock control.",
+      "Designed database models and API endpoints handling user access records, device status, and administrative functions.",
+      "Worked across the stack with Angular 16 on the frontend, connecting UI features to backend services.",
+      "Gained hands-on IoT experience bridging web software with embedded hardware on a production-oriented project.",
     ],
   },
 ] as const;
