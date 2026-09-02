@@ -28,49 +28,59 @@ export default function ThemeToggle({ className = "h-9 w-9" }: { className?: str
   return (
     <button
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-pressed={isDark}
       title={isDark ? "Light mode" : "Dark mode"}
       onClick={toggle}
       suppressHydrationWarning
       type="button"
-      className={`grid place-items-center rounded transition-all duration-220 ${className}`}
-      style={{
-        border: "1px solid var(--border-hv)",
-        color: "var(--muted)",
-        background: "transparent",
-      }}
-      onMouseEnter={(e) => {
-        const t = e.currentTarget as HTMLButtonElement;
-        t.style.borderColor = "var(--gold)";
-        t.style.color = "var(--gold)";
-        t.style.background = "var(--gold-light)";
-      }}
-      onMouseLeave={(e) => {
-        const t = e.currentTarget as HTMLButtonElement;
-        t.style.borderColor = "var(--border-hv)";
-        t.style.color = "var(--muted)";
-        t.style.background = "transparent";
-      }}
+      className={`icon-btn relative overflow-hidden ${className}`}
     >
-      <svg
+      {/* Both marks live in the same box and cross-rotate, so the swap reads
+          as one object turning rather than two icons blinking. */}
+      <span
         suppressHydrationWarning
         aria-hidden="true"
-        className="h-4 w-4"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
+        className="absolute inset-0 grid place-items-center transition-all duration-500"
+        style={{
+          opacity: isDark ? 1 : 0,
+          transform: isDark ? "rotate(0deg) scale(1)" : "rotate(-90deg) scale(0.6)",
+        }}
       >
-        {isDark ? (
-          <>
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-          </>
-        ) : (
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+        </svg>
+      </span>
+
+      <span
+        suppressHydrationWarning
+        aria-hidden="true"
+        className="absolute inset-0 grid place-items-center transition-all duration-500"
+        style={{
+          opacity: isDark ? 0 : 1,
+          transform: isDark ? "rotate(90deg) scale(0.6)" : "rotate(0deg) scale(1)",
+        }}
+      >
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
           <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z" />
-        )}
-      </svg>
+        </svg>
+      </span>
     </button>
   );
 }

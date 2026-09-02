@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { MotionProvider } from "@/app/providers";
@@ -34,6 +34,22 @@ export const metadata: Metadata = {
     "Enterprise Software",
     "Davao Philippines",
   ],
+  openGraph: {
+    title: "Jimuel Dave Rodado | Software Engineer",
+    description:
+      "Enterprise software for healthcare and operations teams — hospital management systems, ERP platforms, and mission-critical applications.",
+    type: "website",
+    locale: "en_PH",
+    siteName: "Jimuel Dave Rodado",
+  },
+};
+
+/* Paints the browser chrome to match whichever ground is showing. */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAF7F0" },
+    { media: "(prefers-color-scheme: dark)",  color: "#080D18" },
+  ],
 };
 
 export default function RootLayout({
@@ -56,6 +72,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-full antialiased">
         <MotionProvider>{children}</MotionProvider>
+        {/* Film grain over everything — the layer that stops flat gradients
+            reading as screen fill. Pointer-events none, hidden when the user
+            asks for reduced motion. */}
+        <div aria-hidden="true" className="grain-overlay" />
       </body>
     </html>
   );
