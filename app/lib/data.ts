@@ -79,6 +79,7 @@ export const stackGroups = [
       { name: "Filament", icon: "backend/filament", color: "#f6a800", bleed: true },
       { name: "Django",   icon: "backend/django",   color: "#0c4b33" },
       { name: "NestJS",   icon: "backend/nestjs",   color: "#e0234e" },
+      { name: "Node.js",  icon: "backend/Node.js",  color: "#339933" },
     ],
   },
   {
