@@ -24,44 +24,133 @@ export default function ProjectsSection() {
   const inView     = useInView(sectionRef, { once: true, amount: 0.1 });
   const scrollRef  = useRef<HTMLDivElement>(null);
 
-  const [progress, setProgress] = useState(0);
+  const trackRef   = useRef<HTMLDivElement>(null);
+
+  /**
+   * The scrub thumb is a window, not a step counter. Its width is the share of
+   * the strip currently on screen and its position is where that share sits, so
+   * it stays truthful whether one card fills the viewport or three share it —
+   * the failure of the old segmented rail, which implied four equal steps
+   * across a strip that only travels a fraction of one card on a wide screen.
+   */
+  const [rail, setRail] = useState({
+    viewFrac:   1,          // thumb width, 0-1 of the track
+    posFrac:    0,          // thumb left edge, 0-1 of the track
+    ticks:      [] as number[], // card boundaries, 0-1 of the track
+    lead:       0,          // leftmost card at least half on screen
+    scrollable: false,
+  });
   const [nearest,  setNearest]  = useState(0);
   const [atStart,  setAtStart]  = useState(true);
   const [atEnd,    setAtEnd]    = useState(false);
+  const [scrubbing, setScrubbing] = useState(false);
+  // The hint has done its job the moment they move the strip.
+  const [hasScrolled, setHasScrolled] = useState(false);
 
-  /** Keep the progress rail and arrow states in step with the scroller. */
+  /**
+   * Distance from one card's start to the next — its width plus the rail gap,
+   * which is 1rem on phones and 1.5rem from sm up. Measuring the two cards
+   * beats hardcoding a gap that only matches one breakpoint.
+   */
+  const cardStep = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return 0;
+    const first  = el.children[0] as HTMLElement | undefined;
+    const second = el.children[1] as HTMLElement | undefined;
+    if (first && second) return second.offsetLeft - first.offsetLeft;
+    return first ? first.offsetWidth : el.clientWidth * 0.8;
+  }, []);
+
+  /** Keep the dots, the scrub thumb and the arrow states in step with the strip. */
   const syncScrollState = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const max = el.scrollWidth - el.clientWidth;
-    setProgress(max > 0 ? el.scrollLeft / max : 0);
-    setAtStart(el.scrollLeft <= 2);
-    setAtEnd(max > 0 ? el.scrollLeft >= max - 2 : true);
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    const max = scrollWidth - clientWidth;
+    setAtStart(scrollLeft <= 2);
+    setAtEnd(max > 0 ? scrollLeft >= max - 2 : true);
+    if (scrollLeft > 2) setHasScrolled(true);
 
-    const first = el.firstElementChild as HTMLElement | null;
-    if (first) {
-      const step = first.offsetWidth + 24;
-      setNearest(Math.min(projects.length - 1, Math.round(el.scrollLeft / step)));
+    // Phones page one card at a time, so the dots track the nearest card.
+    const step = cardStep();
+    if (step > 0) {
+      const idx = Math.round(scrollLeft / step);
+      setNearest(Math.max(0, Math.min(projects.length - 1, idx)));
     }
+
+    const cards = Array.from(el.children) as HTMLElement[];
+    /**
+     * Name the card the thumb points at, read off travel rather than off
+     * whichever card sits leftmost. Leftmost barely moves when three cards
+     * share a wide viewport: the strip could sit at its far end still naming
+     * card two, which is what made the label look stuck. Travel pins the
+     * first card to the start and the last to the end, so both edges say
+     * something the reader can actually see.
+     */
+    const lead = max > 0
+      ? Math.max(0, Math.min(projects.length - 1, Math.round((scrollLeft / max) * (projects.length - 1))))
+      : 0;
+
+    setRail({
+      viewFrac:   scrollWidth > 0 ? clientWidth / scrollWidth : 1,
+      posFrac:    scrollWidth > 0 ? scrollLeft / scrollWidth : 0,
+      ticks:      scrollWidth > 0 ? cards.slice(1).map((card) => card.offsetLeft / scrollWidth) : [],
+      lead,
+      scrollable: max > 2,
+    });
+  }, [cardStep]);
+
+  /**
+   * Map a pointer x to a scroll position, centring the thumb under the finger.
+   * Snap is suspended for the duration so it can't yank the strip mid-scrub.
+   */
+  const scrubTo = useCallback((clientX: number) => {
+    const el = scrollRef.current;
+    const track = trackRef.current;
+    if (!el || !track) return;
+    const rect = track.getBoundingClientRect();
+    const frac = (clientX - rect.left) / rect.width;
+    const max  = el.scrollWidth - el.clientWidth;
+    el.scrollLeft = Math.max(0, Math.min(max, frac * el.scrollWidth - el.clientWidth / 2));
   }, []);
 
-  /** Advance by one card plus the flex gap. */
+  const onScrubDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    const el = scrollRef.current;
+    if (el) el.style.scrollSnapType = "none";
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setScrubbing(true);
+    setHasScrolled(true);
+    scrubTo(e.clientX);
+  }, [scrubTo]);
+
+  const onScrubMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (scrubbing) scrubTo(e.clientX);
+  }, [scrubbing, scrubTo]);
+
+  /** Releasing hands the strip back to scroll-snap, which settles it onto a card. */
+  const onScrubUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!scrubbing) return;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    setScrubbing(false);
+    const el = scrollRef.current;
+    if (el) el.style.scrollSnapType = "x mandatory";
+  }, [scrubbing]);
+
+  /** Advance by exactly one panel. */
   const nudge = useCallback((dir: 1 | -1) => {
     const el = scrollRef.current;
     if (!el) return;
-    const first = el.firstElementChild as HTMLElement | null;
-    const step = first ? first.offsetWidth + 24 : el.clientWidth * 0.8;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
-  }, []);
+    el.scrollBy({ left: dir * (cardStep() || el.clientWidth * 0.8), behavior: "smooth" });
+  }, [cardStep]);
 
-  /** Jump straight to a card from the segmented progress rail. */
+  /** Jump straight to a card from a page dot or a progress segment. */
   const goToCard = useCallback((idx: number) => {
     const el = scrollRef.current;
     if (!el) return;
-    const first = el.firstElementChild as HTMLElement | null;
-    const step = first ? first.offsetWidth + 24 : el.clientWidth * 0.8;
-    el.scrollTo({ left: idx * step, behavior: "smooth" });
-  }, []);
+    el.scrollTo({ left: idx * (cardStep() || el.clientWidth * 0.8), behavior: "smooth" });
+  }, [cardStep]);
 
   /* Pointer drag with inertia, plus arrow-key navigation. */
   useEffect(() => {
@@ -156,32 +245,38 @@ export default function ProjectsSection() {
           lead="IoT systems, real-time dashboards, and full-stack web applications."
           aside={
             <div className="flex items-center gap-3">
-              <span className="lux-label hidden sm:block" style={{ color: "var(--subtle)" }}>
+              <span className="lux-label" style={{ color: "var(--subtle)" }}>
                 {String(projects.length).padStart(2, "0")} Projects
               </span>
-              <span
-                aria-hidden="true"
-                className="hidden h-px w-6 sm:block"
-                style={{ background: "var(--border-hv)" }}
-              />
-              <button
-                type="button"
-                onClick={() => nudge(-1)}
-                disabled={atStart}
-                aria-label="Previous project"
-                className="icon-btn h-10 w-10"
-              >
-                <ChevronIcon dir="left" />
-              </button>
-              <button
-                type="button"
-                onClick={() => nudge(1)}
-                disabled={atEnd}
-                aria-label="Next project"
-                className="icon-btn h-10 w-10"
-              >
-                <ChevronIcon dir="right" />
-              </button>
+              {/* Arrows drive the carousel: sm and up, and only when there is
+                  somewhere to go. Two permanently dead buttons say nothing. */}
+              {rail.scrollable && (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="hidden h-px w-6 sm:block"
+                    style={{ background: "var(--border-hv)" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => nudge(-1)}
+                    disabled={atStart}
+                    aria-label="Previous project"
+                    className="icon-btn hidden h-10 w-10 sm:grid"
+                  >
+                    <ChevronIcon dir="left" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => nudge(1)}
+                    disabled={atEnd}
+                    aria-label="Next project"
+                    className="icon-btn hidden h-10 w-10 sm:grid"
+                  >
+                    <ChevronIcon dir="right" />
+                  </button>
+                </>
+              )}
             </div>
           }
           className="mb-8 sm:mb-12"
@@ -192,7 +287,7 @@ export default function ProjectsSection() {
           {/* Edge fades — only on the side that still has cards to reveal */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 transition-opacity duration-300 sm:w-16"
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 transition-opacity duration-300 sm:w-16"
             style={{
               background: "linear-gradient(90deg, var(--surface), transparent)",
               opacity: atStart ? 0 : 1,
@@ -200,7 +295,7 @@ export default function ProjectsSection() {
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 transition-opacity duration-300 sm:w-16"
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 transition-opacity duration-300 sm:w-16"
             style={{
               background: "linear-gradient(270deg, var(--surface), transparent)",
               opacity: atEnd ? 0 : 1,
@@ -213,13 +308,7 @@ export default function ProjectsSection() {
             aria-label="Project carousel"
             tabIndex={0}
             onKeyDown={onRailKeyDown}
-            className="no-bar flex gap-6 overflow-x-auto px-4 pb-4 pt-4 sm:px-6 lg:px-8"
-            style={{
-              scrollSnapType: "x mandatory",
-              WebkitOverflowScrolling: "touch",
-              cursor: "grab",
-              userSelect: "none",
-            }}
+            className="no-bar project-rail px-4 pb-4 pt-4 sm:px-6 lg:px-8"
             variants={stagger}
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
@@ -228,8 +317,8 @@ export default function ProjectsSection() {
               <m.div
                 key={project.id}
                 variants={fadeUp}
-                className="w-[85vw] shrink-0 sm:w-80 lg:w-96"
-                style={{ scrollSnapAlign: "start" }}
+                className="w-[82vw] shrink-0 sm:w-80 lg:w-96"
+                style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
               >
                 <ProjectCard project={project} index={i + 1} />
               </m.div>
@@ -237,37 +326,94 @@ export default function ProjectsSection() {
           </m.div>
         </div>
 
-        {/* Segmented progress — one clickable segment per project */}
+        {/* Page dots — the phone's read on "which panel am I on", and big
+            enough to tap. The segmented rail below takes over from sm up. */}
         <m.div
-          className="mt-6 flex items-center gap-5"
+          className="mt-4 flex items-center justify-center sm:hidden"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.6, duration: 0.6, ease }}
+          transition={{ delay: 0.4, duration: 0.6, ease }}
         >
-          <div className="flex flex-1 items-center gap-1.5">
-            {projects.map((project, i) => {
-              // The nearest card fills proportionally; the rest read binary.
-              const fill = i < nearest ? 1 : i === nearest ? Math.max(0.25, progress) : 0;
-              return (
-                <button
-                  key={project.id}
-                  type="button"
-                  className="rail-seg"
-                  aria-label={`Go to ${project.name}`}
-                  onClick={() => goToCard(i)}
-                >
-                  <span
-                    className="rail-seg__fill"
-                    style={{ transform: `scaleX(${fill})` }}
-                  />
-                </button>
-              );
-            })}
-          </div>
-          <span className="lux-label whitespace-nowrap" style={{ color: "var(--subtle)" }}>
-            Drag to explore
-          </span>
+          {projects.map((project, i) => (
+            <button
+              key={project.id}
+              type="button"
+              className="dot-hit"
+              aria-current={i === nearest}
+              aria-label={`Go to ${project.name}`}
+              onClick={() => goToCard(i)}
+            >
+              <span className="dot" />
+            </button>
+          ))}
         </m.div>
+
+        {/* Scrub rail — grab the thumb and drag, or click the track to jump.
+            The thumb's width is the share of the strip on screen, so the
+            control is physically coupled to the gesture it names. */}
+        {rail.scrollable && (
+          <m.div
+            className="mt-6 hidden items-center gap-5 sm:flex"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.6, duration: 0.6, ease }}
+          >
+            <div className="flex min-w-0 shrink-0 items-center gap-3">
+              <span className="lux-label whitespace-nowrap" style={{ color: "var(--gold)" }}>
+                {String(rail.lead + 1).padStart(2, "0")}
+                <span style={{ color: "var(--subtle)" }}>{" / "}{String(projects.length).padStart(2, "0")}</span>
+              </span>
+              <span aria-hidden="true" className="h-px w-4" style={{ background: "var(--border-hv)" }} />
+              <span
+                className="truncate text-xs"
+                style={{ color: "var(--muted)", maxWidth: "11rem" }}
+              >
+                {projects[rail.lead].name}
+              </span>
+            </div>
+
+            <div
+              ref={trackRef}
+              role="slider"
+              tabIndex={0}
+              aria-label="Scrub through projects"
+              aria-valuemin={1}
+              aria-valuemax={projects.length}
+              aria-valuenow={rail.lead + 1}
+              aria-valuetext={projects[rail.lead].name}
+              onKeyDown={onRailKeyDown}
+              onPointerDown={onScrubDown}
+              onPointerMove={onScrubMove}
+              onPointerUp={onScrubUp}
+              onPointerCancel={onScrubUp}
+              className={`scrub${scrubbing ? " scrub--live" : ""}`}
+            >
+              <span className="scrub__track">
+                {rail.ticks.map((tick, i) => (
+                  <span
+                    key={projects[i + 1].id}
+                    aria-hidden="true"
+                    className="scrub__tick"
+                    style={{ left: `${tick * 100}%` }}
+                  />
+                ))}
+                <span
+                  className="scrub__thumb"
+                  style={{ left: `${rail.posFrac * 100}%`, width: `${rail.viewFrac * 100}%` }}
+                />
+              </span>
+            </div>
+
+            {/* Fades once the strip has moved — an invitation, not a caption. */}
+            <span
+              aria-hidden="true"
+              className="lux-label whitespace-nowrap transition-opacity duration-700"
+              style={{ color: "var(--subtle)", opacity: hasScrolled ? 0 : 1 }}
+            >
+              Drag to explore
+            </span>
+          </m.div>
+        )}
       </div>
     </section>
   );
