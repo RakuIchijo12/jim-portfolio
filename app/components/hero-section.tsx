@@ -107,9 +107,9 @@ export default function HeroSection() {
           className="hero-lead t-pretty max-w-xl"
           style={{ color: "var(--muted)" }}
         >
-          I architect enterprise software for healthcare and operations teams —
-          hospital management systems, business platforms, and mission-critical
-          applications built for reliability at scale.
+          I build the systems hospitals and operations teams run on every day:
+          management platforms, business software, and applications where
+          downtime is never an option.
         </m.p>
 
         {/* Identity line */}
