@@ -26,8 +26,8 @@ export const identityTags = [
 ];
 
 export const aboutBio = [
-  "I am a Software Engineer with a Computer Engineering background and a strong passion for scalable, maintainable, and useful web applications.",
-  "My work spans hospital systems, healthcare workflows, ERP and CRM platforms, internal automation, role-based access, dashboards, APIs, and operational tools.",
+  "I am a Software Engineer with a Computer Engineering background and hands-on experience building healthcare, ERP, CRM, HR, payroll, and operational systems.",
+  "I work mainly in Laravel, FilamentPHP, React, and TypeScript, with additional experience in Django, Angular, NestJS, MySQL, PostgreSQL, and REST APIs. My focus is reliable, maintainable software for institutions and teams that depend on accurate daily operations.",
 ];
 
 export const aboutCards = [
@@ -278,16 +278,15 @@ export const experience = [
     current: true,
     stack: ["Laravel", "Inertia.js", "React", "TypeScript", "Django", "MySQL", "SQLite"],
     points: [
-      "Design, develop, and maintain hospital management systems supporting clinical and administrative operations for healthcare organizations.",
-      "Built comprehensive payroll management systems with role-based access control, user management, and multi-system API integration.",
-      "Developed healthcare workflow systems covering complex referral processes, compliance requirements, and enterprise-level reporting features.",
-      "Led database architecture and migration projects, including legacy system modernization and schema optimization aligned with business requirements.",
-      "Built responsive, scalable UIs with React and TypeScript, resolved critical backend/frontend issues, and produced technical documentation and training materials.",
-      "Leveraging AI tools (Claude, OpenAI, Codex) to accelerate development and code review.",
+      "Design, develop, and maintain hospital management systems supporting clinical and administrative operations.",
+      "Built payroll and healthcare workflow systems with role-based access control, user management, reporting, and multi-system API integration.",
+      "Contributed to database architecture and legacy modernization through schema design, migrations, and performance-focused improvements.",
+      "Build responsive enterprise interfaces with React and TypeScript while resolving critical frontend and backend issues.",
+      "Use AI-assisted development tools including Claude, OpenAI, and Codex to accelerate development, review code, and improve delivery workflows.",
     ],
   },
   {
-    role: "Full Stack Laravel Developer",
+    role: "Full Stack Developer",
     company: "DevbeansPH",
     period: "Nov 2024 — Oct 2025",
     type: "Full-time · On-site",
@@ -295,11 +294,11 @@ export const experience = [
     current: false,
     stack: ["Laravel", "Filament", "Livewire", "Alpine.js", "Tailwind CSS", "PHP", "MySQL", "Redis", "Git", "Jira"],
     points: [
-      "Developed and maintained scalable ERP/CRM features with Laravel, FilamentPHP, and the TALL stack, supporting mission-critical operations across sales, HR, payroll, inventory, and customer management.",
-      "Designed admin dashboards, CRUD modules, role-based authentication, and RESTful APIs following clean architecture and SOLID principles.",
-      "Managed database schemas through migrations and Eloquent ORM, and implemented background processing with Laravel queues, jobs, and events.",
-      "Improved performance and code quality with Redis caching, Telescope and Debugbar, and unit and feature tests in PestPHP.",
-      "Collaborated in an Agile workflow using Git, GitHub, and Jira — sprint planning, code reviews, and requirement gathering to bridge technical solutions with business needs.",
+      "Built and maintained ERP and CRM systems supporting sales, HR, payroll, inventory, and customer management workflows.",
+      "Developed admin dashboards, CRUD modules, role-based access control, and RESTful APIs using Laravel, FilamentPHP, and the TALL stack.",
+      "Applied clean architecture and SOLID principles to keep modules maintainable and extensible as requirements evolved.",
+      "Improved system performance using Redis caching and Laravel tooling while covering critical paths with unit and feature tests in PestPHP.",
+      "Worked in Agile sprints with Git, GitHub, and Jira, contributing to requirements analysis, sprint planning, code reviews, and feature delivery.",
     ],
   },
   {
@@ -311,11 +310,9 @@ export const experience = [
     current: false,
     stack: ["Angular", "TypeScript", "NestJS", "Node.js", "HTML", "CSS", "Git"],
     points: [
-      "Developed full-stack web applications with Angular 16 and NestJS, delivering features on a fast-paced two-month engagement.",
-      "Built and shipped an Automated Magnetic Lock Admin Website, giving administrators one interface for managing access control systems.",
-      "Implemented responsive Angular frontends and RESTful NestJS APIs, keeping client-server integration seamless.",
-      "Completed structured onboarding in full-stack practices, ramping up quickly on the company tech stack and coding standards.",
-      "Collaborated with the development team through code reviews and version control workflows to deliver against project requirements.",
+      "Developed full-stack web application features using Angular 16, NestJS, TypeScript, and RESTful APIs.",
+      "Built an Automated Magnetic Lock Administration Website for managing access control operations through a centralized interface.",
+      "Implemented responsive frontend components and backend services while collaborating through code reviews and version-control workflows.",
     ],
   },
   {
@@ -327,11 +324,9 @@ export const experience = [
     current: false,
     stack: ["NestJS", "Node.js", "Angular", "TypeScript", "PostgreSQL"],
     points: [
-      "Developed the backend of an Automated Magnetic Lock Admin Website in NestJS, building RESTful APIs for access control operations.",
-      "Integrated the web application with physical door lock hardware via Raspberry Pi 4, enabling real-time device communication and remote lock control.",
-      "Designed database models and API endpoints handling user access records, device status, and administrative functions.",
-      "Worked across the stack with Angular 16 on the frontend, connecting UI features to backend services.",
-      "Gained hands-on IoT experience bridging web software with embedded hardware on a production-oriented project.",
+      "Developed backend and API features for an automated magnetic lock security system using NestJS and PostgreSQL.",
+      "Integrated web software with Raspberry Pi hardware to support real-time device communication and remote lock control.",
+      "Worked across backend, database, and Angular frontend layers while testing and debugging production-oriented features.",
     ],
   },
 ] as const;
