@@ -24,8 +24,7 @@ export interface ProjectData {
 function RealEstateMark() {
   return (
     <div
-      className="relative flex h-full w-full flex-col items-center justify-center gap-3"
-      style={{ minHeight: "13rem" }}
+      className="relative flex h-full min-h-44 w-full flex-col items-center justify-center gap-3 sm:min-h-52"
     >
       <div
         aria-hidden="true"
@@ -155,15 +154,14 @@ export default function ProjectCard({ project, index }: { project: ProjectData; 
             <img
               alt={project.images[0].alt}
               src={project.images[0].src}
-              className="project-shot w-full rounded-sm object-cover"
-              style={{ height: "13rem" }}
+              className="project-shot h-44 w-full rounded-sm object-cover sm:h-52"
               decoding="async"
               loading="lazy"
             />
             {/* Scrim that lifts on hover so the shot reads at full contrast */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-10 opacity-100 transition-opacity duration-500 group-hover:opacity-0"
+              className="pointer-events-none absolute inset-0 z-10 hidden opacity-100 transition-opacity duration-500 group-hover:opacity-0 [@media(hover:hover)]:block"
               style={{
                 background:
                   "linear-gradient(to top, color-mix(in srgb, var(--surface-alt) 55%, transparent), transparent 55%)",
@@ -176,7 +174,7 @@ export default function ProjectCard({ project, index }: { project: ProjectData; 
       </div>
 
       {/* Body */}
-      <div className="relative z-2 flex flex-1 flex-col gap-4 p-6">
+      <div className="relative z-2 flex flex-1 flex-col gap-4 p-5 sm:p-6">
         <div>
           <h3 className="font-display mb-2 text-xl leading-tight" style={{ fontWeight: 700 }}>
             {project.name}
