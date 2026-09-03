@@ -358,16 +358,15 @@ export default function ProjectsSection() {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ delay: 0.6, duration: 0.6, ease }}
           >
-            <div className="flex min-w-0 shrink-0 items-center gap-3">
+            <div className="flex shrink-0 items-center gap-3">
               <span className="lux-label whitespace-nowrap" style={{ color: "var(--gold)" }}>
                 {String(rail.lead + 1).padStart(2, "0")}
                 <span style={{ color: "var(--subtle)" }}>{" / "}{String(projects.length).padStart(2, "0")}</span>
               </span>
               <span aria-hidden="true" className="h-px w-4" style={{ background: "var(--border-hv)" }} />
-              <span
-                className="truncate text-xs"
-                style={{ color: "var(--muted)", maxWidth: "11rem" }}
-              >
+              {/* Named in full: a clipped name is worse than a shorter track,
+                  and the label is the only thing here that says which card. */}
+              <span className="whitespace-nowrap text-xs" style={{ color: "var(--muted)" }}>
                 {projects[rail.lead].name}
               </span>
             </div>
