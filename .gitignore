@@ -30,6 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# throwaway scratch scripts (browser-driving checks, one-off probes)
+.tmp-*
+
 # env files (can opt-in for committing if needed)
 .env*
 
