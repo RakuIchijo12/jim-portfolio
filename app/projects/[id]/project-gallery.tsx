@@ -219,6 +219,7 @@ export default function ProjectView({
   }, [lightbox]);
 
   const activeImage = hasImages ? project.images[activeIdx] : null;
+  const cover = "cover" in project ? project.cover : null;
 
   const facts = [
     { k: "Category", v: project.category },
@@ -437,8 +438,31 @@ export default function ProjectView({
             )}
           </>
         ) : (
-          <div className="lux-panel relative flex flex-col items-center justify-center gap-6 px-6 py-14 sm:py-20">
+          <div className="lux-panel relative flex flex-col items-center justify-center gap-6 overflow-hidden px-6 py-14 sm:py-20">
             <Corners />
+            {/* Atmosphere, not evidence: the photo sits under a scrim so it reads
+                as artwork rather than as a screenshot the caption denies having. */}
+            {cover && (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  src={cover}
+                  className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 dark:opacity-55"
+                  style={{ filter: "saturate(0.72)" }}
+                  decoding="async"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      "radial-gradient(ellipse 58% 68% at 50% 50%, color-mix(in srgb, var(--surface) 95%, transparent) 0%, color-mix(in srgb, var(--surface) 74%, transparent) 55%, color-mix(in srgb, var(--surface) 40%, transparent) 100%)",
+                  }}
+                />
+              </>
+            )}
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0"

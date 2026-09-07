@@ -274,6 +274,7 @@ export const projects = [
     ],
     technologies: ["Laravel", "Filament", "Livewire", "Alpine.js", "Tailwind CSS", "PHP", "MySQL"],
     images:    [],
+    cover:     "/projects/marrea-erp/cover.jpg",
     link:      "",
     linkLabel: "",
   },

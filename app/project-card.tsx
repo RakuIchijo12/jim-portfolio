@@ -18,6 +18,8 @@ export interface ProjectData {
   link: string;
   linkLabel: string;
   caseStudy?: boolean;
+  /** Stand-in artwork for a project under NDA, where no screenshot can ship. */
+  cover?: string;
 }
 
 /** Stand-in artwork for the private ERP, which ships no screenshots. */
@@ -101,6 +103,7 @@ function TechIcon({ tech }: { tech: string }) {
 export default function ProjectCard({ project, index }: { project: ProjectData; index?: number }) {
   const { ref, onPointerMove } = useSpotlight<HTMLElement>();
   const hasCaseStudy = project.caseStudy !== false;
+  const thumb = project.images[0] ?? (project.cover ? { src: project.cover, alt: "" } : null);
 
   return (
     <article
@@ -148,12 +151,12 @@ export default function ProjectCard({ project, index }: { project: ProjectData; 
           </span>
         )}
 
-        {project.images.length > 0 ? (
+        {thumb ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              alt={project.images[0].alt}
-              src={project.images[0].src}
+              alt={thumb.alt}
+              src={thumb.src}
               className="project-shot h-44 w-full rounded-sm object-cover sm:h-52"
               decoding="async"
               loading="lazy"
