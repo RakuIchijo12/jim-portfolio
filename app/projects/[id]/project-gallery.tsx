@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { m, useScroll, useSpring } from "framer-motion";
+import { m } from "framer-motion";
 import type { projects } from "@/app/lib/data";
 import { useSpotlight } from "@/app/components/ui/spotlight";
 import { RevealWords } from "@/app/components/ui/reveal";
@@ -170,14 +170,6 @@ export default function ProjectView({
 
   const { ref: asideRef, onPointerMove: onAsideMove } = useSpotlight<HTMLDivElement>();
 
-  /* Reading progress for the whole case study */
-  const { scrollYProgress } = useScroll();
-  const readProgress = useSpring(scrollYProgress, {
-    stiffness: 180,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   const navigate = useCallback((dir: 1 | -1) => {
@@ -232,9 +224,6 @@ export default function ProjectView({
 
   return (
     <div className="ambient-bg min-h-dvh" style={{ color: "var(--fg)" }}>
-
-      {/* ── Reading progress ───────────────────────────────────── */}
-      <m.div className="scroll-progress" style={{ scaleX: readProgress }} />
 
       {/* ── Sticky header ──────────────────────────────────────── */}
       <header

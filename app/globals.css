@@ -751,18 +751,6 @@ button, input, textarea, select { font: inherit; }
 .nav-pill:hover { color: var(--fg); }
 .nav-pill[data-on] { color: var(--gold); font-weight: 600; }
 
-/* Reading-progress bar — case-study pages only */
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--gold-deep), var(--gold) 45%, var(--gold-bright));
-  transform-origin: left;
-  z-index: 200;
-}
-
 /* Mobile sheet */
 /* Sits *below* the header (z-50) so the logo and the close button stay
    reachable while the sheet is open. */
@@ -911,71 +899,6 @@ button, input, textarea, select { font: inherit; }
 .dot-hit[aria-current="true"] .dot {
   width: 1.35rem;
   background: linear-gradient(90deg, var(--gold-dark), var(--gold));
-}
-
-/* Scrub rail. The thumb is a window over the strip — its width is the share
-   on screen, its position is where that share sits — so it reads correctly
-   whether one card fills the viewport or three share it. Driven straight off
-   scroll events with no transition, so it tracks the drag frame for frame
-   instead of easing along behind it. */
-.scrub {
-  position: relative;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  height: 1.5rem;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: grab;
-  /* The thumb owns horizontal gestures; the page keeps vertical ones. */
-  touch-action: pan-y;
-}
-
-.scrub--live { cursor: grabbing; }
-
-.scrub__track {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 3px;
-  border-radius: 99px;
-  background: var(--border-hv);
-}
-
-/* One hairline per card boundary, so the strip's structure is legible without
-   pretending the cards are equal steps of the travel. */
-.scrub__tick {
-  position: absolute;
-  top: -2px;
-  width: 1px;
-  height: 7px;
-  border-radius: 99px;
-  background: var(--border-hv);
-}
-
-.scrub__thumb {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  min-width: 1.5rem;
-  border-radius: 99px;
-  background: linear-gradient(90deg, var(--gold-dark), var(--gold));
-  box-shadow: 0 0 0 0 rgba(194, 168, 120, 0);
-  transition: box-shadow var(--dur) ease, filter var(--dur) ease;
-}
-
-.scrub:hover .scrub__thumb,
-.scrub:focus-visible .scrub__thumb,
-.scrub--live .scrub__thumb {
-  box-shadow: 0 4px 14px -4px rgba(194, 168, 120, 0.75);
-  filter: brightness(1.12);
-}
-
-.scrub:focus-visible {
-  outline: 1px solid var(--gold-line);
-  outline-offset: 4px;
-  border-radius: 99px;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
