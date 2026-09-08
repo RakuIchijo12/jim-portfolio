@@ -1,6 +1,6 @@
 /**
- * Maps a technology name — as written in `projects[].technologies` and
- * `experience[].stack` — to its logo under `/public/stack-icons`.
+ * Maps a technology name, as written in `projects[].technologies` and
+ * `experience[].stack`, to its logo under `/public/stack-icons`.
  * A name with no entry here falls back to a lettered badge at the call site.
  */
 export const TECH_ICON_MAP: Record<string, string> = {

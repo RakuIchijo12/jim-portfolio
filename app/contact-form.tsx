@@ -98,7 +98,7 @@ export default function ContactForm() {
         </h3>
         <p className="mt-3 max-w-sm text-sm leading-7" style={{ color: "var(--muted)" }}>
           {statusMessage} I read every message personally and will reply with a
-          clear next step — usually within 24 hours.
+          clear next step, usually within 24 hours.
         </p>
 
         <button

@@ -57,7 +57,7 @@ export default function AboutSection() {
             <span aria-hidden="true" className="lux-corner lux-corner--br" />
 
             <m.div className="relative" style={{ y: portraitY }}>
-              {/* Slowly turning conic ring — the frame, not the photo, moves */}
+              {/* Slowly turning conic ring: the frame moves, not the photo */}
               <m.div
                 aria-hidden="true"
                 className="absolute -inset-1.5 rounded-full"

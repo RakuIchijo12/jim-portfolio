@@ -20,7 +20,7 @@ function iconSrc(icon: string, ai?: boolean) {
 }
 
 /* `bleed` marks an asset that is a solid tile rather than a transparent
-   mark — it fills the plate and takes its shape instead of floating in it. */
+   mark, so it fills the plate and takes its shape instead of floating in it. */
 function StackIcon({ icon, ai, bleed }: { icon: string; ai?: boolean; bleed?: boolean }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element

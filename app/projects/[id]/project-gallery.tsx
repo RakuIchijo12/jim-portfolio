@@ -24,9 +24,9 @@ type Sibling = {
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-/** "Obsentry — Admin Dashboard" → "Admin Dashboard". */
+/** "Obsentry: Admin Dashboard" → "Admin Dashboard". */
 function screenLabel(alt: string) {
-  return alt.replace(/^.*?\s+[—–-]\s+/, "");
+  return alt.replace(/^[^:]*:\s*/, "");
 }
 
 /* ─── Small parts ────────────────────────────────────────────────── */
@@ -302,7 +302,7 @@ export default function ProjectView({
           {project.tagline}
         </m.p>
 
-        {/* Key facts, up front — these used to be buried in a sidebar box */}
+        {/* Key facts, up front. These used to be buried in a sidebar box */}
         <m.dl
           className="fact-strip"
           initial={{ opacity: 0, y: 18 }}
@@ -328,7 +328,7 @@ export default function ProjectView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.85, ease, delay: 0.3 }}
             >
-              {/* Browser chrome. The screen's own name sits where a URL would —
+              {/* Browser chrome. The screen's own name sits where a URL would sit:
                   honest, and it surfaces a caption we already author as alt text. */}
               <div className="window__bar">
                 <span aria-hidden="true" className="window__dots">
@@ -477,7 +477,7 @@ export default function ProjectView({
                 {project.category}
               </p>
               <p className="mx-auto mt-3 max-w-sm text-sm leading-7" style={{ color: "var(--muted)" }}>
-                A private client system — no public screenshots available.
+                A private client system, so no public screenshots available.
               </p>
             </div>
           </div>

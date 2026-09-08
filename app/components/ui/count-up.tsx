@@ -40,7 +40,7 @@ export default function CountUp({
 
     const tick = (now: number) => {
       const t = Math.min((now - start) / duration, 1);
-      // easeOutExpo — fast out of the gate, long settle
+      // easeOutExpo: fast out of the gate, long settle
       const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
       el.textContent = String(Math.round(eased * value));
       if (t < 1) raf = requestAnimationFrame(tick);

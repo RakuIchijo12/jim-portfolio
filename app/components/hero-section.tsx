@@ -83,7 +83,7 @@ export default function HeroSection() {
           Computer Engineer · Software Engineer
         </m.div>
 
-        {/* Name — each word rides up out of its own mask */}
+        {/* Name: each word rides up out of its own mask */}
         <h1 className="hero-name font-display" style={{ fontWeight: 700 }}>
           <RevealWords text="Jimuel Dave" delay={0.32} stagger={0.08} className="block" />
           <RevealWords
@@ -216,7 +216,7 @@ export default function HeroSection() {
         </m.div>
       </m.div>
 
-      {/* Scroll cue — a hairline that drains, then the arrow */}
+      {/* Scroll cue: a hairline that drains, then the arrow */}
       <m.div
         className="hero-scroll-cue absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-2.5"
         initial={{ opacity: 0 }}

@@ -20,7 +20,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Jimuel Dave Rodado | Software Engineer",
   description:
-    "Portfolio of Jimuel Dave Rodado — Computer Engineer, Full-Stack Developer specialising in Laravel, FilamentPHP, React, Next.js, and enterprise healthcare systems.",
+    "Portfolio of Jimuel Dave Rodado, Computer Engineer and Full-Stack Developer specialising in Laravel, FilamentPHP, React, Next.js, and enterprise healthcare systems.",
   // No `icons` override: app/icon.svg and app/apple-icon.png are picked up by
   // the file convention, which emits type/sizes and a content hash for cache busting.
   keywords: [
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Jimuel Dave Rodado | Software Engineer",
     description:
-      "Enterprise software for healthcare and operations teams — hospital management systems, ERP platforms, and mission-critical applications.",
+      "Enterprise software for healthcare and operations teams: hospital management systems, ERP platforms, and mission-critical applications.",
     type: "website",
     locale: "en_PH",
     siteName: "Jimuel Dave Rodado",
@@ -72,7 +72,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full antialiased">
         <MotionProvider>{children}</MotionProvider>
-        {/* Film grain over everything — the layer that stops flat gradients
+        {/* Film grain over everything: the layer that stops flat gradients
             reading as screen fill. Pointer-events none, hidden when the user
             asks for reduced motion. */}
         <div aria-hidden="true" className="grain-overlay" />

@@ -25,7 +25,7 @@ const bulletVariant = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease } },
 };
 
-/* Tighter than the bullet stagger — ten plates at 0.18s would crawl. */
+/* Tighter than the bullet stagger, since ten plates at 0.18s would crawl. */
 const plateStagger = {
   hidden:  {},
   visible: { transition: { staggerChildren: 0.045, delayChildren: 0.15 } },
@@ -37,7 +37,7 @@ const plateVariant = {
 };
 
 /**
- * One technology, as a logo disc — the same circular language the stack
+ * One technology, as a logo disc, in the same circular language the stack
  * section uses, at rail scale. The name rides above on hover, so a column
  * of these stays a tidy grid instead of a ragged run of word-pills.
  */
@@ -250,7 +250,7 @@ export default function ExperienceSection() {
                     </m.ul>
                   </div>
 
-                  {/* Left column, row 2 — the meta rail runs short, so the
+                  {/* Left column, row 2. The meta rail runs short, so the
                       stack fills it. On one column it falls in last. */}
                   {job.stack.length > 0 && (
                     <div

@@ -172,7 +172,7 @@ button, input, textarea, select { font: inherit; }
   border-radius: var(--r-xs);
 }
 
-/* Page scrollbar — thin, gold, unobtrusive */
+/* Page scrollbar: thin, gold, unobtrusive */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--surface-alt); }
 ::-webkit-scrollbar-thumb {
@@ -190,7 +190,7 @@ button, input, textarea, select { font: inherit; }
   font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
 }
 
-/* Fluid display scale — one source of truth for every section heading */
+/* Fluid display scale: one source of truth for every section heading */
 .t-display {
   font-size: clamp(2.5rem, 6.2vw, 5rem);
   line-height: 1.02;
@@ -228,12 +228,12 @@ button, input, textarea, select { font: inherit; }
   .t-em { color: var(--gold); }
 }
 
-/* Balanced heading wraps — no orphan words on wide screens */
+/* Balanced heading wraps, so no orphan words on wide screens */
 .t-balance { text-wrap: balance; }
 .t-pretty  { text-wrap: pretty; }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   MATERIAL — grain, ambient washes, aurora
+   MATERIAL: grain, ambient washes, aurora
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* Film grain over the whole viewport: the single cheapest thing that makes
@@ -500,7 +500,7 @@ button, input, textarea, select { font: inherit; }
   box-shadow: 0 12px 30px -14px rgba(194, 168, 120, 0.8);
 }
 
-/* Square icon button — social links, carousel arrows */
+/* Square icon button: social links, carousel arrows */
 .icon-btn {
   display: grid;
   place-items: center;
@@ -533,7 +533,7 @@ button, input, textarea, select { font: inherit; }
    SURFACES
    ══════════════════════════════════════════════════════════════════════════ */
 
-/* Raised card — reads as lifted on any section ground */
+/* Raised card, which reads as lifted on any section ground */
 .lux-card {
   position: relative;
   border: 1px solid var(--border);
@@ -552,7 +552,7 @@ button, input, textarea, select { font: inherit; }
   box-shadow: var(--shadow-lg);
 }
 
-/* Recessed panel — the well that raised things sit in */
+/* Recessed panel: the well that raised things sit in */
 .lux-panel {
   position: relative;
   border: 1px solid var(--border);
@@ -599,7 +599,7 @@ button, input, textarea, select { font: inherit; }
     var(--spot-line, rgba(194, 168, 120, 0.85)),
     transparent 62%
   );
-  /* Standard properties only — Lightning CSS adds the -webkit- forms from
+  /* Standard properties only, because Lightning CSS adds the -webkit- forms from
      the build targets, and a hand-written companion makes it drop both. */
   mask:
     linear-gradient(#000 0 0) content-box,
@@ -629,7 +629,7 @@ button, input, textarea, select { font: inherit; }
 .lux-corner--bl { bottom: -1px; left:  -1px; border-right: 0; border-top:    0; }
 .lux-corner--br { bottom: -1px; right: -1px; border-left:  0; border-top:    0; }
 
-/* Glass — floating badges, sticky bars */
+/* Glass: floating badges, sticky bars */
 .glass-card {
   background: rgba(250, 247, 240, 0.88);
   border: 1px solid var(--gold-line);
@@ -662,7 +662,7 @@ button, input, textarea, select { font: inherit; }
   background: var(--gold-light);
 }
 
-/* Status pill — "Available for work" */
+/* Status pill: "Available for work" */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -840,7 +840,7 @@ button, input, textarea, select { font: inherit; }
 
 .dark .project-badge { color: var(--gold); }
 
-/* Swipeable panels: on touch this is paged like an iOS carousel — native
+/* Swipeable panels: on touch this is paged like an iOS carousel using native
    momentum scrolling, one card per flick (scroll-snap-stop on the items), and
    overscroll containment so a sideways swipe never chains into the page scroll
    or the browser's back gesture. The mouse-drag affordances belong to sm and
@@ -1109,7 +1109,7 @@ button, input, textarea, select { font: inherit; }
 
 /* A square only fits inside a circle when its side is at most r√2, so 34px
    is the ceiling in this 52px plate. Logos that bleed to the edge of their
-   canvas — Laravel, Next.js, Tailwind — crossed the curve at 40px. */
+   canvas (Laravel, Next.js, Tailwind) crossed the curve at 40px. */
 .stack-tile__plate img {
   width: 2.125rem;
   height: 2.125rem;
@@ -1368,7 +1368,7 @@ textarea.field-input { padding-top: 1.75rem; resize: vertical; }
    ══════════════════════════════════════════════════════════════════════════ */
 
 /* Browser frame. Every screenshot in the set is a viewport capture at roughly
-   2:1, so the body is pinned to that ratio — a 16:9 stage letterboxed them all. */
+   2:1, so the body is pinned to that ratio. A 16:9 stage letterboxed them all. */
 .window {
   position: relative;
   overflow: hidden;
@@ -1493,7 +1493,7 @@ textarea.field-input { padding-top: 1.75rem; resize: vertical; }
   object-position: top;
 }
 
-/* Header fact strip — replaces the old sidebar "At a Glance" box.
+/* Header fact strip, which replaces the old sidebar "At a Glance" box.
    An explicit grid rather than flex-wrap, so the dividers know which cells
    actually start a row and none of them dangle at the left edge. */
 .fact-strip {

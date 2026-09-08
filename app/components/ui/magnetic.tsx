@@ -5,7 +5,7 @@ import { m, useMotionValue, useSpring } from "framer-motion";
 
 /**
  * Pulls its child a little toward the pointer, then springs back.
- * Fine-pointer only — on touch it is an inert wrapper.
+ * Fine-pointer only. On touch it is an inert wrapper.
  */
 export default function Magnetic({
   children,

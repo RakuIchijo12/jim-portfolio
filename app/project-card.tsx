@@ -225,7 +225,7 @@ export default function ProjectCard({ project, index }: { project: ProjectData; 
               Built at DevbeansPH
             </span>
             <span className="font-mono text-[0.62rem]" style={{ color: "var(--subtle)", opacity: 0.7 }}>
-              2024 – 2025
+              2024 - 2025
             </span>
           </div>
         )}

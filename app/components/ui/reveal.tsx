@@ -40,7 +40,7 @@ export function Reveal({
 }
 
 /**
- * Word-by-word mask reveal — each word rides up out of its own clipped box.
+ * Word-by-word mask reveal: each word rides up out of its own clipped box.
  * The signature move of the hero and every section heading.
  */
 export function RevealWords({

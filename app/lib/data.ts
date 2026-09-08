@@ -155,7 +155,7 @@ export const projects = [
     id: "obsentry",
     name: "Obsentry",
     category: "Vehicle Tracking",
-    tagline: "School vehicle monitoring — University of Mindanao",
+    tagline: "School vehicle monitoring at the University of Mindanao",
     overview:
       "A web-based system to monitor data from GPS, gas sensors, and RFID. Built to help track untracked school vehicles at the University of Mindanao.",
     details: [
@@ -171,11 +171,11 @@ export const projects = [
     ],
     technologies: ["HTML", "CSS", "JavaScript", "Node.js", "Express.js", "Firebase", "GitHub"],
     images: [
-      { src: "/projects/obsentry/login.webp",            alt: "Obsentry — Login"           },
-      { src: "/projects/obsentry/admin-dashboard.webp",  alt: "Obsentry — Admin Dashboard" },
-      { src: "/projects/obsentry/admin-maps.webp",       alt: "Obsentry — Admin Maps"      },
-      { src: "/projects/obsentry/user-dashboard.webp",   alt: "Obsentry — User Dashboard"  },
-      { src: "/projects/obsentry/user-maps.webp",        alt: "Obsentry — User Maps"       },
+      { src: "/projects/obsentry/login.webp",            alt: "Obsentry: Login"           },
+      { src: "/projects/obsentry/admin-dashboard.webp",  alt: "Obsentry: Admin Dashboard" },
+      { src: "/projects/obsentry/admin-maps.webp",       alt: "Obsentry: Admin Maps"      },
+      { src: "/projects/obsentry/user-dashboard.webp",   alt: "Obsentry: User Dashboard"  },
+      { src: "/projects/obsentry/user-maps.webp",        alt: "Obsentry: User Maps"       },
     ],
     link: "https://um-obsentry.onrender.com/",
     linkLabel: "View Live Site",
@@ -284,7 +284,7 @@ export const experience = [
   {
     role: "Computer Programmer I",
     company: "Southern Philippines Medical Center (SPMC)",
-    period: "Apr 2026 — Present",
+    period: "Apr 2026 - Present",
     type: "Full-time · On-site",
     location: "Davao, Philippines",
     current: true,
@@ -300,7 +300,7 @@ export const experience = [
   {
     role: "Full Stack Developer",
     company: "DevbeansPH",
-    period: "Nov 2024 — Oct 2025",
+    period: "Nov 2024 - Oct 2025",
     type: "Full-time · On-site",
     location: "Davao, Philippines",
     current: false,
@@ -316,7 +316,7 @@ export const experience = [
   {
     role: "Junior Software Engineer",
     company: "Jairosoft Inc.",
-    period: "Sep 2024 — Oct 2024",
+    period: "Sep 2024 - Oct 2024",
     type: "Contract · On-site",
     location: "Davao, Philippines",
     current: false,
@@ -330,7 +330,7 @@ export const experience = [
   {
     role: "Software Engineer Intern",
     company: "Jairosoft Inc.",
-    period: "Feb 2024 — May 2024",
+    period: "Feb 2024 - May 2024",
     type: "Internship · On-site",
     location: "Davao, Philippines",
     current: false,

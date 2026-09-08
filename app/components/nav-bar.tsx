@@ -107,7 +107,7 @@ export default function NavBar() {
         >
           <div className="relative mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
 
-            {/* Monogram — expands to the full surname on hover */}
+            {/* Monogram, which expands to the full surname on hover */}
             <a
               href="#home"
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
@@ -186,7 +186,7 @@ export default function NavBar() {
               </Magnetic>
             </div>
 
-            {/* Mobile trigger — the two rules cross into an X */}
+            {/* Mobile trigger: the two rules cross into an X */}
             <button
               type="button"
               className="ml-auto grid h-10 w-10 place-items-center rounded-md lg:hidden"
@@ -244,7 +244,7 @@ export default function NavBar() {
                     data-on={activeHash === link.href ? "true" : undefined}
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
-                    // Entry staggers; exit does not — AnimatePresence waits for
+                    // Entry staggers; exit does not, because AnimatePresence waits for
                     // the slowest child, so a staggered exit makes the sheet
                     // linger on screen after the tap.
                     exit={{ opacity: 0, y: 8, transition: { duration: 0.15, delay: 0 } }}
