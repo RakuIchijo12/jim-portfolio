@@ -1,29 +1,100 @@
 "use client";
 
 import { Fragment } from "react";
-import { m } from "framer-motion";
+import { m, type Variants } from "framer-motion";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+export const ease = [0.16, 1, 0.3, 1] as const;
+
+type Token = { text: string; em: boolean };
 
 /**
- * A block that wipes up into view once, from a clipped edge.
- * Works with arbitrary inline markup inside, unlike a per-word split.
+ * Splits copy into words. Words wrapped in asterisks are emphasised and set
+ * in the italic serif, and emphasis can span several words:
+ * "Built to solve *real problems.*"
  */
+export function tokenize(text: string): Token[] {
+  const tokens: Token[] = [];
+  let open = false;
+  for (const raw of text.split(/\s+/).filter(Boolean)) {
+    let word = raw;
+    let em = open;
+    if (word.startsWith("*")) {
+      word = word.slice(1);
+      em = true;
+      open = true;
+    }
+    const close = word.match(/\*([^*]*)$/);
+    if (close && close.index !== undefined) {
+      word = word.slice(0, close.index) + close[1];
+      open = false;
+    }
+    tokens.push({ text: word, em });
+  }
+  return tokens;
+}
+
+const word: Variants = {
+  hidden: { y: "112%" },
+  shown: { y: "0%", transition: { duration: 1.05, ease } },
+};
+
+/**
+ * Each word rises out of its own clipped box. Plays when scrolled into view,
+ * or when `play` turns true if it is given.
+ */
+export function RevealWords({
+  text,
+  className = "",
+  delay = 0,
+  stagger = 0.06,
+  amount = 0.5,
+  play,
+}: {
+  text: string;
+  className?: string;
+  delay?: number;
+  stagger?: number;
+  amount?: number;
+  play?: boolean;
+}) {
+  const tokens = tokenize(text);
+  const parent: Variants = {
+    hidden: {},
+    shown: { transition: { staggerChildren: stagger, delayChildren: delay } },
+  };
+  const trigger =
+    play === undefined
+      ? { initial: "hidden", whileInView: "shown", viewport: { once: true, amount } }
+      : { initial: "hidden", animate: play ? "shown" : "hidden" };
+
+  return (
+    <m.span className={className} variants={parent} {...trigger}>
+      {tokens.map((token, i) => (
+        <Fragment key={`${token.text}-${i}`}>
+          <span className={token.em ? "mask mask--em" : "mask"}>
+            <m.span variants={word} className={token.em ? "t-em" : undefined}>
+              {token.text}
+            </m.span>
+          </span>
+          {i < tokens.length - 1 ? " " : null}
+        </Fragment>
+      ))}
+    </m.span>
+  );
+}
+
+/** A block that drifts up into place once it scrolls into view. */
 export function Reveal({
   children,
-  delay = 0,
-  y = 26,
-  duration = 0.85,
   className = "",
-  once = true,
-  amount = 0.35,
+  delay = 0,
+  y = 36,
+  amount = 0.3,
 }: {
   children: React.ReactNode;
+  className?: string;
   delay?: number;
   y?: number;
-  duration?: number;
-  className?: string;
-  once?: boolean;
   amount?: number;
 }) {
   return (
@@ -31,70 +102,21 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, amount }}
-      transition={{ duration, ease, delay }}
+      viewport={{ once: true, amount }}
+      transition={{ duration: 1.1, ease, delay }}
     >
       {children}
     </m.div>
   );
 }
 
-/**
- * Word-by-word mask reveal: each word rides up out of its own clipped box.
- * The signature move of the hero and every section heading.
- */
-export function RevealWords({
-  text,
-  delay = 0,
-  stagger = 0.055,
-  duration = 0.9,
-  className = "",
-  inView = false,
-  as: Tag = "span",
-}: {
-  text: string;
-  delay?: number;
-  stagger?: number;
-  duration?: number;
-  className?: string;
-  /** Trigger on scroll into view instead of on mount. */
-  inView?: boolean;
-  as?: "span" | "h1" | "h2" | "h3";
-}) {
-  const words = text.split(" ");
-  const motionProps = inView
-    ? { initial: { y: "108%" }, whileInView: { y: "0%" }, viewport: { once: true, amount: 0.5 } }
-    : { initial: { y: "108%" }, animate: { y: "0%" } };
-
-  return (
-    <Tag className={className}>
-      {words.map((word, i) => (
-        // The separator must sit *outside* the mask: a trailing space inside
-        // an overflow:hidden inline-block is trimmed, which welds words together.
-        <Fragment key={`${word}-${i}`}>
-          <span className="word-mask">
-            <m.span
-              className="inline-block"
-              {...motionProps}
-              transition={{ duration, ease, delay: delay + i * stagger }}
-            >
-              {word}
-            </m.span>
-          </span>
-          {i < words.length - 1 ? " " : null}
-        </Fragment>
-      ))}
-    </Tag>
-  );
-}
-
-/** Standard container/child variants so sections stagger identically. */
-export const staggerParent = {
+/** Container and child variants, so lists stagger the same way everywhere. */
+export const staggerParent: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.08 } },
+  shown: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
 };
 
-export const fadeUpChild = {
-  hidden: { opacity: 0, y: 26 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease } },
+export const riseChild: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.95, ease } },
 };

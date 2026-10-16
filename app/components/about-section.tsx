@@ -1,241 +1,195 @@
 "use client";
 
 import { useRef } from "react";
-import { m, useInView, useScroll, useTransform } from "framer-motion";
-import { aboutBio, aboutCards, labNotes } from "@/app/lib/data";
-import SectionHead from "@/app/components/ui/section-head";
-import SpotlightCard from "@/app/components/ui/spotlight";
-import { fadeUpChild, staggerParent } from "@/app/components/ui/reveal";
+import { m } from "framer-motion";
+import { aboutBio, aboutCards, heroStats, labNotes } from "@/app/lib/data";
+import { SectionMeta } from "@/app/components/ui/section-head";
+import CountUp from "@/app/components/ui/count-up";
+import RotatingBadge from "@/app/components/ui/rotating-badge";
+import { ease, Reveal, riseChild, staggerParent } from "@/app/components/ui/reveal";
+import ScrollLit from "@/app/components/ui/scroll-lit";
+import { SHAPE_CLASS, SHAPE_COLOR, SHAPE_CYCLE } from "@/app/components/ui/shapes";
+import { useOffscreenPause } from "@/app/components/ui/use-offscreen";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const sweep = [0.76, 0, 0.24, 1] as const;
+
+const MANIFESTO =
+  "Engineering software for institutions that cannot afford to *fail.* [circle] " +
+  "I build hospital systems, ERP platforms [square] and the everyday tools operations " +
+  "teams depend on, made to be reliable, readable and quietly [tri] *beautiful.*";
+
+function Gauge({
+  value,
+  label,
+  color,
+  delay,
+}: {
+  value: number;
+  label: string;
+  color: string;
+  delay: number;
+}) {
+  return (
+    <div className="gauge">
+      <div className="gauge__dial">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="var(--line)" strokeWidth="1.5" />
+          <m.circle
+            cx="50"
+            cy="50"
+            r="44"
+            fill="none"
+            stroke={color}
+            strokeWidth="5"
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: value / 100 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 1.8, ease, delay }}
+          />
+        </svg>
+        <span className="gauge__n">
+          <CountUp value={value} suffix="%" duration={1800} />
+        </span>
+      </div>
+      <span className="t-label text-muted">{label}</span>
+    </div>
+  );
+}
+
+const PLATE_SHAPES = SHAPE_CYCLE;
+const GAUGE_COLORS = ["var(--brand-terra)", "var(--ochre)", "var(--olive)"];
 
 export default function AboutSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const metersRef  = useRef<HTMLDivElement>(null);
-  const metersInView = useInView(metersRef, { once: true, amount: 0.4 });
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-  const portraitY = useTransform(scrollYProgress, [0, 1], [24, -24]);
+  const figRef = useRef<HTMLElement>(null);
+  useOffscreenPause(figRef);
 
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="relative py-16 sm:py-24 lg:py-32"
-      style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}
-    >
-      <div aria-hidden="true" className="gold-rule absolute inset-x-0 top-0 opacity-50" />
+    <section id="about" className="section">
+      <div className="wrap">
+        <SectionMeta index="01" label="About" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <ScrollLit text={MANIFESTO} className="manifesto t-pretty" />
 
-        <SectionHead
-          eyebrow="01 / About"
-          heading={
-            <>
-              Engineering software for institutions that cannot afford to{" "}
-              <em className="t-em">fail.</em>
-            </>
-          }
-        />
-
-        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-16">
-
-          {/* ── Left: portrait card ── */}
-          <m.div
-            className="lux-panel flex flex-col items-center gap-6 p-6 sm:p-8"
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.9, ease }}
+        <div className="about-grid">
+          {/* Figure: the off-duty portrait, whole at its own 2:3 ratio, framed with crop marks */}
+          <m.figure
+            ref={figRef}
+            className="about-fig lg:sticky lg:top-28"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 1.2, ease }}
           >
-            <span aria-hidden="true" className="lux-corner lux-corner--tl" />
-            <span aria-hidden="true" className="lux-corner lux-corner--tr" />
-            <span aria-hidden="true" className="lux-corner lux-corner--bl" />
-            <span aria-hidden="true" className="lux-corner lux-corner--br" />
+            <span aria-hidden="true" className="crop crop--tl" />
+            <span aria-hidden="true" className="crop crop--tr" />
+            <span aria-hidden="true" className="crop crop--bl" />
+            <span aria-hidden="true" className="crop crop--br" />
 
-            <m.div className="relative" style={{ y: portraitY }}>
-              {/* Slowly turning conic ring: the frame moves, not the photo */}
-              <m.div
-                aria-hidden="true"
-                className="absolute -inset-1.5 rounded-full"
-                style={{
-                  background:
-                    "conic-gradient(from 0deg, transparent 0deg, var(--gold) 70deg, var(--gold-bright) 110deg, var(--gold) 150deg, transparent 230deg, var(--gold-dark) 300deg, transparent 360deg)",
-                  opacity: 0.55,
-                }}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+            <div className="about-fig__frame">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/jim-cafe-portrait-optimized.webp"
+                alt="Jimuel Dave Rodado smiling with arms folded at a garden cafe at night"
+                width={768}
+                height={1154}
+                loading="lazy"
+                decoding="async"
               />
+              <m.span
+                aria-hidden="true"
+                className="absolute inset-0"
+                style={{ background: "var(--brand-terra)", originY: 0 }}
+                initial={{ scaleY: 1 }}
+                whileInView={{ scaleY: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 1.3, ease: sweep, delay: 0.15 }}
+              />
+            </div>
 
-              <div
-                className="relative rounded-full p-0.75"
-                style={{
-                  background:
-                    "linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-dark))",
-                }}
-              >
-                <div
-                  className="h-44 w-44 overflow-hidden rounded-full sm:h-52 sm:w-52"
-                  style={{ background: "var(--bg)" }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/images/jim-cafe-portrait-optimized.webp"
-                    alt="Portrait of Jimuel Dave Rodado"
-                    className="block h-full w-full object-cover transition-transform duration-700 hover:scale-[1.04]"
-                    style={{ objectPosition: "center 18%", filter: "saturate(0.95) contrast(1.05)" }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-
-              <m.div
-                className="glass-card absolute bottom-1 right-1 flex items-center gap-2 rounded-full px-3 py-1.5"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.6, duration: 0.5, ease }}
-              >
-                <span aria-hidden="true" className="live-dot" />
-                <span className="lux-label" style={{ color: "var(--fg)" }}>
-                  Available
-                </span>
-              </m.div>
-            </m.div>
+            <figcaption className="t-label">
+              <span>Fig. 02</span>
+              <span>
+                Off the clock<span className="hidden sm:inline">, Davao City</span>
+              </span>
+            </figcaption>
 
             <m.div
-              className="text-center"
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.6, ease }}
+              className="about-fig__badge"
+              initial={{ scale: 0, rotate: -90 }}
+              whileInView={{ scale: 1, rotate: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 120, damping: 14, delay: 0.5 }}
             >
-              <p className="font-display text-2xl leading-tight" style={{ fontWeight: 700 }}>
-                Jimuel Dave Rodado
-              </p>
-              <p className="lux-label mt-2" style={{ color: "var(--gold)" }}>
-                Software Engineer · Computer Engineer
-              </p>
+              <RotatingBadge text={"Software engineer ✦ Computer engineer ✦ "}>
+                <span className="sh sh-split h-5 w-5" />
+              </RotatingBadge>
             </m.div>
+          </m.figure>
 
-            <div aria-hidden="true" className="gold-rule w-full opacity-50" />
-
-            <m.div
-              className="space-y-3"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.45, duration: 0.7, ease }}
-            >
-              {aboutBio.map((para) => (
-                <p
-                  key={para.slice(0, 30)}
-                  className="t-pretty text-sm leading-7"
-                  style={{ color: "var(--muted)" }}
-                >
-                  {para}
-                </p>
+          {/* Body */}
+          <div className="space-y-14">
+            <div className="grid gap-5 md:grid-cols-2">
+              {aboutBio.map((paragraph, i) => (
+                <Reveal key={paragraph.slice(0, 24)} delay={i * 0.1}>
+                  <p className="t-lead t-pretty">{paragraph}</p>
+                </Reveal>
               ))}
-            </m.div>
-          </m.div>
+            </div>
 
-          {/* ── Right: cards + meters ── */}
-          <div className="space-y-5">
+            <Reveal>
+              <dl className="stats">
+                {heroStats.map((stat) => (
+                  <div key={stat.label} className="stat">
+                    <dt className="sr-only">{stat.label}</dt>
+                    <dd className="m-0">
+                      <CountUp value={stat.n} suffix={stat.suffix} className="stat__n" />
+                      <span aria-hidden="true" className="stat__l t-label">
+                        {stat.label}
+                      </span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
 
-            <m.div
-              className="grid grid-cols-1 gap-4 sm:grid-cols-3"
+            <m.ul
+              className="plates"
               variants={staggerParent}
               initial="hidden"
-              whileInView="visible"
+              whileInView="shown"
               viewport={{ once: true, amount: 0.25 }}
             >
               {aboutCards.map((card, i) => (
-                <m.div key={card.title} variants={fadeUpChild} className="h-full">
-                  <SpotlightCard className="lux-card flex h-full flex-col p-5 sm:p-6">
-                    <div className="mb-4 flex items-baseline justify-between gap-3">
-                      <p className="lux-label" style={{ color: "var(--gold)" }}>
-                        {card.title}
-                      </p>
-                      <span
-                        className="font-mono text-[0.58rem]"
-                        style={{ color: "var(--subtle)", opacity: 0.7 }}
-                      >
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                    </div>
-
-                    <h3
-                      className="font-display mb-2 text-xl leading-tight"
-                      style={{ fontWeight: 600 }}
-                    >
-                      {card.value}
-                    </h3>
-                    <p className="text-sm leading-6" style={{ color: "var(--muted)" }}>
-                      {card.copy}
-                    </p>
-                  </SpotlightCard>
-                </m.div>
-              ))}
-            </m.div>
-
-            {/* Work approach meters */}
-            <m.div
-              ref={metersRef}
-              className="lux-panel p-5 sm:p-7"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, ease }}
-            >
-              <span aria-hidden="true" className="lux-corner lux-corner--tl" />
-              <span aria-hidden="true" className="lux-corner lux-corner--tr" />
-              <span aria-hidden="true" className="lux-corner lux-corner--bl" />
-              <span aria-hidden="true" className="lux-corner lux-corner--br" />
-
-              <div className="mb-6 flex items-baseline gap-4">
-                <p className="lux-label" style={{ color: "var(--gold)" }}>
-                  Work Approach
-                </p>
-                <span aria-hidden="true" className="rule-soft flex-1" />
-              </div>
-
-              <div className="space-y-5">
-                {labNotes.map((note, i) => (
-                  <div key={note.label}>
-                    <div className="mb-2 flex items-baseline justify-between">
-                      <span className="text-sm" style={{ fontWeight: 600 }}>
-                        {note.label}
-                      </span>
-                      <span
-                        className="font-display text-lg leading-none"
-                        style={{ color: "var(--gold)", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}
-                      >
-                        {note.display}
-                      </span>
-                    </div>
-                    <div
-                      className="h-1 w-full overflow-hidden rounded-full"
-                      style={{ background: "var(--border-hv)" }}
-                    >
-                      <m.div
-                        className="h-full origin-left rounded-full"
-                        style={{
-                          width: note.display,
-                          background: "linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-bright))",
-                        }}
-                        initial={{ scaleX: 0 }}
-                        animate={metersInView ? { scaleX: 1 } : { scaleX: 0 }}
-                        transition={{ duration: 1.2, ease, delay: 0.15 + i * 0.14 }}
-                      />
-                    </div>
+                <m.li key={card.title} variants={riseChild} className="plate">
+                  <div className="plate__top">
+                    <span
+                      aria-hidden="true"
+                      className={`plate__shape plate__shape--${PLATE_SHAPES[i]} ${SHAPE_CLASS[PLATE_SHAPES[i]]}`}
+                      style={{ background: SHAPE_COLOR[PLATE_SHAPES[i]] }}
+                    />
+                    <span className="t-label text-subtle">{String(i + 1).padStart(2, "0")}</span>
                   </div>
+                  <p className="t-label text-accent">{card.title}</p>
+                  <h3 className="plate__title">{card.value}</h3>
+                  <p className="plate__copy t-pretty">{card.copy}</p>
+                </m.li>
+              ))}
+            </m.ul>
+
+            <div>
+              <SectionMeta index="01.1" label="Work approach" className="mb-8" />
+              <div className="gauges">
+                {labNotes.map((note, i) => (
+                  <Gauge
+                    key={note.label}
+                    value={note.value}
+                    label={note.label}
+                    color={GAUGE_COLORS[i % GAUGE_COLORS.length]}
+                    delay={0.15 + i * 0.15}
+                  />
                 ))}
               </div>
-            </m.div>
+            </div>
           </div>
         </div>
       </div>

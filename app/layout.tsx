@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Geist_Mono, Inter, Jost, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import { MotionProvider } from "@/app/providers";
+import { Providers } from "@/app/providers";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -9,11 +9,24 @@ const inter = Inter({
   display: "swap",
 });
 
+/* Geometric display face in the Futura tradition: the Bauhaus voice. */
+const jost = Jost({
+  variable: "--font-jost",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+/* Only the italic is used, for emphasis inside display type. */
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  style: ["normal", "italic"],
+  style: ["italic"],
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
   display: "swap",
 });
 
@@ -47,10 +60,19 @@ export const metadata: Metadata = {
 /* Paints the browser chrome to match whichever ground is showing. */
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAF7F0" },
-    { media: "(prefers-color-scheme: dark)",  color: "#080D18" },
+    { media: "(prefers-color-scheme: light)", color: "#F0E9DC" },
+    { media: "(prefers-color-scheme: dark)",  color: "#11100E" },
   ],
 };
+
+/* Runs before first paint: restores the theme, and skips the intro when it
+   already played this session or the visitor prefers reduced motion. */
+const bootScript = [
+  "(function(){var d=document.documentElement;",
+  "try{var t=localStorage.getItem('theme');if(t==='light')d.classList.remove('dark');else d.classList.add('dark');}catch(e){}",
+  "try{if(sessionStorage.getItem('intro-seen')||matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('intro-seen');}catch(e){d.classList.add('intro-seen');}",
+  "})();",
+].join("");
 
 export default function RootLayout({
   children,
@@ -60,22 +82,18 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${playfair.variable}`}
+      className={`dark ${inter.variable} ${jost.variable} ${playfair.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('theme');if(t==='light')document.documentElement.classList.remove('dark');else document.documentElement.classList.add('dark');}catch(e){}`,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+        <noscript dangerouslySetInnerHTML={{ __html: "<style>.preloader{display:none!important}</style>" }} />
       </head>
-      <body className="min-h-full antialiased">
-        <MotionProvider>{children}</MotionProvider>
-        {/* Film grain over everything: the layer that stops flat gradients
-            reading as screen fill. Pointer-events none, hidden when the user
-            asks for reduced motion. */}
-        <div aria-hidden="true" className="grain-overlay" />
+      <body>
+        <Providers>{children}</Providers>
+        {/* Printed-paper grain over everything. Pointer-events none, and
+            hidden when the visitor asks for reduced motion. */}
+        <div aria-hidden="true" className="grain" />
       </body>
     </html>
   );

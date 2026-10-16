@@ -1,276 +1,377 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { m, useInView } from "framer-motion";
+import { useRef, useState } from "react";
+import { m, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { projects } from "@/app/lib/data";
-import ProjectCard from "@/app/project-card";
-import SectionHead from "@/app/components/ui/section-head";
-import { ChevronIcon } from "@/app/components/ui/icons";
+import { TECH_ICON_MAP } from "@/app/lib/tech-icons";
+import { lookFor, SHAPE_CLASS } from "@/app/lib/project-looks";
+import { TransitionLink } from "@/app/components/motion/page-transition";
+import { scrollToTarget } from "@/app/components/motion/smooth-scroll";
+import { SectionMeta } from "@/app/components/ui/section-head";
+import { ease, RevealWords } from "@/app/components/ui/reveal";
+import RollText from "@/app/components/ui/roll-text";
+import { ArrowRightIcon, ExternalIcon } from "@/app/components/ui/icons";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const sweep = [0.76, 0, 0.24, 1] as const;
 
-const stagger = {
-  hidden:  {},
-  visible: { transition: { staggerChildren: 0.13 } },
+/* Panel widths in vw. The pinned wall's scroll length is derived from these
+   in CSS, so it is right before any script runs. */
+const INTRO = 44;
+const PANEL = 74;
+const OUTRO = 42;
+const N = projects.length;
+const TRAVEL = INTRO + N * PANEL + OUTRO - 100;
+
+type Work = {
+  id: string;
+  name: string;
+  category: string;
+  tagline: string;
+  overview: string;
+  technologies: readonly string[];
+  image: string | null;
+  cover: string | null;
+  link: string;
 };
 
-const fadeUp = {
-  hidden:  { opacity: 0, y: 44 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease } },
+const works: Work[] = projects.map((p) => ({
+  id: p.id,
+  name: p.name,
+  category: p.category,
+  tagline: p.tagline,
+  overview: p.overview,
+  technologies: p.technologies,
+  image: p.images[0]?.src ?? null,
+  cover: "cover" in p ? p.cover : null,
+  link: p.link,
+}));
+
+/* Where each project's shape peeks out of its screenshot on the wall: into
+   the gutter between plates, never over the labels above or the type below.
+   Colour and shape come from the shared project looks. */
+const PLACEMENT: Record<string, { size: string; pos: React.CSSProperties }> = {
+  obsentry: { size: "w-[24%] rotate-90", pos: { right: "-14%", top: "22%" } },
+  eingress: { size: "w-[17%]", pos: { left: "-9%", top: "30%" } },
+  "velora-motors": { size: "w-[16%]", pos: { right: "-8%", top: "34%" } },
+  "marrea-erp": { size: "w-[13%]", pos: { left: "-7%", top: "26%" } },
 };
 
-export default function ProjectsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const inView     = useInView(sectionRef, { once: true, amount: 0.1 });
-  const scrollRef  = useRef<HTMLDivElement>(null);
+function wallLook(id: string) {
+  const look = lookFor(id);
+  const place = PLACEMENT[id] ?? { size: "w-[14%]", pos: { right: "-7%", top: "30%" } };
+  return { color: look.color, shape: `${SHAPE_CLASS[look.shape]} ${place.size}`, pos: place.pos };
+}
 
-  const [nearest,  setNearest]  = useState(0);
-  const [atStart,  setAtStart]  = useState(true);
-  const [atEnd,    setAtEnd]    = useState(false);
-  const [scrollable, setScrollable] = useState(false);
+const pad = (n: number) => String(n).padStart(2, "0");
 
-  /**
-   * Distance from one card's start to the next: its width plus the rail gap,
-   * which is 1rem on phones and 1.5rem from sm up. Measuring the two cards
-   * beats hardcoding a gap that only matches one breakpoint.
-   */
-  const cardStep = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return 0;
-    const first  = el.children[0] as HTMLElement | undefined;
-    const second = el.children[1] as HTMLElement | undefined;
-    if (first && second) return second.offsetLeft - first.offsetLeft;
-    return first ? first.offsetWidth : el.clientWidth * 0.8;
-  }, []);
+function TechDots({ items }: { items: readonly string[] }) {
+  return (
+    <ul className="work__tech">
+      {items.slice(0, 8).map((tech) => {
+        const file = TECH_ICON_MAP[tech];
+        return (
+          <li key={tech} className="tech-dot" title={tech}>
+            {file ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img alt={tech} src={`/stack-icons/${file}`} width={18} height={18} loading="lazy" decoding="async" />
+            ) : (
+              <span className="tech-dot__txt">{tech.slice(0, 3)}</span>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
-  /** Keep the dots and the arrow states in step with the strip. */
-  const syncScrollState = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    const max = scrollWidth - clientWidth;
-    setAtStart(scrollLeft <= 2);
-    setAtEnd(max > 0 ? scrollLeft >= max - 2 : true);
-    setScrollable(max > 2);
+/** Screenshot, or for the private ERP the cover photo under a scrim. */
+function Media({ work, imgStyle }: { work: Work; imgStyle?: { x: MotionValue<string> } }) {
+  if (work.image) {
+    return (
+       
+      <m.img
+        src={work.image}
+        alt={`${work.name}: ${work.category}`}
+        loading="lazy"
+        decoding="async"
+        style={imgStyle}
+      />
+    );
+  }
+  return (
+    <span className="private-art">
+      {work.cover && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={work.cover} alt="" loading="lazy" decoding="async" />
+      )}
+      <span className="relative grid place-items-center gap-3 text-center">
+        <span className="sh sh-half w-16" style={{ background: "var(--fg)" }} />
+        <span className="t-label">Private client system</span>
+      </span>
+    </span>
+  );
+}
 
-    // Phones page one card at a time, so the dots track the nearest card.
-    const step = cardStep();
-    if (step > 0) {
-      const idx = Math.round(scrollLeft / step);
-      setNearest(Math.max(0, Math.min(projects.length - 1, idx)));
-    }
-  }, [cardStep]);
+/* ── Desktop: the pinned wall ─────────────────────────────────────────── */
 
-  /** Advance by exactly one panel. */
-  const nudge = useCallback((dir: 1 | -1) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * (cardStep() || el.clientWidth * 0.8), behavior: "smooth" });
-  }, [cardStep]);
+function Panel({ work, index, progress }: { work: Work; index: number; progress: MotionValue<number> }) {
+  const left = INTRO + index * PANEL;
+  const start = Math.max(0, (left - 100) / TRAVEL);
+  const end = Math.min(1, (left + PANEL) / TRAVEL);
 
-  /** Jump straight to a card from a page dot or a progress segment. */
-  const goToCard = useCallback((idx: number) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollTo({ left: idx * (cardStep() || el.clientWidth * 0.8), behavior: "smooth" });
-  }, [cardStep]);
-
-  /* Pointer drag with inertia, plus arrow-key navigation. */
-  useEffect(() => {
-    const rawEl = scrollRef.current;
-    if (!rawEl) return;
-    const el: HTMLDivElement = rawEl;
-
-    syncScrollState();
-
-    let isDown      = false;
-    let startX      = 0;
-    let startScroll = 0;
-    let velX        = 0;
-    let lastX       = 0;
-    let lastTime    = 0;
-    let rafId       = 0;
-
-    function onMouseDown(e: MouseEvent) {
-      cancelAnimationFrame(rafId);
-      isDown      = true;
-      startX      = e.pageX;
-      startScroll = el.scrollLeft;
-      lastX       = e.pageX;
-      lastTime    = performance.now();
-      velX        = 0;
-      el.style.scrollSnapType = "none";
-      el.style.cursor = "grabbing";
-      e.preventDefault();
-    }
-
-    function onMouseMove(e: MouseEvent) {
-      if (!isDown) return;
-      const now = performance.now();
-      const dt  = now - lastTime;
-      if (dt > 0) velX = (e.pageX - lastX) / dt;
-      lastX    = e.pageX;
-      lastTime = now;
-      el.scrollLeft = startScroll - (e.pageX - startX);
-    }
-
-    function onMouseUp() {
-      if (!isDown) return;
-      isDown = false;
-      el.style.cursor = "grab";
-      let vel = velX * 15;
-      function coast() {
-        vel *= 0.93;
-        el.scrollLeft -= vel;
-        if (Math.abs(vel) > 0.5) {
-          rafId = requestAnimationFrame(coast);
-        } else {
-          el.style.scrollSnapType = "x mandatory";
-        }
-      }
-      rafId = requestAnimationFrame(coast);
-    }
-
-    el.addEventListener("mousedown", onMouseDown);
-    el.addEventListener("scroll", syncScrollState, { passive: true });
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-    window.addEventListener("resize", syncScrollState);
-    return () => {
-      cancelAnimationFrame(rafId);
-      el.removeEventListener("mousedown", onMouseDown);
-      el.removeEventListener("scroll", syncScrollState);
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-      window.removeEventListener("resize", syncScrollState);
-    };
-  }, [syncScrollState]);
-
-  const onRailKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "ArrowRight") { e.preventDefault(); nudge(1); }
-    if (e.key === "ArrowLeft")  { e.preventDefault(); nudge(-1); }
-  }, [nudge]);
+  const imgX = useTransform(progress, [start, end], ["4%", "-4%"]);
+  const shapeRotate = useTransform(progress, [start, end], [-70, 70]);
+  const shapeY = useTransform(progress, [start, end], ["14%", "-14%"]);
+  const look = wallLook(work.id);
 
   return (
-    <section
-      id="projects"
-      ref={sectionRef}
-      className="relative py-16 sm:py-24 lg:py-32"
-      style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}
-    >
-      <div aria-hidden="true" className="gold-rule absolute inset-x-0 top-0 opacity-40" />
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-        <SectionHead
-          eyebrow="03 / Selected Works"
-          heading={<>Built to solve <em className="t-em">real problems.</em></>}
-          lead="IoT systems, real-time dashboards, and full-stack web applications."
-          aside={
-            <div className="flex items-center gap-3">
-              <span className="lux-label" style={{ color: "var(--subtle)" }}>
-                {String(projects.length).padStart(2, "0")} Projects
-              </span>
-              {/* Arrows drive the carousel: sm and up, and only when there is
-                  somewhere to go. Two permanently dead buttons say nothing. */}
-              {scrollable && (
-                <>
-                  <span
-                    aria-hidden="true"
-                    className="hidden h-px w-6 sm:block"
-                    style={{ background: "var(--border-hv)" }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => nudge(-1)}
-                    disabled={atStart}
-                    aria-label="Previous project"
-                    className="icon-btn hidden h-10 w-10 sm:grid"
-                  >
-                    <ChevronIcon dir="left" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => nudge(1)}
-                    disabled={atEnd}
-                    aria-label="Next project"
-                    className="icon-btn hidden h-10 w-10 sm:grid"
-                  >
-                    <ChevronIcon dir="right" />
-                  </button>
-                </>
-              )}
-            </div>
-          }
-          className="mb-8 sm:mb-12"
-        />
-
-        {/* Project rail */}
-        <div className="relative -mx-4 sm:-mx-6 lg:-mx-8">
-          {/* Edge fades, only on the side that still has cards to reveal */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 transition-opacity duration-300 sm:w-16"
-            style={{
-              background: "linear-gradient(90deg, var(--surface), transparent)",
-              opacity: atStart ? 0 : 1,
-            }}
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 transition-opacity duration-300 sm:w-16"
-            style={{
-              background: "linear-gradient(270deg, var(--surface), transparent)",
-              opacity: atEnd ? 0 : 1,
-            }}
-          />
-
-          <m.div
-            ref={scrollRef}
-            role="region"
-            aria-label="Project carousel"
-            tabIndex={0}
-            onKeyDown={onRailKeyDown}
-            className="no-bar project-rail px-4 pb-4 pt-4 sm:px-6 lg:px-8"
-            variants={stagger}
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
-          >
-            {projects.map((project, i) => (
-              <m.div
-                key={project.id}
-                variants={fadeUp}
-                className="w-[82vw] shrink-0 sm:w-80 lg:w-96"
-                style={{ scrollSnapAlign: "start", scrollSnapStop: "always" }}
-              >
-                <ProjectCard project={project} index={i + 1} />
-              </m.div>
-            ))}
-          </m.div>
-        </div>
-
-        {/* Page dots: the phone's read on "which panel am I on", and big
-            enough to tap. Desktop navigates with the header arrows instead. */}
-        <m.div
-          className="mt-4 flex items-center justify-center sm:hidden"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.4, duration: 0.6, ease }}
-        >
-          {projects.map((project, i) => (
-            <button
-              key={project.id}
-              type="button"
-              className="dot-hit"
-              aria-current={i === nearest}
-              aria-label={`Go to ${project.name}`}
-              onClick={() => goToCard(i)}
-            >
-              <span className="dot" />
-            </button>
-          ))}
-        </m.div>
+    <article className="work" aria-labelledby={`work-${work.id}`}>
+      <div className="work__meta t-label">
+        <span>
+          PL. {pad(index + 1)} / {work.category}
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span aria-hidden="true" className="status-dot" style={{ background: look.color }} />
+          {work.link ? "Live" : "Private"}
+        </span>
       </div>
+
+      <TransitionLink
+        href={`/projects/${work.id}`}
+        label={work.name}
+        className="work__media block"
+        data-cursor="View"
+        aria-label={`Open the ${work.name} case study`}
+      >
+        <m.span
+          aria-hidden="true"
+          className={`work__shape sh ${look.shape}`}
+          style={{ ...look.pos, background: look.color, rotate: shapeRotate, y: shapeY }}
+        />
+        <span className="work__frame">
+          <Media work={work} imgStyle={{ x: imgX }} />
+        </span>
+      </TransitionLink>
+
+      <div className="work__row">
+        <div>
+          <h3 id={`work-${work.id}`} className="work__name t-balance">
+            {work.name}
+          </h3>
+          <p className="work__tagline t-pretty">{work.tagline}</p>
+        </div>
+        <div>
+          <p className="work__overview line-clamp-3">{work.overview}</p>
+          <TechDots items={work.technologies} />
+          <div className="mt-5 flex flex-wrap gap-2.5">
+            <TransitionLink
+              href={`/projects/${work.id}`}
+              label={work.name}
+              className="btn btn-line btn-sm roll-host"
+            >
+              <RollText text="Case study" />
+              <ArrowRightIcon className="btn__arrow h-3.5 w-3.5" />
+            </TransitionLink>
+            {work.link && (
+              <a href={work.link} target="_blank" rel="noreferrer" className="btn btn-line btn-sm roll-host">
+                <RollText text="Visit" />
+                <ExternalIcon />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function Wall() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const x = useTransform(scrollYProgress, [0, 1], ["0vw", `-${TRAVEL}vw`]);
+  const [stage, setStage] = useState<number>(-1);
+
+  /* Which plate sits under the middle of the screen: -1 intro, N outro. */
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const center = v * TRAVEL + 50;
+    const next =
+      center < INTRO ? -1 : center >= INTRO + N * PANEL ? N : Math.floor((center - INTRO) / PANEL);
+    setStage(next);
+  });
+
+  const vars = {
+    "--intro-w": `${INTRO}vw`,
+    "--panel-w": `${PANEL}vw`,
+    "--outro-w": `${OUTRO}vw`,
+    "--travel": `${TRAVEL}vw`,
+  } as React.CSSProperties;
+
+  const current = stage >= 0 && stage < N ? works[stage] : null;
+
+  return (
+    <div ref={ref} className="works__pin hidden lg:block" style={vars}>
+      <div className="works__sticky">
+        <m.div className="works__track" style={{ x }}>
+          <div className="works__intro">
+            <SectionMeta index="03" label="Selected works" />
+            <h2 className="works__big">
+              <RevealWords text="Selected" amount={0.6} />
+              <em>
+                <RevealWords text="works" delay={0.12} amount={0.6} />
+              </em>
+            </h2>
+            <m.p
+              className="t-lead t-pretty mt-8 max-w-sm"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 1, ease, delay: 0.3 }}
+            >
+              IoT systems, real-time dashboards and full-stack platforms, shipped for real users.
+            </m.p>
+            <p className="t-label mt-10 flex items-center gap-3 text-muted">
+              <span className="works__count">({pad(N)})</span> Keep scrolling
+              <span aria-hidden="true" className="works__hint-arrow">
+                <ArrowRightIcon className="h-4 w-4" />
+              </span>
+            </p>
+          </div>
+
+          {works.map((work, i) => (
+            <Panel key={work.id} work={work} index={i} progress={scrollYProgress} />
+          ))}
+
+          <div className="works__outro">
+            <p className="t-label text-muted">End of the selection</p>
+            <p className="works__big mt-6" style={{ fontSize: "clamp(3rem, 6.2vw, 6.75rem)" }}>
+              More in <em>the archive</em>
+            </p>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <a
+                href="https://github.com/RakuIchijo12"
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-solid roll-host"
+              >
+                <RollText text="GitHub" />
+                <ExternalIcon />
+              </a>
+              <button type="button" className="btn btn-line roll-host" onClick={() => scrollToTarget("#contact")}>
+                <RollText text="Let's talk" />
+              </button>
+            </div>
+          </div>
+        </m.div>
+
+        <div className="works__hud t-label" aria-hidden="true">
+          <span className="inline-flex items-center gap-3">
+            <span className="text-accent">
+              {current ? `PL. ${pad(stage + 1)}` : stage < 0 ? "PL. 00" : "FIN."}
+            </span>
+            <span>/ {pad(N)}</span>
+            <span className="hidden xl:inline">{current ? current.name : "Selected works"}</span>
+          </span>
+          <span className="inline-flex items-center gap-3">
+            {Array.from({ length: N }, (_, i) => (
+              <span
+                key={i}
+                className="block h-1.5 w-1.5 rounded-full transition-transform duration-500"
+                style={{
+                  background: i === stage ? "var(--accent)" : "var(--line-strong)",
+                  transform: i === stage ? "scale(1.6)" : "scale(1)",
+                }}
+              />
+            ))}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Phones and tablets: a plain list ─────────────────────────────────── */
+
+function Card({ work, index }: { work: Work; index: number }) {
+  return (
+    <article className="work-card">
+      <div className="work__meta t-label">
+        <span>
+          PL. {pad(index + 1)} / {work.category}
+        </span>
+        <span>{work.link ? "Live" : "Private"}</span>
+      </div>
+
+      <TransitionLink
+        href={`/projects/${work.id}`}
+        label={work.name}
+        className="work-card__media block"
+        aria-label={`Open the ${work.name} case study`}
+      >
+        <m.span
+          className="absolute inset-0 block"
+          initial={{ scale: 1.25 }}
+          whileInView={{ scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 1.5, ease }}
+        >
+          <Media work={work} />
+        </m.span>
+        <m.span
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{ background: lookFor(work.id).color, originY: 0 }}
+          initial={{ scaleY: 1 }}
+          whileInView={{ scaleY: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 1.1, ease: sweep }}
+        />
+      </TransitionLink>
+
+      <h3 className="work__name mt-6">{work.name}</h3>
+      <p className="work__tagline t-pretty">{work.tagline}</p>
+      <p className="work__overview mt-4 line-clamp-4">{work.overview}</p>
+      <TechDots items={work.technologies} />
+      <TransitionLink
+        href={`/projects/${work.id}`}
+        label={work.name}
+        className="btn btn-line btn-sm roll-host mt-6"
+      >
+        <RollText text="Case study" />
+        <ArrowRightIcon className="btn__arrow h-3.5 w-3.5" />
+      </TransitionLink>
+    </article>
+  );
+}
+
+function List() {
+  return (
+    <div className="section lg:hidden">
+      <div className="wrap">
+        <SectionMeta index="03" label="Selected works" />
+        <h2 className="works__big">
+          <RevealWords text="Selected" />
+          <em>
+            <RevealWords text="works" delay={0.1} />
+          </em>
+        </h2>
+        <p className="t-lead t-pretty mt-6 max-w-md">
+          IoT systems, real-time dashboards and full-stack platforms, shipped for real users.
+        </p>
+        <div className="mt-10">
+          {works.map((work, i) => (
+            <Card key={work.id} work={work} index={i} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ProjectsSection() {
+  return (
+    <section id="projects" className="works scheme-ink">
+      <Wall />
+      <List />
     </section>
   );
 }

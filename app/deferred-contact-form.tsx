@@ -11,28 +11,18 @@ const ContactForm = dynamic(() => import("./contact-form"), {
 /** Mirrors the real form's metrics so nothing shifts when it hydrates. */
 function ContactFormSkeleton() {
   return (
-    <div
-      className="p-6 sm:p-8"
-      style={{
-        borderRadius: "var(--r-md)",
-        background: "var(--card)",
-        border: "1px solid var(--border-hv)",
-        boxShadow: "var(--shadow-md)",
-      }}
-    >
-      <div className="mb-6 flex items-center gap-3">
-        <span aria-hidden="true" className="h-px w-10" style={{ background: "var(--gold)" }} />
-        <div className="skeleton h-2.5 w-28" />
+    <div aria-hidden="true">
+      <div className="mb-8 flex items-center justify-between">
+        <div className="skeleton h-3 w-32" />
+        <div className="skeleton h-3 w-10" />
       </div>
-
-      <div className="grid gap-4">
-        <div className="skeleton h-14 w-full" style={{ borderRadius: "var(--r-sm)" }} />
-        <div className="skeleton h-14 w-full" style={{ borderRadius: "var(--r-sm)" }} />
-        <div className="skeleton h-40 w-full" style={{ borderRadius: "var(--r-sm)" }} />
-
+      <div className="grid gap-7">
+        <div className="skeleton h-12 w-full" />
+        <div className="skeleton h-12 w-full" />
+        <div className="skeleton h-36 w-full" />
         <div className="flex items-center justify-between">
           <div className="skeleton h-3 w-28" />
-          <div className="skeleton h-12 w-40" style={{ borderRadius: "var(--r-sm)" }} />
+          <div className="skeleton h-13 w-44 rounded-full" />
         </div>
       </div>
     </div>
@@ -46,19 +36,20 @@ export default function DeferredContactForm() {
   useEffect(() => {
     if (load) return;
     const el = wrapperRef.current;
-    if (!el || !("IntersectionObserver" in window)) { setLoad(true); return; }
+    if (!el) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setLoad(true); observer.disconnect(); } },
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLoad(true);
+          observer.disconnect();
+        }
+      },
       { rootMargin: "600px 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, [load]);
 
-  return (
-    <div ref={wrapperRef}>
-      {load ? <ContactForm /> : <ContactFormSkeleton />}
-    </div>
-  );
+  return <div ref={wrapperRef}>{load ? <ContactForm /> : <ContactFormSkeleton />}</div>;
 }

@@ -1,248 +1,327 @@
 "use client";
 
-import { Fragment, useCallback, useRef } from "react";
-import { m } from "framer-motion";
-import { heroStats, identityTags, resumeHref, socialLinks } from "@/app/lib/data";
-import { RevealWords } from "@/app/components/ui/reveal";
+import { useRef } from "react";
+import { m, useScroll, useTransform } from "framer-motion";
+import { resumeHref } from "@/app/lib/data";
+import { useIntroDone } from "@/app/components/motion/intro";
+import { scrollToTarget } from "@/app/components/motion/smooth-scroll";
 import Magnetic from "@/app/components/ui/magnetic";
-import CountUp from "@/app/components/ui/count-up";
-import {
-  ArrowDownIcon,
-  ArrowRightIcon,
-  DocumentIcon,
-  SocialIcon,
-} from "@/app/components/ui/icons";
+import Marquee from "@/app/components/ui/marquee";
+import RollText from "@/app/components/ui/roll-text";
+import RotatingBadge from "@/app/components/ui/rotating-badge";
+import LocalTime from "@/app/components/ui/local-time";
+import { ease } from "@/app/components/ui/reveal";
+import RiseChars from "@/app/components/ui/rise-chars";
+import { useOffscreenPause } from "@/app/components/ui/use-offscreen";
+import { ArrowDownIcon, ArrowRightIcon, DocumentIcon } from "@/app/components/ui/icons";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const sweep = [0.76, 0, 0.24, 1] as const;
+const roll = [0.22, 1, 0.36, 1] as const;
+/** Seconds after the intro lifts before the hero starts composing itself. */
+const T = 0.1;
 
-const container = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
-};
+const stackTape = [
+  "Laravel",
+  "FilamentPHP",
+  "React",
+  "Next.js",
+  "TypeScript",
+  "Inertia.js",
+  "Livewire",
+  "NestJS",
+  "Angular",
+  "Django",
+  "PostgreSQL",
+  "MySQL",
+];
 
-const item = {
-  hidden:  { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
-};
+const focusTape = [
+  "Hospital systems",
+  "ERP and CRM",
+  "Payroll and HR",
+  "Operational dashboards",
+  "REST APIs",
+  "AI-assisted delivery",
+];
+
+const SEP_SHAPES = ["sh-circle", "", "sh-tri"] as const;
+
+function Sep({ i, tone }: { i: number; tone: "a" | "b" }) {
+  const color =
+    tone === "a"
+      ? i % 2 === 0
+        ? "var(--ink)"
+        : "var(--paper)"
+      : ["var(--brand-terra)", "#D6AB52", "#A3936A"][i % 3];
+  return <span className={`sh tape__sep ${SEP_SHAPES[i % 3]}`} style={{ background: color }} />;
+}
 
 export default function HeroSection() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLElement>(null);
+  const posterRef = useRef<HTMLDivElement>(null);
+  const play = useIntroDone();
+  useOffscreenPause(posterRef);
 
-  /* The gold halo trails the pointer across the hero. */
-  const onPointerMove = useCallback((event: React.PointerEvent<HTMLElement>) => {
-    if (event.pointerType !== "mouse") return;
-    const el = sectionRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${event.clientX - rect.left}px`);
-    el.style.setProperty("--my", `${event.clientY - rect.top}px`);
-  }, []);
+  const { scrollYProgress: p } = useScroll({ target: ref, offset: ["start start", "end start"] });
 
-  const scrollTo = useCallback((href: string) => {
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
+  /* Leaving the hero: the copy sinks back and the poster comes apart. */
+  const copyY = useTransform(p, [0, 1], ["0%", "22%"]);
+  const copyFade = useTransform(p, [0.45, 1], [1, 0.2]);
+  const frameY = useTransform(p, [0, 1], ["0%", "-9%"]);
+  const imgScale = useTransform(p, [0, 1], [1, 1.14]);
+  const terraX = useTransform(p, [0, 1], ["0%", "190%"]);
+  const terraRot = useTransform(p, [0, 1], [0, 320]);
+  const tealY = useTransform(p, [0, 1], ["0%", "40%"]);
+  const ruleAX = useTransform(p, [0, 1], ["0%", "-30%"]);
+  const ruleBX = useTransform(p, [0, 1], ["0%", "-65%"]);
+  const orbitScale = useTransform(p, [0, 1], [1, 1.28]);
+  const dotsY = useTransform(p, [0, 1], ["0%", "-160%"]);
+
+  const on = (target: Record<string, number | string>) => (play ? target : undefined);
 
   return (
-    <section
-      id="home"
-      ref={sectionRef}
-      onPointerMove={onPointerMove}
-      className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden"
-      style={{ background: "var(--bg)" }}
-    >
-      {/* ── Ground ── */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="aurora">
-          <span className="aurora__blob aurora__blob--a" />
-          <span className="aurora__blob aurora__blob--b" />
-          <span className="aurora__blob aurora__blob--c" />
-        </div>
-        <div className="dot-grid absolute inset-0 opacity-50" />
-        <div className="hero-halo" />
-      </div>
-
-      <m.div
-        className="hero-stack relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-4 text-center sm:px-6"
-        variants={container}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Availability */}
-        <m.div variants={item} className="status-pill">
-          <span aria-hidden="true" className="live-dot" />
-          <span className="lux-label" style={{ color: "var(--fg)" }}>
+    <section id="home" ref={ref} className="hero">
+      <div className="wrap hero__wrap">
+        {/* Masthead, like the folio line of a magazine cover */}
+        <m.div
+          className="hero__masthead t-label"
+          initial={{ opacity: 0, y: -12 }}
+          animate={on({ opacity: 1, y: 0 })}
+          transition={{ duration: 1, ease, delay: T }}
+        >
+          <span>
+            Portfolio <span className="text-accent">&copy;2026</span>
+          </span>
+          <span className="hidden md:inline">Davao City, Philippines</span>
+          <span className="hidden xl:inline">7.07&deg; N, 125.61&deg; E</span>
+          <LocalTime className="hidden sm:inline" />
+          <span className="inline-flex items-center gap-2">
+            <span aria-hidden="true" className="status-dot" />
             Available for work
           </span>
         </m.div>
 
-        {/* Eyebrow */}
-        <m.div
-          variants={item}
-          className="section-eyebrow section-eyebrow--bare justify-center text-balance tracking-[0.18em] sm:tracking-[0.32em]"
-        >
-          Computer Engineer · Software Engineer
-        </m.div>
-
-        {/* Name: each word rides up out of its own mask */}
-        <h1 className="hero-name font-display" style={{ fontWeight: 700 }}>
-          <RevealWords text="Jimuel Dave" delay={0.32} stagger={0.08} className="block" />
-          <RevealWords
-            text="Rodado"
-            delay={0.48}
-            stagger={0.08}
-            className="hero-name-accent block"
-          />
-        </h1>
-
-        {/* Ornament */}
-        <m.div variants={item} className="hero-ornament" aria-hidden="true">
-          <span className="hero-ornament__line hero-ornament__line--l" />
-          <span className="hero-ornament__gem" />
-          <span className="hero-ornament__line hero-ornament__line--r" />
-        </m.div>
-
-        {/* Lead */}
-        <m.p
-          variants={item}
-          className="hero-lead t-pretty max-w-xl"
-          style={{ color: "var(--muted)" }}
-        >
-          I build the systems hospitals and operations teams run on every day:
-          management platforms, business software, and applications where
-          downtime is never an option.
-        </m.p>
-
-        {/* Identity line */}
-        <m.p
-          variants={item}
-          className="hero-identity lux-label max-w-2xl leading-6"
-          style={{ color: "var(--subtle)" }}
-        >
-          {identityTags.map((tag, i) => (
-            <Fragment key={tag}>
-              {i > 0 && <span aria-hidden="true" style={{ opacity: 0.55 }}>{" · "}</span>}
-              <span className="whitespace-nowrap">{tag}</span>
-            </Fragment>
-          ))}
-        </m.p>
-
-        {/* CTAs */}
-        <m.div
-          variants={item}
-          className="grid w-full max-w-xs grid-cols-2 gap-2.5 sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:justify-center"
-        >
-          <Magnetic strength={0.24} className="col-span-2 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => scrollTo("#contact")}
-              className="btn-gold group inline-flex w-full items-center justify-center gap-2 rounded-md px-6 py-2.5 text-sm tracking-wide sm:w-auto"
+        <div className="hero__grid">
+          {/* Copy */}
+          <m.div className="hero__copy" style={{ y: copyY, opacity: copyFade }}>
+            <m.p
+              className="hero__kicker t-label"
+              initial={{ opacity: 0, x: -20 }}
+              animate={on({ opacity: 1, x: 0 })}
+              transition={{ duration: 1, ease, delay: T + 0.15 }}
             >
-              Get in Touch
-              <span className="transition-transform duration-300 group-hover:translate-x-1">
-                <ArrowRightIcon className="h-3.5 w-3.5" />
+              Software engineer / Computer engineer
+            </m.p>
+
+            <h1 className="hero__name">
+              <span className="sr-only">Jimuel Dave Rodado</span>
+              <span aria-hidden="true" className="hero__first">
+                <RiseChars text="Jimuel Dave" play={play} delay={T + 0.25} stagger={0.03} />
               </span>
-            </button>
-          </Magnetic>
+              <span aria-hidden="true" className="hero__last">
+                <RiseChars text="RODADO" play={play} delay={T + 0.38} stagger={0.065} tilt />
+                {/* The full stop rolls in from the right and settles. */}
+                <m.span
+                  className="hero__dot sh-split"
+                  initial={{ x: "7em", rotate: 1080 }}
+                  animate={on({ x: "0em", rotate: 0 })}
+                  transition={{ duration: 1.7, ease: roll, delay: T + 0.8 }}
+                />
+              </span>
+            </h1>
 
-          <Magnetic strength={0.18} className="w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => scrollTo("#projects")}
-              className="btn-ghost inline-flex w-full items-center justify-center rounded-md px-4 py-2.5 text-sm tracking-wide sm:w-auto sm:px-6"
+            <m.p
+              className="hero__lead t-lead t-pretty"
+              initial={{ opacity: 0, y: 24 }}
+              animate={on({ opacity: 1, y: 0 })}
+              transition={{ duration: 1.1, ease, delay: T + 0.95 }}
             >
-              View Work
-            </button>
-          </Magnetic>
+              I build the systems hospitals and operations teams run on every day:
+              management platforms, business software, and applications where
+              downtime is never an option.
+            </m.p>
 
-          <Magnetic strength={0.18} className="w-full sm:w-auto">
-            <a
-              href={resumeHref}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-ghost inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm tracking-wide sm:w-auto sm:px-6"
+            <m.div
+              className="hero__ctas"
+              initial={{ opacity: 0, y: 24 }}
+              animate={on({ opacity: 1, y: 0 })}
+              transition={{ duration: 1.1, ease, delay: T + 1.05 }}
             >
-              Résumé
-              <DocumentIcon className="h-3.5 w-3.5" />
-            </a>
-          </Magnetic>
-        </m.div>
+              <Magnetic strength={0.3}>
+                <button
+                  type="button"
+                  className="btn btn-solid roll-host"
+                  onClick={() => scrollToTarget("#contact")}
+                >
+                  <span aria-hidden="true" className="btn__dot" />
+                  <RollText text="Let's talk" />
+                </button>
+              </Magnetic>
+              <Magnetic strength={0.22}>
+                <button
+                  type="button"
+                  className="btn btn-line roll-host"
+                  onClick={() => scrollToTarget("#projects")}
+                >
+                  <RollText text="Selected work" />
+                  <ArrowRightIcon className="btn__arrow h-3.5 w-3.5" />
+                </button>
+              </Magnetic>
+              <a href={resumeHref} target="_blank" rel="noreferrer" className="btn btn-line roll-host">
+                <RollText text="Résumé" />
+                <DocumentIcon className="h-3.5 w-3.5" />
+              </a>
+            </m.div>
+          </m.div>
 
-        {/* Stat strip */}
-        <m.div
-          variants={item}
-          className="grid w-full max-w-lg grid-cols-3 py-4"
-          style={{
-            borderTop: "1px solid var(--border-hv)",
-            borderBottom: "1px solid var(--border-hv)",
-          }}
-        >
-          {heroStats.map((stat, i) => (
-            <div
-              key={stat.label}
-              className="px-1"
-              style={i > 0 ? { borderLeft: "1px solid var(--border-hv)" } : undefined}
-            >
-              <CountUp
-                value={stat.n}
-                suffix={stat.suffix}
-                className="hero-stat-value font-display block leading-none"
-                style={{ fontWeight: 700 }}
-              />
-              <p
-                className="lux-label mt-1.5 text-[0.55rem] tracking-[0.08em] sm:text-[0.58rem] sm:tracking-[0.22em]"
-                style={{ color: "var(--gold)" }}
-              >
-                {stat.label}
-              </p>
+          {/* Poster: the portrait in an arch, its shapes spilling past the frame */}
+          <div className="hero__art">
+            <div ref={posterRef} className="poster">
+              <div className="poster__stage">
+                <m.span aria-hidden="true" className="pz pz-orbit" style={{ scale: orbitScale }}>
+                  <m.span
+                    initial={{ opacity: 0, scale: 0.85 }}
+                    animate={on({ opacity: 1, scale: 1 })}
+                    transition={{ duration: 1.6, ease, delay: T + 1.2 }}
+                  >
+                    <span className="pz-orbit__ring">
+                      <span className="pz-orbit__moon" />
+                    </span>
+                  </m.span>
+                </m.span>
+
+                <m.span aria-hidden="true" className="pz pz-teal" style={{ y: tealY }}>
+                  <m.span
+                    initial={{ scaleY: 0 }}
+                    animate={on({ scaleY: 1 })}
+                    transition={{ duration: 1.3, ease: sweep, delay: T + 0.9 }}
+                  />
+                </m.span>
+
+                <m.span
+                  aria-hidden="true"
+                  className="pz pz-terra"
+                  style={{ x: terraX, rotate: terraRot }}
+                >
+                  <m.span
+                    initial={{ x: "260%", rotate: 420 }}
+                    animate={on({ x: "0%", rotate: 0 })}
+                    transition={{ duration: 1.7, ease: roll, delay: T + 1 }}
+                  />
+                </m.span>
+
+                <m.span aria-hidden="true" className="pz pz-rule-a" style={{ x: ruleAX }}>
+                  <m.span
+                    initial={{ scaleX: 0 }}
+                    animate={on({ scaleX: 1 })}
+                    transition={{ duration: 1.2, ease: sweep, delay: T + 1.15 }}
+                  />
+                </m.span>
+
+                <m.span aria-hidden="true" className="pz pz-rule-b" style={{ x: ruleBX }}>
+                  <m.span
+                    initial={{ scaleX: 0 }}
+                    animate={on({ scaleX: 1 })}
+                    transition={{ duration: 1.2, ease: sweep, delay: T + 1.3 }}
+                  />
+                </m.span>
+
+                <m.span
+                  aria-hidden="true"
+                  className="pz pz-dots sh-dots"
+                  style={{ y: dotsY }}
+                  initial={{ opacity: 0 }}
+                  animate={on({ opacity: 0.55 })}
+                  transition={{ duration: 1.2, delay: T + 1.45 }}
+                />
+
+                <m.div className="poster__frame" style={{ y: frameY }}>
+                  <m.div
+                    className="absolute inset-0"
+                    initial={{ scale: 1.28 }}
+                    animate={on({ scale: 1 })}
+                    transition={{ duration: 1.9, ease, delay: T + 0.15 }}
+                  >
+                    <m.img
+                      src="/images/jim-studio-portrait-1024.webp"
+                      srcSet="/images/jim-studio-portrait-640.webp 640w, /images/jim-studio-portrait-1024.webp 1024w"
+                      sizes="(min-width: 1024px) 27rem, 58vw"
+                      width={1024}
+                      height={1536}
+                      alt="Studio portrait of Jimuel Dave Rodado in a brown polo against an olive backdrop"
+                      fetchPriority="high"
+                      decoding="async"
+                      style={{ scale: imgScale }}
+                    />
+                  </m.div>
+                  <m.span
+                    aria-hidden="true"
+                    className="poster__curtain"
+                    style={{ originY: 0 }}
+                    initial={{ scaleY: 1 }}
+                    animate={on({ scaleY: 0 })}
+                    transition={{ duration: 1.25, ease: sweep, delay: T + 0.12 }}
+                  />
+                </m.div>
+
+                <m.p
+                  className="poster__caption t-label"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={on({ opacity: 1, y: 0 })}
+                  transition={{ duration: 1, ease, delay: T + 1.5 }}
+                >
+                  <span aria-hidden="true" className="reg" />
+                  Fig. 01<span className="hidden sm:inline"> / Davao City, PH</span>
+                </m.p>
+
+                <m.div
+                  className="poster__badge"
+                  initial={{ scale: 0, rotate: -120 }}
+                  animate={on({ scale: 1, rotate: 0 })}
+                  transition={{ type: "spring", stiffness: 120, damping: 14, delay: T + 1.35 }}
+                >
+                  <RotatingBadge
+                    text={"Scroll down ✦ See the work ✦ "}
+                    onClick={() => scrollToTarget("#about")}
+                    label="Scroll to the about section"
+                  >
+                    <ArrowDownIcon className="h-4 w-4" />
+                  </RotatingBadge>
+                </m.div>
+              </div>
             </div>
-          ))}
-        </m.div>
+          </div>
+        </div>
+      </div>
 
-        {/* Socials */}
-        <m.div variants={item} className="flex items-center justify-center gap-2">
-          {socialLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target={link.icon === "mail" ? undefined : "_blank"}
-              rel={link.icon === "mail" ? undefined : "noreferrer"}
-              aria-label={link.label}
-              title={link.label}
-              className="icon-btn h-9 w-9"
-            >
-              <SocialIcon icon={link.icon} />
-            </a>
-          ))}
-        </m.div>
-      </m.div>
-
-      {/* Scroll cue: a hairline that drains, then the arrow */}
+      {/* Two tapes crossing at the foot of the poster */}
       <m.div
-        className="hero-scroll-cue absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-2.5"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6, duration: 0.8 }}
+        className="tapes"
+        aria-hidden="true"
+        initial={{ opacity: 0, y: 40 }}
+        animate={on({ opacity: 1, y: 0 })}
+        transition={{ duration: 1.2, ease, delay: T + 1.1 }}
       >
-        <span
-          aria-hidden="true"
-          className="block h-8 w-px overflow-hidden"
-          style={{ background: "var(--border-hv)" }}
-        >
-          <m.span
-            className="block h-full w-full"
-            style={{ background: "var(--gold)", transformOrigin: "top" }}
-            animate={{ scaleY: [0, 1, 1], y: ["0%", "0%", "100%"] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", times: [0, 0.45, 1] }}
-          />
-        </span>
-        <button
-          type="button"
-          aria-label="Scroll to about section"
-          onClick={() => scrollTo("#about")}
-          className="icon-btn h-9 w-9"
-        >
-          <ArrowDownIcon />
-        </button>
+        <div className="tape tape--b">
+          <Marquee duration={40} direction={-1}>
+            {focusTape.map((item, i) => (
+              <span key={item} className="tape__item">
+                <em>{item}</em>
+                <Sep i={i} tone="b" />
+              </span>
+            ))}
+          </Marquee>
+        </div>
+        <div className="tape tape--a">
+          <Marquee duration={34}>
+            {stackTape.map((item, i) => (
+              <span key={item} className="tape__item">
+                {item}
+                <Sep i={i} tone="a" />
+              </span>
+            ))}
+          </Marquee>
+        </div>
       </m.div>
     </section>
   );

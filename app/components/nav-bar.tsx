@@ -1,309 +1,260 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { AnimatePresence, m } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, m, useMotionValueEvent, useScroll } from "framer-motion";
 import { navLinks, resumeHref, socialLinks } from "@/app/lib/data";
 import ThemeToggle from "@/app/theme-toggle";
 import Magnetic from "@/app/components/ui/magnetic";
+import RollText from "@/app/components/ui/roll-text";
+import LocalTime from "@/app/components/ui/local-time";
+import { ease } from "@/app/components/ui/reveal";
+import { useIntroDone } from "@/app/components/motion/intro";
+import { scrollToTarget, useLenis } from "@/app/components/motion/smooth-scroll";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const sweep = [0.76, 0, 0.24, 1] as const;
+const sections = navLinks.filter((link) => link.href !== "#home");
 
 export default function NavBar() {
-  const [scrolled,   setScrolled]   = useState(false);
-  const [menuOpen,   setMenuOpen]   = useState(false);
-  const [activeHash, setActiveHash] = useState("#home");
+  const [solid, setSolid] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("#home");
+  const introDone = useIntroDone();
+  const lenis = useLenis();
+  const { scrollY } = useScroll();
+  const lastY = useRef(0);
 
-  const railRef  = useRef<HTMLElement>(null);
-  const pillRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [thumb, setThumb] = useState({ x: 0, w: 0, ready: false });
+  /* Tuck away while reading down, come back the moment you scroll up. */
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const previous = lastY.current;
+    lastY.current = y;
+    setSolid(y > 24);
+    if (y < 140) setHidden(false);
+    else if (y > previous + 6) setHidden(true);
+    else if (y < previous - 6) setHidden(false);
+  });
 
-  /* ── Scrolled chrome ─────────────────────────────────────────────────── */
+  /* The active section is whichever one crosses the middle of the screen,
+     which stays right however tall a section is (the pinned gallery). */
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 24);
-      if (window.scrollY < 80) setActiveHash("#home");
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  /* ── Active section ──────────────────────────────────────────────────── */
-  useEffect(() => {
-    const ratios = new Map<string, number>();
-
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => ratios.set(e.target.id, e.intersectionRatio));
-        const best = [...ratios.entries()].sort((a, b) => b[1] - a[1])[0];
-        if (best && best[1] > 0) setActiveHash(`#${best[0]}`);
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActive(`#${entry.target.id}`);
+        }
       },
-      { threshold: [0.15, 0.3, 0.5, 0.75] },
+      { rootMargin: "-50% 0px -50% 0px" },
     );
-
     navLinks.forEach(({ href }) => {
-      const el = document.getElementById(href.slice(1));
+      const el = document.querySelector(href);
       if (el) observer.observe(el);
     });
-
     return () => observer.disconnect();
   }, []);
 
-  /* ── Slide the rail indicator under the active pill ──────────────────── */
-  const measureThumb = useCallback(() => {
-    const rail = railRef.current;
-    const pill = pillRefs.current[activeHash];
-    if (!rail || !pill) return;
-    setThumb({ x: pill.offsetLeft, w: pill.offsetWidth, ready: true });
-  }, [activeHash]);
-
-  useLayoutEffect(measureThumb, [measureThumb]);
-
+  /* Mobile sheet: hold the page still, close on Escape. */
   useEffect(() => {
-    window.addEventListener("resize", measureThumb);
-    // Web fonts land after first paint and change pill widths.
-    document.fonts?.ready.then(measureThumb).catch(() => {});
-    return () => window.removeEventListener("resize", measureThumb);
-  }, [measureThumb]);
-
-  /* ── Mobile sheet: lock scroll, close on Escape ──────────────────────── */
-  useEffect(() => {
-    if (!menuOpen) return;
-    const prev = document.body.style.overflow;
+    if (!open) return;
+    lenis?.stop();
+    const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setMenuOpen(false); };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prev;
+      lenis?.start();
+      document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
     };
-  }, [menuOpen]);
+  }, [open, lenis]);
 
-  const goTo = useCallback((href: string) => {
-    const scroll = () =>
-      document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    // Let the sheet finish closing before the page moves under it.
-    if (menuOpen) { setMenuOpen(false); setTimeout(scroll, 320); }
-    else scroll();
-  }, [menuOpen]);
+  const goTo = useCallback(
+    (href: string) => {
+      if (open) {
+        setOpen(false);
+        // Let the sheet lift before the page moves under it.
+        window.setTimeout(() => scrollToTarget(href), 520);
+      } else {
+        scrollToTarget(href);
+      }
+    },
+    [open],
+  );
 
   return (
     <>
-      <m.header
-        className="fixed inset-x-0 top-0 z-50"
-        initial={{ y: -72, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease, delay: 0.1 }}
+      <header
+        className={`nav ${open ? "scheme-ink" : ""}`}
+        data-solid={solid || open}
+        data-hidden={hidden && !open}
+        style={open ? { background: "transparent", borderColor: "transparent" } : undefined}
       >
-        <div
-          className="transition-all duration-500"
-          style={{
-            background: scrolled ? "color-mix(in srgb, var(--bg) 78%, transparent)" : "transparent",
-            borderBottom: `1px solid ${scrolled ? "var(--border)" : "transparent"}`,
-            backdropFilter: scrolled ? "blur(20px) saturate(1.6)" : "none",
-            WebkitBackdropFilter: scrolled ? "blur(20px) saturate(1.6)" : "none",
-            boxShadow: scrolled ? "var(--shadow-xs)" : "none",
-          }}
+        <m.div
+          className="wrap flex h-full items-center gap-6"
+          initial={{ y: -24, opacity: 0 }}
+          animate={introDone ? { y: 0, opacity: 1 } : { y: -24, opacity: 0 }}
+          transition={{ duration: 1, ease, delay: 0.35 }}
         >
-          <div className="relative mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+          <a
+            href="#home"
+            onClick={(event) => {
+              event.preventDefault();
+              goTo("#home");
+            }}
+            className="logo"
+            aria-label="Jimuel Dave Rodado, back to top"
+          >
+            <span aria-hidden="true" className="logo__mark">
+              <span className="logo__sq" />
+              <span className="logo__ci" />
+            </span>
+            <span aria-hidden="true" className="logo__word hidden sm:block lg:hidden xl:block">
+              Jimuel Dave
+              <br />
+              Rodado
+            </span>
+          </a>
 
-            {/* Monogram, which expands to the full surname on hover */}
+          <nav aria-label="Sections" className="mx-auto hidden items-center gap-7 lg:flex">
+            {sections.map((link) => (
+              <button
+                key={link.href}
+                type="button"
+                onClick={() => goTo(link.href)}
+                className="nav__link roll-host"
+                aria-current={active === link.href ? "true" : undefined}
+              >
+                <span aria-hidden="true" className="nav__pip" />
+                <RollText text={link.label} />
+              </button>
+            ))}
+          </nav>
+
+          <div className="ml-auto flex items-center gap-2.5 lg:ml-0">
+            <ThemeToggle />
             <a
-              href="#home"
-              onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-              aria-label="Back to top"
-              className="group relative inline-flex items-center gap-2.5"
+              href={resumeHref}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-line btn-sm roll-host hidden lg:inline-flex"
             >
-              <span
-                className="font-display text-lg italic tracking-wide lg:text-xl"
-                style={{ color: "var(--gold)", fontWeight: 700 }}
-              >
-                JDR
-              </span>
-              <span
-                aria-hidden="true"
-                className="h-3.5 w-px origin-bottom scale-y-0 transition-transform duration-300 group-hover:scale-y-100"
-                style={{ background: "var(--gold)" }}
-              />
-              <span
-                aria-hidden="true"
-                className="lux-label max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-500 group-hover:max-w-32 group-hover:opacity-100"
-                style={{ color: "var(--subtle)" }}
-              >
-                Rodado
-              </span>
+              <RollText text={"Résumé"} />
             </a>
-
-            {/* Desktop rail */}
-            <nav
-              ref={railRef}
-              aria-label="Sections"
-              className="nav-rail absolute left-1/2 hidden -translate-x-1/2 lg:flex"
-            >
-              <span
-                aria-hidden="true"
-                className="nav-rail__thumb"
-                style={{
-                  transform: `translateX(${thumb.x}px)`,
-                  width: thumb.w,
-                  opacity: thumb.ready ? 1 : 0,
-                }}
-              />
-              {navLinks.map((link) => (
-                <button
-                  key={link.href}
-                  ref={(el) => { pillRefs.current[link.href] = el; }}
-                  type="button"
-                  onClick={() => goTo(link.href)}
-                  className="nav-pill"
-                  data-on={activeHash === link.href ? "true" : undefined}
-                  aria-current={activeHash === link.href ? "true" : undefined}
-                >
-                  {link.label}
-                </button>
-              ))}
-            </nav>
-
-            {/* Desktop actions */}
-            <div className="ml-auto hidden items-center gap-2.5 lg:flex">
-              <ThemeToggle />
-              <a
-                href={resumeHref}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-ghost rounded-md px-4 py-2 text-sm"
-              >
-                Résumé
-              </a>
-              <Magnetic strength={0.22}>
+            <span className="hidden lg:inline-flex">
+              <Magnetic strength={0.25}>
                 <button
                   type="button"
                   onClick={() => goTo("#contact")}
-                  className="btn-gold whitespace-nowrap rounded-md px-5 py-2 text-sm"
+                  className="btn btn-solid btn-sm roll-host"
                 >
-                  Hire Me
+                  <span aria-hidden="true" className="btn__dot" />
+                  <RollText text="Let's talk" />
                 </button>
               </Magnetic>
-            </div>
-
-            {/* Mobile trigger: the two rules cross into an X */}
+            </span>
             <button
               type="button"
-              className="ml-auto grid h-10 w-10 place-items-center rounded-md lg:hidden"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={menuOpen}
-              style={{ color: "var(--fg)" }}
+              className="btn btn-line btn-sm roll-host lg:hidden"
+              aria-expanded={open}
+              aria-controls="menu-sheet"
+              onClick={() => setOpen((v) => !v)}
             >
-              <span className="relative block h-4 w-5">
-                <span
-                  className="absolute left-0 block h-px w-full transition-all duration-300"
-                  style={{
-                    background: "currentColor",
-                    top: menuOpen ? "50%" : "2px",
-                    transform: menuOpen ? "rotate(45deg)" : "none",
-                  }}
-                />
-                <span
-                  className="absolute left-0 top-1/2 block h-px w-full transition-all duration-200"
-                  style={{ background: "currentColor", opacity: menuOpen ? 0 : 1 }}
-                />
-                <span
-                  className="absolute left-0 block h-px w-full transition-all duration-300"
-                  style={{
-                    background: "currentColor",
-                    top: menuOpen ? "50%" : "auto",
-                    bottom: menuOpen ? "auto" : "2px",
-                    transform: menuOpen ? "rotate(-45deg)" : "none",
-                  }}
-                />
-              </span>
+              <RollText text={open ? "Close" : "Menu"} />
             </button>
           </div>
-        </div>
-      </m.header>
+        </m.div>
+      </header>
 
-      {/* Mobile sheet */}
       <AnimatePresence>
-        {menuOpen && (
+        {open && (
           <m.div
-            className="nav-sheet lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease }}
+            id="menu-sheet"
+            className="menu-sheet scheme-ink lg:hidden"
+            initial={{ y: "-100%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "-100%", transition: { duration: 0.6, ease: sweep, delay: 0.1 } }}
+            transition={{ duration: 0.75, ease: sweep }}
           >
-            <div className="flex h-full flex-col px-6 pb-8 pt-24">
-              <nav aria-label="Sections" className="flex-1">
-                {navLinks.map((link, i) => (
+            {/* Bauhaus furniture in the corner of the sheet */}
+            <m.span
+              aria-hidden="true"
+              className="sh sh-circle pointer-events-none absolute -right-16 top-24 h-48 w-48"
+              style={{ background: "var(--brand-terra)" }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              transition={{ type: "spring", stiffness: 160, damping: 18, delay: 0.25 }}
+            />
+            <m.span
+              aria-hidden="true"
+              className="sh sh-half pointer-events-none absolute -right-4 top-68 w-32"
+              style={{ background: "#D6AB52" }}
+              initial={{ rotate: -180, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1, ease, delay: 0.35 }}
+            />
+
+            <nav aria-label="Sections" className="relative flex-1">
+              {navLinks.map((link, i) => (
+                <div key={link.href} className="overflow-hidden">
                   <m.button
-                    key={link.href}
                     type="button"
                     onClick={() => goTo(link.href)}
-                    className="nav-sheet__link"
-                    data-on={activeHash === link.href ? "true" : undefined}
-                    initial={{ opacity: 0, y: 18 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    // Entry staggers; exit does not, because AnimatePresence waits for
-                    // the slowest child, so a staggered exit makes the sheet
-                    // linger on screen after the tap.
-                    exit={{ opacity: 0, y: 8, transition: { duration: 0.15, delay: 0 } }}
-                    transition={{ duration: 0.45, ease, delay: 0.06 + i * 0.05 }}
+                    className="menu-sheet__link"
+                    aria-current={active === link.href ? "true" : undefined}
+                    initial={{ y: "110%" }}
+                    animate={{ y: "0%" }}
+                    exit={{ y: "110%", transition: { duration: 0.3, ease: sweep } }}
+                    transition={{ duration: 0.8, ease, delay: 0.2 + i * 0.06 }}
                   >
-                    <span className="nav-sheet__idx">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="font-display text-3xl" style={{ fontWeight: 600 }}>
-                      {link.label}
-                    </span>
+                    <span className="t-label text-subtle">{String(i).padStart(2, "0")}</span>
+                    <span className="menu-sheet__word">{link.label}</span>
                   </m.button>
-                ))}
-              </nav>
-
-              <m.div
-                className="space-y-4"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease, delay: 0.36 }}
-              >
-                <div className="flex gap-2.5">
-                  <a
-                    href={resumeHref}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn-ghost flex-1 rounded-md px-4 py-3 text-center text-sm"
-                  >
-                    Résumé
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => goTo("#contact")}
-                    className="btn-gold flex-1 rounded-md px-4 py-3 text-sm"
-                  >
-                    Hire Me
-                  </button>
                 </div>
+              ))}
+            </nav>
 
-                <div
-                  className="flex items-center justify-between pt-4"
-                  style={{ borderTop: "1px solid var(--border)" }}
+            <m.div
+              className="relative space-y-6"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease, delay: 0.55 }}
+            >
+              <div className="flex gap-2.5">
+                <a
+                  href={resumeHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-line flex-1"
                 >
-                  <div className="flex flex-wrap gap-1">
-                    {socialLinks.map((link) => (
+                  R&eacute;sum&eacute;
+                </a>
+                <button type="button" onClick={() => goTo("#contact")} className="btn btn-solid flex-1">
+                  <span aria-hidden="true" className="btn__dot" />
+                  Let&apos;s talk
+                </button>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5">
+                <ul className="flex flex-wrap gap-x-5 gap-y-2">
+                  {socialLinks.map((link) => (
+                    <li key={link.label}>
                       <a
-                        key={link.label}
                         href={link.href}
                         target={link.icon === "mail" ? undefined : "_blank"}
                         rel={link.icon === "mail" ? undefined : "noreferrer"}
-                        className="lux-label nav-link"
-                        style={{ color: "var(--subtle)", padding: "0.35rem 0.5rem" }}
+                        className="t-label u-link text-muted"
                       >
                         {link.label}
                       </a>
-                    ))}
-                  </div>
-                  <ThemeToggle />
-                </div>
-              </m.div>
-            </div>
+                    </li>
+                  ))}
+                </ul>
+                <LocalTime className="t-label text-subtle" />
+              </div>
+            </m.div>
           </m.div>
         )}
       </AnimatePresence>
