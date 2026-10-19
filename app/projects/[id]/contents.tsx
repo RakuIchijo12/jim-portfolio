@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SHAPE_CLASS, type ProjectLook } from "@/app/lib/project-looks";
+import type { ProjectLook } from "@/app/lib/project-looks";
 import CountUp from "@/app/components/ui/count-up";
 import RollText from "@/app/components/ui/roll-text";
 import { scrollToTarget } from "@/app/components/motion/smooth-scroll";
@@ -48,17 +48,16 @@ export default function Contents({
     return () => observer.disconnect();
   }, [chapters]);
 
-  const split = look.shape === "split";
-
   return (
     <div className="rail">
       <nav aria-label="Case study contents" className="rail__toc">
         <p className="t-label rail__k">Contents</p>
         <div className="rail__list-wrap" style={{ "--active": active } as React.CSSProperties}>
+          {/* An LED in the project's colour lights the chapter being read. */}
           <span
             aria-hidden="true"
-            className={`rail__marker sh ${SHAPE_CLASS[look.shape]}`}
-            style={split ? undefined : { background: look.color }}
+            className="rail__marker led"
+            style={{ "--led": look.color } as React.CSSProperties}
           />
           <ol className="rail__list">
           {chapters.map((chapter, i) => (

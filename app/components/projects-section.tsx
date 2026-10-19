@@ -4,7 +4,9 @@ import { useRef, useState } from "react";
 import { m, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { projects } from "@/app/lib/data";
 import { TECH_ICON_MAP } from "@/app/lib/tech-icons";
-import { lookFor, SHAPE_CLASS } from "@/app/lib/project-looks";
+import { lookFor } from "@/app/lib/project-looks";
+import ProjectGlyph from "@/app/components/ui/project-glyph";
+import { Chip, Led } from "@/app/components/ui/circuit";
 import { TransitionLink } from "@/app/components/motion/page-transition";
 import { scrollToTarget } from "@/app/components/motion/smooth-scroll";
 import { SectionMeta } from "@/app/components/ui/section-head";
@@ -46,20 +48,21 @@ const works: Work[] = projects.map((p) => ({
   link: p.link,
 }));
 
-/* Where each project's shape peeks out of its screenshot on the wall: into
-   the gutter between plates, never over the labels above or the type below.
-   Colour and shape come from the shared project looks. */
+/* Where each project's hardware peeks out of its screenshot on the wall:
+   into the gutter between plates, never over the labels above or the type
+   below. Neighbours share a gutter, so one sits high and the other low.
+   Colour and part come from the shared project looks. */
 const PLACEMENT: Record<string, { size: string; pos: React.CSSProperties }> = {
-  obsentry: { size: "w-[24%] rotate-90", pos: { right: "-14%", top: "22%" } },
-  eingress: { size: "w-[17%]", pos: { left: "-9%", top: "30%" } },
-  "velora-motors": { size: "w-[16%]", pos: { right: "-8%", top: "34%" } },
-  "marrea-erp": { size: "w-[13%]", pos: { left: "-7%", top: "26%" } },
+  obsentry: { size: "w-[17%]", pos: { right: "-10%", top: "7%" } },
+  eingress: { size: "w-[17%]", pos: { left: "-10%", top: "57%" } },
+  "velora-motors": { size: "w-[16%]", pos: { right: "-9.5%", top: "4%" } },
+  "marrea-erp": { size: "w-[16%]", pos: { left: "-9.5%", top: "56%" } },
 };
 
 function wallLook(id: string) {
   const look = lookFor(id);
-  const place = PLACEMENT[id] ?? { size: "w-[14%]", pos: { right: "-7%", top: "30%" } };
-  return { color: look.color, shape: `${SHAPE_CLASS[look.shape]} ${place.size}`, pos: place.pos };
+  const place = PLACEMENT[id] ?? { size: "w-[16%]", pos: { right: "-9%", top: "30%" } };
+  return { look, size: place.size, pos: place.pos };
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -105,7 +108,10 @@ function Media({ work, imgStyle }: { work: Work; imgStyle?: { x: MotionValue<str
         <img src={work.cover} alt="" loading="lazy" decoding="async" />
       )}
       <span className="relative grid place-items-center gap-3 text-center">
-        <span className="sh sh-half w-16" style={{ background: "var(--fg)" }} />
+        <span className="flex items-center gap-2">
+          <Chip pins={4} body="var(--fg)" mark="var(--bg)" className="w-12" />
+          <Led color="#D0714D" blink />
+        </span>
         <span className="t-label">Private client system</span>
       </span>
     </span>
@@ -120,7 +126,7 @@ function Panel({ work, index, progress }: { work: Work; index: number; progress:
   const end = Math.min(1, (left + PANEL) / TRAVEL);
 
   const imgX = useTransform(progress, [start, end], ["4%", "-4%"]);
-  const shapeRotate = useTransform(progress, [start, end], [-70, 70]);
+  const shapeRotate = useTransform(progress, [start, end], [-18, 18]);
   const shapeY = useTransform(progress, [start, end], ["14%", "-14%"]);
   const look = wallLook(work.id);
 
@@ -131,7 +137,7 @@ function Panel({ work, index, progress }: { work: Work; index: number; progress:
           PL. {pad(index + 1)} / {work.category}
         </span>
         <span className="inline-flex items-center gap-2">
-          <span aria-hidden="true" className="status-dot" style={{ background: look.color }} />
+          <span aria-hidden="true" className="status-dot" style={{ background: look.look.color }} />
           {work.link ? "Live" : "Private"}
         </span>
       </div>
@@ -145,9 +151,11 @@ function Panel({ work, index, progress }: { work: Work; index: number; progress:
       >
         <m.span
           aria-hidden="true"
-          className={`work__shape sh ${look.shape}`}
-          style={{ ...look.pos, background: look.color, rotate: shapeRotate, y: shapeY }}
-        />
+          className={`work__shape ${look.size}`}
+          style={{ ...look.pos, rotate: shapeRotate, y: shapeY }}
+        >
+          <ProjectGlyph kind={look.look.glyph} fill={look.look.color} detail="var(--bg)" accent={look.look.second} />
+        </m.span>
         <span className="work__frame">
           <Media work={work} imgStyle={{ x: imgX }} />
         </span>

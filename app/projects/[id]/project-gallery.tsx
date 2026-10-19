@@ -2,7 +2,7 @@
 
 import { m, type Variants } from "framer-motion";
 import type { projects } from "@/app/lib/data";
-import { lookFor, SHAPE_CLASS } from "@/app/lib/project-looks";
+import { lookFor } from "@/app/lib/project-looks";
 import { useIntroDone } from "@/app/components/motion/intro";
 import { TransitionLink } from "@/app/components/motion/page-transition";
 import { ease, Reveal, RevealWords } from "@/app/components/ui/reveal";
@@ -149,13 +149,13 @@ export default function ProjectView({
           </aside>
 
           <div className="dossier__main">
-            {/* ── 01 Brief: a standfirst with a drop cap in the project's shape ── */}
+            {/* ── 01 Brief: a standfirst whose first letter is printed on a chip ── */}
             <section id="cs-brief" className="chapter">
               <ChapterHead n={1} title="Brief" />
               <p className="sr-only">{overview}</p>
               <div className="brief" aria-hidden="true">
                 <m.span
-                  className={`brief__cap brief__cap--${look.shape}`}
+                  className="brief__cap"
                   style={{ "--cover": look.color, "--cover-ink": look.ink } as React.CSSProperties}
                   initial={{ scale: 0, rotate: -40 }}
                   whileInView={{ scale: 1, rotate: 0 }}
@@ -194,10 +194,7 @@ export default function ProjectView({
                 {project.features.map((feature, i) => (
                   <m.li key={feature} variants={item} className="shipped__item">
                     <span aria-hidden="true" className="shipped__n t-label">
-                      <span
-                        className={`sh ${SHAPE_CLASS[look.shape]} shipped__mark`}
-                        style={look.shape === "split" ? undefined : { background: look.color }}
-                      />
+                      <span className="led shipped__mark" style={{ "--led": look.color } as React.CSSProperties} />
                       {pad(i + 1)}
                     </span>
                     <p className="shipped__text t-pretty">{feature}</p>

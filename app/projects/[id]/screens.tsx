@@ -4,6 +4,7 @@ import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, m } from "framer-motion";
 import type { ProjectLook } from "@/app/lib/project-looks";
+import { Chip, Led } from "@/app/components/ui/circuit";
 import { ease } from "@/app/components/ui/reveal";
 import { useLenis } from "@/app/components/motion/smooth-scroll";
 import { ChevronIcon } from "@/app/components/ui/icons";
@@ -170,7 +171,9 @@ function ContactSheet({
             </button>
             <p className="sheet__label t-label">
               {screenLabel(shot.alt)}
-              {i < FEATURED && <span className="sheet__select" style={{ background: look.color }} />}
+              {i < FEATURED && (
+                <span className="led sheet__select" style={{ "--led": look.color } as React.CSSProperties} />
+              )}
             </p>
           </m.li>
         ))}
@@ -302,10 +305,10 @@ function PrivatePrint({ cover, category, look }: { cover: string | null; categor
         )}
         {/* A paper sticker on the print, like a label on a confidential file. */}
         <span className="private-print__sticker">
-          <span aria-hidden="true" className="flex items-end gap-1.5">
-            <span className="sh sh-half w-8" style={{ background: look.color }} />
-            <span className="sh h-5 w-5" style={{ background: "#C99A3E" }} />
-            <span className="sh sh-tri h-6 w-6" style={{ background: "#BB613F" }} />
+          <span aria-hidden="true" className="flex items-center gap-2">
+            <Chip pins={4} body="#14120F" mark="rgba(240, 233, 220, 0.6)" className="w-9" />
+            <Led color={look.color} blink />
+            <Led color="#C99A3E" off />
           </span>
           <span className="t-label">Under NDA / no public screens</span>
         </span>

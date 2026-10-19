@@ -10,6 +10,7 @@ import LocalTime from "@/app/components/ui/local-time";
 import { ease } from "@/app/components/ui/reveal";
 import { useIntroDone } from "@/app/components/motion/intro";
 import { scrollToTarget, useLenis } from "@/app/components/motion/smooth-scroll";
+import { Cpu, Gate } from "@/app/components/ui/circuit";
 
 const sweep = [0.76, 0, 0.24, 1] as const;
 const sections = navLinks.filter((link) => link.href !== "#home");
@@ -106,8 +107,8 @@ export default function NavBar() {
             aria-label="Jimuel Dave Rodado, back to top"
           >
             <span aria-hidden="true" className="logo__mark">
-              <span className="logo__sq" />
-              <span className="logo__ci" />
+              <span className="logo__chip" />
+              <span className="logo__led led" />
             </span>
             <span aria-hidden="true" className="logo__word hidden sm:block lg:hidden xl:block">
               Jimuel Dave
@@ -176,25 +177,27 @@ export default function NavBar() {
             exit={{ y: "-100%", transition: { duration: 0.6, ease: sweep, delay: 0.1 } }}
             transition={{ duration: 0.75, ease: sweep }}
           >
-            {/* Bauhaus furniture in the corner of the sheet */}
+            {/* Hardware in the corner of the sheet: a processor and a gate */}
             <m.span
               aria-hidden="true"
-              className="sh sh-circle pointer-events-none absolute -right-16 top-24 h-48 w-48"
-              style={{ background: "var(--brand-terra)" }}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              className="pointer-events-none absolute -right-14 top-24 w-52"
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
               exit={{ scale: 0 }}
-              transition={{ type: "spring", stiffness: 160, damping: 18, delay: 0.25 }}
-            />
+              transition={{ type: "spring", stiffness: 140, damping: 16, delay: 0.25 }}
+            >
+              <Cpu body="#BB613F" die="#D6AB52" pin="#CFC7B8" />
+            </m.span>
             <m.span
               aria-hidden="true"
-              className="sh sh-half pointer-events-none absolute -right-4 top-68 w-32"
-              style={{ background: "#D6AB52" }}
-              initial={{ rotate: -180, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
+              className="pointer-events-none absolute -right-4 top-[28rem] w-40"
+              initial={{ x: "40%", opacity: 0 }}
+              animate={{ x: "0%", opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1, ease, delay: 0.35 }}
-            />
+            >
+              <Gate kind="nand" body="#D6AB52" lead="#D6AB52" hole="var(--bg)" />
+            </m.span>
 
             <nav aria-label="Sections" className="relative flex-1">
               {navLinks.map((link, i) => (

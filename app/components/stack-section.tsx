@@ -5,6 +5,7 @@ import { stackGroups, totalTechnologies } from "@/app/lib/data";
 import SectionHead from "@/app/components/ui/section-head";
 import CountUp from "@/app/components/ui/count-up";
 import { ease } from "@/app/components/ui/reveal";
+import { DramStick, Gate, LcdModule, NeuralNet, SchCircuit, ServerRack } from "@/app/components/ui/circuit";
 
 type Group = (typeof stackGroups)[number];
 type GroupId = Group["id"];
@@ -19,8 +20,8 @@ function iconSrc(icon: string, ai?: boolean) {
   return ai ? (AI_ICON_PATHS[icon] ?? `/stack-icons/${icon}.png`) : `/stack-icons/${icon}.png`;
 }
 
-/* Each tile is a small Bauhaus poster: three solid fields, three paper ones
-   with a shape tucked into the corner. */
+/* Each tile is a small poster with a piece of hardware tucked into the
+   corner: the part that does that kind of work. */
 const META: Record<
   GroupId,
   { label: string; blurb: string; fill?: "ochre" | "teal" | "terra"; deco: React.ReactNode }
@@ -30,9 +31,11 @@ const META: Record<
     blurb: "Interfaces, design systems, and the browser runtime.",
     deco: (
       <span
-        className="tile__deco sh sh-quarter -bottom-10 -right-10 w-52"
-        style={{ background: "var(--brand-terra)", opacity: 0.9 }}
-      />
+        className="tile__deco -bottom-5 -right-6 w-52 sm:w-60"
+        style={{ "--glyph-hole": "var(--bg)" } as React.CSSProperties}
+      >
+        <LcdModule />
+      </span>
     ),
   },
   backend: {
@@ -40,10 +43,9 @@ const META: Record<
     blurb: "Frameworks and services that run the server side.",
     fill: "ochre",
     deco: (
-      <span
-        className="tile__deco sh sh-half -bottom-1 -right-10 w-56"
-        style={{ background: "var(--ink)" }}
-      />
+      <span className="tile__deco -bottom-14 -right-4 w-44">
+        <ServerRack body="var(--ink)" unit="var(--bg)" led="#BB613F" />
+      </span>
     ),
   },
   database: {
@@ -51,12 +53,8 @@ const META: Record<
     blurb: "Storage, querying, and managed data platforms.",
     fill: "teal",
     deco: (
-      <span className="tile__deco -bottom-20 -right-20 grid w-52 place-items-center">
-        <span className="sh sh-ring aspect-square w-full" style={{ color: "var(--paper)" }} />
-        <span
-          className="sh sh-circle absolute aspect-square w-10"
-          style={{ background: "var(--brand-terra)", top: "18%", left: "18%" }}
-        />
+      <span className="tile__deco tile__deco--tilt bottom-1 -right-14 w-64">
+        <DramStick board="var(--paper)" chip="var(--ink)" gold="#D6AB52" />
       </span>
     ),
   },
@@ -64,10 +62,9 @@ const META: Record<
     label: "Languages",
     blurb: "The core languages everything else is written in.",
     deco: (
-      <span
-        className="tile__deco sh sh-half -right-12 bottom-0 w-60"
-        style={{ background: "var(--olive)" }}
-      />
+      <span className="tile__deco -bottom-14 -right-8 w-56 lg:w-64">
+        <Gate kind="xor" body="var(--olive)" lead="var(--olive)" />
+      </span>
     ),
   },
   ai: {
@@ -75,20 +72,17 @@ const META: Record<
     blurb: "Assistants and models woven into the daily workflow.",
     fill: "terra",
     deco: (
-      <span
-        className="tile__deco sh sh-tri -bottom-6 -right-6 aspect-square w-36"
-        style={{ background: "var(--ink)" }}
-      />
+      <span className="tile__deco -bottom-8 -right-6 w-44" style={{ "--glyph-hole": "var(--bg)" } as React.CSSProperties}>
+        <NeuralNet node="var(--ink)" edge="var(--ink)" />
+      </span>
     ),
   },
   tools: {
     label: "Other Tools",
     blurb: "Version control, containers, editors, and delivery.",
     deco: (
-      <span className="tile__deco bottom-8 right-8 hidden items-end gap-2 md:flex">
-        <span className="block h-16 w-4" style={{ background: "var(--fg)" }} />
-        <span className="block h-24 w-4" style={{ background: "var(--brand-terra)" }} />
-        <span className="block h-12 w-4" style={{ background: "var(--ochre)" }} />
+      <span className="tile__deco bottom-6 right-8 hidden w-80 md:block" style={{ color: "var(--fg)" }}>
+        <SchCircuit led="var(--brand-terra)" />
       </span>
     ),
   },

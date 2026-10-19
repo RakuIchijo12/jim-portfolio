@@ -14,9 +14,17 @@ import { ease } from "@/app/components/ui/reveal";
 import RiseChars from "@/app/components/ui/rise-chars";
 import { useOffscreenPause } from "@/app/components/ui/use-offscreen";
 import { ArrowDownIcon, ArrowRightIcon, DocumentIcon } from "@/app/components/ui/icons";
+import {
+  SchCapacitor,
+  SchDiode,
+  SchGate,
+  SchGround,
+  SchLed,
+  SchResistor,
+} from "@/app/components/ui/circuit";
+import HeroCircuit from "@/app/components/hero-circuit";
 
 const sweep = [0.76, 0, 0.24, 1] as const;
-const roll = [0.22, 1, 0.36, 1] as const;
 /** Seconds after the intro lifts before the hero starts composing itself. */
 const T = 0.1;
 
@@ -44,16 +52,25 @@ const focusTape = [
   "AI-assisted delivery",
 ];
 
-const SEP_SHAPES = ["sh-circle", "", "sh-tri"] as const;
+/* Schematic symbols between the tape words, cycling through the parts bin. */
+const SEP_GLYPHS = [
+  SchResistor,
+  SchDiode,
+  (props: { className?: string }) => <SchGate kind="and" {...props} />,
+  SchCapacitor,
+  SchGround,
+  SchLed,
+];
 
 function Sep({ i, tone }: { i: number; tone: "a" | "b" }) {
+  const Glyph = SEP_GLYPHS[i % SEP_GLYPHS.length];
   const color =
-    tone === "a"
-      ? i % 2 === 0
-        ? "var(--ink)"
-        : "var(--paper)"
-      : ["var(--brand-terra)", "#D6AB52", "#A3936A"][i % 3];
-  return <span className={`sh tape__sep ${SEP_SHAPES[i % 3]}`} style={{ background: color }} />;
+    tone === "a" ? "var(--ink)" : ["var(--brand-terra)", "#D6AB52", "#A3936A"][i % 3];
+  return (
+    <span className="tape__sep" style={{ color }}>
+      <Glyph className="tape__glyph" />
+    </span>
+  );
 }
 
 export default function HeroSection() {
@@ -69,15 +86,8 @@ export default function HeroSection() {
   const copyFade = useTransform(p, [0.45, 1], [1, 0.2]);
   const frameY = useTransform(p, [0, 1], ["0%", "-9%"]);
   const imgScale = useTransform(p, [0, 1], [1, 1.14]);
-  const terraX = useTransform(p, [0, 1], ["0%", "190%"]);
-  const terraRot = useTransform(p, [0, 1], [0, 320]);
-  const tealY = useTransform(p, [0, 1], ["0%", "40%"]);
-  const ruleAX = useTransform(p, [0, 1], ["0%", "-30%"]);
-  const ruleBX = useTransform(p, [0, 1], ["0%", "-65%"]);
-  const orbitScale = useTransform(p, [0, 1], [1, 1.28]);
-  const dotsY = useTransform(p, [0, 1], ["0%", "-160%"]);
 
-  const on = (target: Record<string, number | string>) => (play ? target : undefined);
+  const on = (target: Record<string, number | string | number[]>) => (play ? target : undefined);
 
   return (
     <section id="home" ref={ref} className="hero">
@@ -120,12 +130,16 @@ export default function HeroSection() {
               </span>
               <span aria-hidden="true" className="hero__last">
                 <RiseChars text="RODADO" play={play} delay={T + 0.38} stagger={0.065} tilt />
-                {/* The full stop rolls in from the right and settles. */}
+                {/* The full stop is a power LED: it drops into place and flickers on. */}
                 <m.span
-                  className="hero__dot sh-split"
-                  initial={{ x: "7em", rotate: 1080 }}
-                  animate={on({ x: "0em", rotate: 0 })}
-                  transition={{ duration: 1.7, ease: roll, delay: T + 0.8 }}
+                  className="hero__dot led"
+                  style={{ "--led": "#D0714D" } as React.CSSProperties}
+                  initial={{ scale: 0, opacity: 0.25 }}
+                  animate={on({ scale: 1, opacity: [0.25, 1, 0.3, 1, 0.55, 1] })}
+                  transition={{
+                    scale: { type: "spring", stiffness: 260, damping: 13, delay: T + 0.8 },
+                    opacity: { duration: 1.2, delay: T + 1.05, times: [0, 0.18, 0.32, 0.5, 0.68, 1] },
+                  }}
                 />
               </span>
             </h1>
@@ -174,66 +188,11 @@ export default function HeroSection() {
             </m.div>
           </m.div>
 
-          {/* Poster: the portrait in an arch, its shapes spilling past the frame */}
+          {/* Poster: the portrait as the processor on a circuit board */}
           <div className="hero__art">
             <div ref={posterRef} className="poster">
               <div className="poster__stage">
-                <m.span aria-hidden="true" className="pz pz-orbit" style={{ scale: orbitScale }}>
-                  <m.span
-                    initial={{ opacity: 0, scale: 0.85 }}
-                    animate={on({ opacity: 1, scale: 1 })}
-                    transition={{ duration: 1.6, ease, delay: T + 1.2 }}
-                  >
-                    <span className="pz-orbit__ring">
-                      <span className="pz-orbit__moon" />
-                    </span>
-                  </m.span>
-                </m.span>
-
-                <m.span aria-hidden="true" className="pz pz-teal" style={{ y: tealY }}>
-                  <m.span
-                    initial={{ scaleY: 0 }}
-                    animate={on({ scaleY: 1 })}
-                    transition={{ duration: 1.3, ease: sweep, delay: T + 0.9 }}
-                  />
-                </m.span>
-
-                <m.span
-                  aria-hidden="true"
-                  className="pz pz-terra"
-                  style={{ x: terraX, rotate: terraRot }}
-                >
-                  <m.span
-                    initial={{ x: "260%", rotate: 420 }}
-                    animate={on({ x: "0%", rotate: 0 })}
-                    transition={{ duration: 1.7, ease: roll, delay: T + 1 }}
-                  />
-                </m.span>
-
-                <m.span aria-hidden="true" className="pz pz-rule-a" style={{ x: ruleAX }}>
-                  <m.span
-                    initial={{ scaleX: 0 }}
-                    animate={on({ scaleX: 1 })}
-                    transition={{ duration: 1.2, ease: sweep, delay: T + 1.15 }}
-                  />
-                </m.span>
-
-                <m.span aria-hidden="true" className="pz pz-rule-b" style={{ x: ruleBX }}>
-                  <m.span
-                    initial={{ scaleX: 0 }}
-                    animate={on({ scaleX: 1 })}
-                    transition={{ duration: 1.2, ease: sweep, delay: T + 1.3 }}
-                  />
-                </m.span>
-
-                <m.span
-                  aria-hidden="true"
-                  className="pz pz-dots sh-dots"
-                  style={{ y: dotsY }}
-                  initial={{ opacity: 0 }}
-                  animate={on({ opacity: 0.55 })}
-                  transition={{ duration: 1.2, delay: T + 1.45 }}
-                />
+                <HeroCircuit play={play} progress={p} />
 
                 <m.div className="poster__frame" style={{ y: frameY }}>
                   <m.div

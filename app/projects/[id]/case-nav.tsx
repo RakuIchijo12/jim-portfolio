@@ -71,8 +71,8 @@ export default function CaseNav({
       >
         <TransitionLink href="/" label="Portfolio" className="logo" aria-label="Jimuel Dave Rodado, back to the portfolio">
           <span aria-hidden="true" className="logo__mark">
-            <span className="logo__sq" />
-            <span className="logo__ci" />
+            <span className="logo__chip" />
+            <span className="logo__led led" />
           </span>
         </TransitionLink>
 

@@ -9,20 +9,22 @@ import RollText from "@/app/components/ui/roll-text";
 import LocalTime from "@/app/components/ui/local-time";
 import RotatingBadge from "@/app/components/ui/rotating-badge";
 import { ArrowRightIcon } from "@/app/components/ui/icons";
+import { PowerSymbol } from "@/app/components/ui/circuit";
 
 export default function ContactSection() {
   return (
     <section id="contact" className="section contact scheme-accent">
-      {/* Poster furniture: a big ink disc sliding in behind the type */}
+      {/* Poster furniture: a giant power symbol switching on behind the type */}
       <m.span
         aria-hidden="true"
-        className="sh sh-circle pointer-events-none absolute left-[-12vw] top-[18%] aspect-square w-[34vw] max-w-120"
-        style={{ background: "var(--ink)", opacity: 0.06 }}
-        initial={{ x: "-40%", scale: 0.7 }}
-        whileInView={{ x: "0%", scale: 1 }}
+        className="contact__power pointer-events-none absolute left-[-5vw] top-[12%] w-[30vw] max-w-110"
+        initial={{ x: "-30%", rotate: -60, scale: 0.8 }}
+        whileInView={{ x: "0%", rotate: 0, scale: 1 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1.8, ease }}
-      />
+      >
+        <PowerSymbol />
+      </m.span>
 
       <div className="wrap relative">
         <SectionMeta

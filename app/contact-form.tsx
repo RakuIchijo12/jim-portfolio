@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import RollText from "@/app/components/ui/roll-text";
 import { ArrowRightIcon } from "@/app/components/ui/icons";
+import { Led } from "@/app/components/ui/circuit";
 
 type SubmitState = "idle" | "sending" | "sent" | "error";
 
@@ -103,10 +104,12 @@ export default function ContactForm() {
     <form onSubmit={handleSubmit}>
       <div className="mb-6 flex items-center justify-between gap-4">
         <span className="t-label text-accent">Send a message</span>
-        <span aria-hidden="true" className="flex items-center gap-1.5">
-          <span className="sh sh-circle h-2.5 w-2.5" style={{ background: "var(--brand-terra)" }} />
-          <span className="sh h-2.5 w-2.5" style={{ background: "var(--ochre)" }} />
-          <span className="sh sh-tri h-2.5 w-2.5" style={{ background: "var(--olive)" }} />
+        {/* Status LEDs, like the lights on a modem: TX blinks, RX and power hold. */}
+        <span aria-hidden="true" className="form-leds t-label">
+          <Led color="#BB613F" blink />
+          <Led color="#C99A3E" />
+          <Led color="#92825A" />
+          <span>TX RX PWR</span>
         </span>
       </div>
 

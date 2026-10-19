@@ -330,43 +330,109 @@ html.has-cursor [data-cursor] { cursor: none; }
 .roll-host:focus-visible .roll__ch { transform: translateY(-100%); }
 
 /* ==========================================================================
-   SHAPES
+   PARTS: the CSS half of the component library in ui/circuit.tsx
    ========================================================================== */
 
-.sh { display: block; flex: none; }
-.sh-circle  { border-radius: 50%; }
-.sh-half    { border-radius: 999px 999px 0 0; aspect-ratio: 2 / 1; }
-.sh-quarter { border-top-left-radius: 100%; aspect-ratio: 1; }
-.sh-tri     { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
-.sh-ring    { border-radius: 50%; border: var(--ring, 1px) solid currentColor; }
-.sh-dots {
-  background-image: radial-gradient(circle, currentColor 1.15px, transparent 1.65px);
-  background-size: var(--pitch, 14px) var(--pitch, 14px);
-}
-
-/* Split disc: the brand's rolling dot. */
-.sh-split {
+/* LED: a flat lens in --led with a hard glint and a soft glow. Both scale
+   with the lens, so one part serves as a full stop or a status light. */
+.led {
+  --led: var(--brand-terra);
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+  flex: none;
+  width: 0.7rem;
+  height: 0.7rem;
   border-radius: 50%;
-  background: linear-gradient(90deg, var(--brand-terra) 50%, var(--ochre) 50%);
+  background: var(--led);
 }
 
-/* Print crop marks, just outside each corner. */
-.crop {
+.led::before {
+  content: "";
   position: absolute;
-  width: 14px;
-  height: 14px;
-  pointer-events: none;
-  border-color: var(--line-strong);
-  border-style: solid;
-  border-width: 0;
+  z-index: 1;
+  left: 21%;
+  top: 17%;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
 }
 
-.crop--tl { top: -18px;    left: -18px;  border-right-width: 1px; border-bottom-width: 1px; }
-.crop--tr { top: -18px;    right: -18px; border-left-width: 1px;  border-bottom-width: 1px; }
-.crop--bl { bottom: -18px; left: -18px;  border-right-width: 1px; border-top-width: 1px; }
-.crop--br { bottom: -18px; right: -18px; border-left-width: 1px;  border-top-width: 1px; }
+.led::after,
+.led__lit::after {
+  content: "";
+  position: absolute;
+  inset: -85%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--led) 48%, transparent), transparent);
+  pointer-events: none;
+}
 
-/* Registration target, the printer's alignment mark. */
+/* Off: the lens without the light. */
+.led--off { background: color-mix(in srgb, var(--led) 30%, #2A2622); }
+.led--off::after { content: none; }
+
+/* The light a motion value fades in over an off LED. */
+.led__lit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--led);
+}
+
+/* Drive activity: two quick blinks every few seconds. */
+.led--blink { animation: led-blink 2.8s steps(1, end) infinite; }
+
+@keyframes led-blink {
+  0%, 58%, 66%, 74% { opacity: 1; }
+  62%, 70% { opacity: 0.3; }
+}
+
+@keyframes led-flicker {
+  0%, 100% { opacity: 1; }
+  20% { opacity: 0.25; }
+  40% { opacity: 1; }
+  60% { opacity: 0.45; }
+}
+
+/* Silkscreen on a chip's body. */
+.glyph-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* The heartbeat trace, drawn as one dash so it can sweep. */
+.ecg-line { stroke-dasharray: 1 2; }
+
+@keyframes ecg-sweep {
+  0%   { stroke-dashoffset: 1.05; }
+  55%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -1.05; }
+}
+
+/* Characters on the LCD module, and its blinking cursor. */
+.lcd-text {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.lcd-cursor { animation: caret 1s steps(1, end) infinite; }
+
+/* The little circuit's switch and LED (the tools tile closes it on hover). */
+.sch-switch {
+  transform-box: view-box;
+  transform-origin: 101px 88px;
+  transition: transform 0.6s var(--ease-back);
+}
+
+.sch-led { opacity: 0.32; transition: opacity 0.25s ease; }
+
+/* Fiducial: the board's alignment mark, a copper dot in a clear ring. */
 .reg {
   position: relative;
   display: inline-block;
@@ -377,15 +443,13 @@ html.has-cursor [data-cursor] { cursor: none; }
   border-radius: 50%;
 }
 
-.reg::before,
-.reg::after {
+.reg::before {
   content: "";
   position: absolute;
+  inset: 3.5px;
+  border-radius: 50%;
   background: currentColor;
 }
-
-.reg::before { left: 50%; top: -25%; bottom: -25%; width: 1px; transform: translateX(-50%); }
-.reg::after  { top: 50%; left: -25%; right: -25%; height: 1px; transform: translateY(-50%); }
 
 /* ==========================================================================
    BUTTONS
@@ -553,7 +617,8 @@ html.has-cursor [data-cursor] { cursor: none; }
 
 .nav__link[aria-current="true"] .nav__pip { transform: scale(1); }
 
-/* Logo: a square and a split disc that roll past each other on hover. */
+/* Logo: a chip and its power LED. On hover the chip turns over and the LED
+   flickers, like a board powering up. */
 .logo { display: inline-flex; align-items: center; gap: 0.75rem; }
 
 .logo__mark {
@@ -563,29 +628,50 @@ html.has-cursor [data-cursor] { cursor: none; }
   flex: none;
 }
 
-.logo__sq {
+.logo__chip {
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 1.3rem;
-  height: 1.3rem;
-  background: var(--fg);
-  transition: transform 0.8s var(--ease-out);
+  left: 3px;
+  bottom: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  background:
+    radial-gradient(circle at 4.5px 4.5px, var(--bg) 0 1.6px, transparent 2.1px),
+    var(--fg);
+  transition: transform 0.9s var(--ease-back);
 }
 
-.logo__ci {
+/* Pins on all four sides, three to a side. */
+.logo__chip::before,
+.logo__chip::after {
+  content: "";
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 1.1rem;
-  height: 1.1rem;
-  border-radius: 50%;
-  background: linear-gradient(90deg, var(--brand-terra) 50%, var(--ochre) 50%);
-  transition: transform 0.9s var(--ease-out);
 }
 
-.logo:hover .logo__ci { transform: translateX(-0.9rem) rotate(-180deg); }
-.logo:hover .logo__sq { transform: translateX(0.7rem) rotate(90deg); }
+.logo__chip::before {
+  inset: -3px 3px;
+  background:
+    repeating-linear-gradient(90deg, var(--fg) 0 2px, transparent 2px 5px) top / 100% 3px no-repeat,
+    repeating-linear-gradient(90deg, var(--fg) 0 2px, transparent 2px 5px) bottom / 100% 3px no-repeat;
+}
+
+.logo__chip::after {
+  inset: 3px -3px;
+  background:
+    repeating-linear-gradient(180deg, var(--fg) 0 2px, transparent 2px 5px) left / 3px 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--fg) 0 2px, transparent 2px 5px) right / 3px 100% no-repeat;
+}
+
+.logo__led {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 0.7rem;
+  height: 0.7rem;
+}
+
+.logo:hover .logo__chip { transform: rotate(180deg); }
+.logo:hover .logo__led { animation: led-flicker 0.7s steps(1, end); }
 
 .logo__word {
   white-space: nowrap;
@@ -796,7 +882,7 @@ html.has-cursor [data-cursor] { cursor: none; }
 
 .hero__last .mask { padding-top: 0.08em; margin-top: -0.08em; }
 
-/* The full stop that rolls in after the surname. */
+/* The full stop: a power LED that drops in after the surname. */
 .hero__dot {
   display: inline-block;
   width: 0.19em;
@@ -828,9 +914,9 @@ html.has-cursor [data-cursor] { cursor: none; }
 }
 
 /* --------------------------------------------------------------------------
-   Poster: the studio portrait in an arch, collaged with live shapes that
-   tuck behind the frame and spill past its edges. Positions are percentages
-   of the frame box, which keeps the photo's 2:3 ratio.
+   Poster: the studio portrait in an arch, mounted on a circuit board whose
+   traces run in under the frame. Positions are percentages of the frame
+   box, which keeps the photo's 2:3 ratio.
    -------------------------------------------------------------------------- */
 
 .poster {
@@ -855,96 +941,113 @@ html.has-cursor [data-cursor] { cursor: none; }
   container-type: size;
 }
 
-.pz {
+/* Board: the portrait mounted as the processor on a PCB (hero-circuit.tsx).
+   The SVG's units are percent of the frame's width, so it is placed with
+   the same numbers: -44% to 120% across, -12% to 118% down. */
+.pcb {
   position: absolute;
-  display: block;
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
 }
 
-.pz > span { position: relative; display: block; width: 100%; height: 100%; }
-
-.pz-terra {
-  left: 87.34%;
-  top: 74.32%;
-  width: 24.38%;
-  aspect-ratio: 1;
-  z-index: 1;
-}
-
-.pz-terra > span { border-radius: 50%; background: var(--brand-terra); }
-
-/* A seam marker on the rolling disc, so the roll reads as a roll. */
-.pz-terra > span::after {
-  content: "";
+.pcb__board {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, transparent 0 82%, rgba(20, 18, 15, 0.16) 82% 100%);
+  left: -44%;
+  top: -11.975%;
+  width: 164%;
+  height: 130%;
+  overflow: visible;
 }
 
-.pz-teal {
-  left: 79.84%;
-  top: 56.65%;
-  width: 11.72%;
-  height: 57.5%;
-  z-index: 1;
+.pcb__silk {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 2.6px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
 }
 
-.pz-teal > span { background: var(--brand-teal); transform-origin: top; }
-
-.pz-rule-a,
-.pz-rule-b {
-  height: max(2px, 0.32%);
-  z-index: 1;
-}
-
-.pz-rule-a { top: 11.0%;  left: -40%; width: 60.3%; }
-.pz-rule-b { top: 76.1%;  left: -26%; width: 36.3%; }
-
-.pz-rule-a > span,
-.pz-rule-b > span { background: var(--brand-rule); transform-origin: right; }
-
-/* Orbit ring concentric with the arch, with a moon that passes behind it. */
-.pz-orbit {
-  left: -10%;
-  top: -6.65%;
-  width: 120%;
-  aspect-ratio: 1;
-  z-index: 1;
-}
-
-.pz-orbit__ring {
+/* Signal pulses: a lit bead runs a trace into the frame, on a loop. The
+   keyframes are the trace's corners in stage units, spaced by length, so
+   every bead travels at the same speed. */
+.pcb__pulse {
   position: absolute;
-  inset: 0;
-  border: 1px solid var(--line-strong);
+  left: 0;
+  top: 0;
+  width: 2.2cqw;
+  height: 2.2cqw;
+  margin: -1.1cqw 0 0 -1.1cqw;
   border-radius: 50%;
-  animation: spin 28s linear infinite;
+  background: #FBE3A6;
+  box-shadow: 0 0 0 0.5cqw rgba(214, 171, 82, 0.42), 0 0 3.2cqw 1.1cqw rgba(214, 171, 82, 0.5);
+  opacity: 0;
 }
 
-.pz-orbit__moon {
+.pcb[data-live="true"] .pcb__pulse--l1 { animation: pcb-l1 3.4s linear 2.3s infinite both; }
+.pcb[data-live="true"] .pcb__pulse--l2 { animation: pcb-l2 3.4s linear 3.4s infinite both; }
+.pcb[data-live="true"] .pcb__pulse--r2 { animation: pcb-r2 3.4s linear 4.1s infinite both; }
+
+@keyframes pcb-l1 {
+  0%        { opacity: 0; transform: translate(-38cqw, 18cqh); }
+  4%        { opacity: 1; }
+  16.8%     { transform: translate(-24cqw, 18cqh); }
+  29.8%     { transform: translate(-18cqw, 24cqh); }
+  52%       { opacity: 1; }
+  55%, 100% { opacity: 0; transform: translate(3cqw, 24cqh); }
+}
+
+@keyframes pcb-l2 {
+  0%          { opacity: 0; transform: translate(-41cqw, 62cqh); }
+  4%          { opacity: 1; }
+  16.8%       { transform: translate(-27cqw, 62cqh); }
+  29.8%       { transform: translate(-21cqw, 56cqh); }
+  55.6%       { opacity: 1; }
+  58.6%, 100% { opacity: 0; transform: translate(3cqw, 56cqh); }
+}
+
+@keyframes pcb-r2 {
+  0%        { opacity: 0; transform: translate(117cqw, 46cqh); }
+  3%        { opacity: 1; }
+  21%       { opacity: 1; }
+  24%, 100% { opacity: 0; transform: translate(97cqw, 46cqh); }
+}
+
+/* U1 on the frame's right edge, its left pins touching the frame. */
+.pcb__chip {
   position: absolute;
-  top: -0.55rem;
-  left: 50%;
-  width: 1.1rem;
-  height: 1.1rem;
-  margin-left: -0.55rem;
-  border-radius: 50%;
-  background: var(--accent);
+  left: 99.2%;
+  top: 57%;
+  width: 19%;
 }
 
-/* Echoes the photo's own dot field, outside the frame. */
-.pz-dots {
-  left: -36%;
-  top: 50.4%;
-  width: 30%;
-  height: 10.5%;
-  z-index: 1;
-  color: var(--fg);
-  --pitch: 1.875cqw;
-  opacity: 0.55;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%);
-  mask-image: linear-gradient(90deg, transparent, #000 45%);
+.pcb__chip svg { display: block; width: 100%; height: auto; }
+
+.pcb__silk-html {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: max(0.5rem, 2.5cqw);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1;
 }
+
+.pcb__silk-html--u1 {
+  position: absolute;
+  left: 24%;
+  bottom: calc(100% + 0.45rem);
+}
+
+.pcb__led {
+  position: absolute;
+  left: 102%;
+  top: 79%;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.pcb__led .led { width: 3.2cqw; height: 3.2cqw; }
 
 .poster__frame {
   position: absolute;
@@ -1046,7 +1149,9 @@ html.has-cursor [data-cursor] { cursor: none; }
   letter-spacing: 0;
 }
 
-.tape__sep { width: 0.55em; height: 0.55em; }
+/* Schematic symbols between the words, cap height. */
+.tape__sep { display: inline-flex; align-items: center; }
+.tape__glyph { display: block; width: auto; height: 0.92em; }
 
 /* ==========================================================================
    MARQUEE
@@ -1115,7 +1220,8 @@ html.has-cursor [data-cursor] { cursor: none; }
 }
 
 .is-offscreen .badge__ring,
-.is-offscreen .pz-orbit__ring { animation-play-state: paused; }
+.is-offscreen .pcb__pulse,
+.is-offscreen .led--blink { animation-play-state: paused; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -1140,13 +1246,16 @@ html.has-cursor [data-cursor] { cursor: none; }
   color: var(--accent);
 }
 
-.manifesto__shape {
+/* The parts dropped into the manifesto, about cap height. */
+.manifesto__glyph {
   display: inline-block;
-  width: 0.6em;
-  height: 0.6em;
-  margin: 0 0.1em;
-  vertical-align: -0.02em;
+  margin: 0 0.08em;
+  vertical-align: -0.03em;
 }
+
+.manifesto__led { display: block; width: 0.52em; height: 0.52em; }
+.manifesto__chip { width: auto; height: 0.66em; }
+.manifesto__gate { width: auto; height: 0.62em; }
 
 .about-grid {
   display: grid;
@@ -1328,25 +1437,23 @@ html.has-cursor [data-cursor] { cursor: none; }
   transition: transform 0.9s var(--ease-back);
 }
 
+/* The second stamp is a circuit-board issue: gold traces on teal solder mask. */
 .stamp--back {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #BB613F;
+  background: #21423F;
 }
 
-.dark .stamp--back { background: #BB613F; }
+.dark .stamp--back { background: #21423F; }
 
-.stamp--back::before { border-color: rgba(240, 233, 220, 0.5); }
+.stamp--back::before { border-color: rgba(214, 171, 82, 0.6); }
 
-.stamp--back__sun {
+.stamp--back__pcb {
   position: absolute;
-  left: -14%;
-  top: -9%;
-  width: 40%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #D6AB52;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .stamp--back__label {
@@ -1365,7 +1472,7 @@ html.has-cursor [data-cursor] { cursor: none; }
 }
 
 /* Postmark: a terracotta date ring stamped over the top right corner, with
-   wavy cancellation lines running off the stamp. Terracotta reads on the
+   square-wave cancellation lines running off the stamp. Terracotta reads on the
    paper and on either page ground. */
 .stamp-fig__mark {
   position: absolute;
@@ -1493,18 +1600,23 @@ html.has-cursor [data-cursor] { cursor: none; }
   padding-bottom: 2.25rem;
 }
 
-.plate__shape {
-  width: 2.4rem;
-  height: 2.4rem;
-  transition:
-    border-radius 0.8s var(--ease-out),
-    transform 0.9s var(--ease-back),
-    clip-path 0.8s var(--ease-out);
+/* Each plate's part. Hover sets it working: the heartbeat sweeps, the chip
+   turns, the gate steps forward. */
+.plate__part { display: flex; align-items: center; height: 2.4rem; }
+
+.plate__icon {
+  display: block;
+  width: auto;
+  height: 100%;
+  transition: transform 0.9s var(--ease-back);
 }
 
-.plate:hover .plate__shape--circle { border-radius: 0; transform: rotate(45deg) scale(0.82); }
-.plate:hover .plate__shape--square { border-radius: 50%; transform: scale(0.92); }
-.plate:hover .plate__shape--tri    { transform: rotate(180deg); }
+.plate__icon--ecg { color: var(--accent); }
+.plate__icon--chip { height: 88%; }
+
+.plate:hover .plate__icon--ecg .ecg-line { animation: ecg-sweep 1.5s linear infinite; }
+.plate:hover .plate__icon--chip { transform: rotate(-90deg) scale(0.92); }
+.plate:hover .plate__icon--gate { transform: translateX(0.45rem); }
 
 .plate__title {
   font-family: var(--font-display);
@@ -1550,7 +1662,8 @@ html.has-cursor [data-cursor] { cursor: none; }
 }
 
 /* ==========================================================================
-   FRIEZE: a band of Bauhaus tiles that turn as the page scrolls.
+   FRIEZE: computer engineering in eight parts, all driven by one scroll
+   value. Each cell is a size container, so its part scales with the cell.
    ========================================================================== */
 
 .frieze {
@@ -1569,9 +1682,189 @@ html.has-cursor [data-cursor] { cursor: none; }
   place-items: center;
   aspect-ratio: 1;
   overflow: hidden;
+  container-type: size;
+  color: var(--paper);
 }
 
-.frieze__cell > * { grid-area: 1 / 1; }
+.frieze__cell--teal  { background: var(--brand-teal); }
+.frieze__cell--ink   { background: var(--ink); }
+.frieze__cell--scope { background: #0E1714; color: #E9C068; }
+.frieze__cell--ochre { background: #D6AB52; color: var(--ink); }
+.frieze__cell--terra { background: var(--brand-terra); color: var(--ink); }
+.frieze__cell--olive { background: #A3936A; color: var(--ink); }
+.frieze__cell--paper { background: var(--paper); color: var(--ink); }
+
+/* The part's reference designator, like silkscreen beside it. */
+.frieze__tag {
+  position: absolute;
+  left: 7cqw;
+  bottom: 6.5cqw;
+  font-family: var(--font-mono);
+  font-size: max(0.42rem, 5.2cqw);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0.68;
+}
+
+.spec-readout {
+  position: absolute;
+  right: 7cqw;
+  top: 6.5cqw;
+  font-family: var(--font-mono);
+  font-size: max(0.5rem, 7.4cqw);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 1. Binary counter: eight LEDs on a strip. */
+.spec-counter {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 2.2cqw;
+  width: 82cqw;
+  padding: 3.6cqw 3.2cqw;
+  border-radius: 1.6cqw;
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.spec-counter .led { width: 100%; height: auto; aspect-ratio: 1; }
+
+/* 2. Seven-segment display, slanted like the real thing. */
+.spec-seg {
+  width: 64cqw;
+  height: auto;
+  fill: #E8693F;
+  transform: skewX(-7deg);
+}
+
+/* 3. AND gate with an LED on each lead. */
+.spec-gate { position: relative; width: 62cqw; }
+.spec-gate > svg { display: block; width: 100%; height: auto; }
+
+.spec-gate__in,
+.spec-gate__out {
+  position: absolute;
+  display: grid;
+  transform: translate(-50%, -50%);
+}
+
+.spec-gate__in { left: 3.3%; }
+.spec-gate__in--a { top: 30%; }
+.spec-gate__in--b { top: 70%; }
+.spec-gate__out { left: 96.7%; top: 50%; }
+.spec-gate .led { width: 10cqw; height: 10cqw; }
+
+/* 4. Oscilloscope: a graticule and a clock trace sliding across it. */
+.spec-scope {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(233, 192, 104, 0.26), rgba(233, 192, 104, 0.26)) 50% 50% / 100% 1px no-repeat,
+    linear-gradient(rgba(233, 192, 104, 0.26), rgba(233, 192, 104, 0.26)) 50% 50% / 1px 100% no-repeat,
+    repeating-linear-gradient(rgba(233, 192, 104, 0.09) 0 1px, transparent 1px 12.5%),
+    repeating-linear-gradient(90deg, rgba(233, 192, 104, 0.09) 0 1px, transparent 1px 12.5%);
+}
+
+.spec-scope__wave {
+  position: absolute;
+  left: 0;
+  top: 32%;
+  width: 200%;
+  height: 32%;
+  overflow: visible;
+}
+
+/* 5. The 74HC08 itself. */
+.spec-chip { width: 38cqw; }
+.spec-chip > svg { display: block; width: 100%; height: auto; }
+
+/* 6. Electrolytic capacitor: the charge rises inside the can. */
+.spec-cap {
+  display: grid;
+  justify-items: center;
+  width: 28cqw;
+  margin-top: 5cqh;
+}
+
+.spec-cap__body {
+  position: relative;
+  width: 100%;
+  height: 46cqh;
+  overflow: hidden;
+  border-radius: 4.5cqw / 3cqw;
+  background: var(--ink);
+}
+
+.spec-cap__charge {
+  position: absolute;
+  inset: 0;
+  background: #D6AB52;
+  transform-origin: 50% 100%;
+}
+
+/* The minus stripe, with its row of dashes. */
+.spec-cap__stripe {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 14%;
+  width: 26%;
+  background:
+    repeating-linear-gradient(transparent 0 12%, var(--ink) 12% 15.5%, transparent 15.5% 22%) center / 42% 100% no-repeat,
+    #F0E9DC;
+}
+
+/* The crimp under the top of the can. */
+.spec-cap__body::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 10%;
+  height: 2.6%;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Legs: the longer one is the anode. */
+.spec-cap__legs {
+  width: 50%;
+  height: 15cqh;
+  background:
+    linear-gradient(#CFC7B8, #CFC7B8) 0 0 / 2.6cqw 100% no-repeat,
+    linear-gradient(#CFC7B8, #CFC7B8) 100% 0 / 2.6cqw 76% no-repeat;
+}
+
+/* 7. Case fan: the frame holds still, the blades spin with the scroll. */
+.spec-fan { position: relative; width: 66cqw; aspect-ratio: 1; }
+
+.spec-fan > svg,
+.spec-fan__blades {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.spec-fan__blades > svg { width: 100%; height: 100%; }
+
+/* 8. A routed net and the pulse running it. */
+.spec-net { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.spec-net__pulse {
+  --led: #D0714D;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 9cqw;
+  height: 9cqw;
+  margin: -4.5cqw 0 0 -4.5cqw;
+}
 
 /* ==========================================================================
    STACK: bento tiles
@@ -1682,7 +1975,16 @@ html.has-cursor [data-cursor] { cursor: none; }
   transition: transform 1.1s var(--ease-back);
 }
 
-.tile:hover .tile__deco { transform: rotate(90deg); }
+.tile__deco--tilt { rotate: -16deg; }
+
+/* Hover lifts the tile's hardware; on the tools tile it closes the switch
+   and the LED lights. */
+@media (hover: hover) {
+  .tile:hover .tile__deco { transform: translate(-0.4rem, -0.6rem) rotate(-6deg); }
+  .tile--tools:hover .tile__deco { transform: none; }
+  .tile--tools:hover .sch-switch { transform: rotate(27deg); }
+  .tile--tools:hover .sch-led { opacity: 1; transition-delay: 0.3s; }
+}
 
 .chip {
   display: inline-flex;
@@ -2121,18 +2423,24 @@ html.has-cursor [data-cursor] { cursor: none; }
   line-height: 1.7;
 }
 
+/* Bullets as board features: a via, a square pad and a lit pad. */
 .xp__points li::before {
   content: "";
-  width: 0.45rem;
-  height: 0.45rem;
+  width: 0.5rem;
+  height: 0.5rem;
   flex: none;
-  margin-top: 0.62rem;
+  margin-top: 0.6rem;
+  border: 2px solid var(--accent);
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--bg);
 }
 
-.xp__points li:nth-child(3n + 2)::before { border-radius: 0; background: var(--ochre); }
-.xp__points li:nth-child(3n + 3)::before { border-radius: 0; background: var(--olive); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.xp__points li:nth-child(3n + 2)::before { border-color: var(--ochre); border-radius: 1px; }
+.xp__points li:nth-child(3n + 3)::before {
+  border: 0;
+  background: var(--olive);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--olive) 28%, transparent);
+}
 
 .xp__side { display: grid; gap: 1.5rem; align-content: start; }
 
@@ -2219,6 +2527,20 @@ html.has-cursor [data-cursor] { cursor: none; }
   top: clamp(1.5rem, 4vw, 3rem);
   width: clamp(6.5rem, 10vw, 9rem);
 }
+
+/* The giant power symbol behind the contact type. */
+.contact__power { color: var(--fg); opacity: 0.1; }
+
+/* Modem lights on the form: TX blinks, RX and power hold. */
+.form-leds {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+}
+
+.form-leds .led { width: 0.5rem; height: 0.5rem; }
+.form-leds > span:last-child { margin-left: 0.3rem; }
 
 /* Floating-label fields, underline style. */
 .field { position: relative; display: block; }
@@ -2320,6 +2642,9 @@ textarea.field__input { min-height: 8.5rem; resize: vertical; }
 
 .footer__word .mask { padding-top: 0.06em; margin-top: -0.06em; }
 
+/* The wordmark's full stop: the same power LED as the hero's. */
+.footer__led { width: 0.19em; height: 0.19em; margin-left: 0.05em; }
+
 .swatches {
   display: flex;
   flex-wrap: wrap;
@@ -2331,12 +2656,15 @@ textarea.field__input { min-height: 8.5rem; resize: vertical; }
 
 .swatch { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--muted); }
 
+/* Each colour as a band off the resistor. */
 .swatch__chip {
-  width: 0.9rem;
+  width: 0.32rem;
   height: 0.9rem;
-  border-radius: 50%;
+  border-radius: 1px;
   box-shadow: inset 0 0 0 1px var(--line-strong);
 }
+
+.palette-resistor { display: block; width: 4.75rem; height: auto; }
 
 /* ==========================================================================
    CURSOR FOLLOWER
@@ -2416,13 +2744,29 @@ textarea.field__input { min-height: 8.5rem; resize: vertical; }
 }
 
 .preloader__shapes {
+  --u: clamp(3rem, 9vw, 7rem);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: clamp(0.75rem, 2.5vw, 1.75rem);
 }
 
-.preloader__shapes > * { width: clamp(3rem, 9vw, 7rem); height: clamp(3rem, 9vw, 7rem); }
+.preloader__part { display: grid; place-items: center; height: var(--u); }
+.preloader__part > svg { width: auto; height: var(--u); }
+.preloader__led { width: calc(var(--u) * 0.74); height: calc(var(--u) * 0.74); }
+
+/* The terminal cursor after the self-test line. */
+.preloader__caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  margin-left: 0.25em;
+  vertical-align: -0.2em;
+  background: currentColor;
+  animation: caret 0.9s steps(1, end) infinite;
+}
+
+@keyframes caret { 50% { opacity: 0; } }
 
 .preloader__count {
   font-family: var(--font-display);
@@ -2568,7 +2912,7 @@ textarea.field__input { min-height: 8.5rem; resize: vertical; }
   .cover[data-mirror="true"] .cover__print-wrap { justify-self: start; }
 }
 
-/* A giant tone-on-tone shape, cropped by the edge of the cover. */
+/* The project's hardware, tone on tone, cropped by the edge of the cover. */
 .cover__slab-wrap {
   will-change: transform;
   position: absolute;
@@ -2592,18 +2936,9 @@ textarea.field__input { min-height: 8.5rem; resize: vertical; }
   position: absolute;
   inset: 0;
   display: block;
-  background: var(--cover-deep);
 }
 
-.cover__slab--half { top: 25%; bottom: 25%; border-radius: 999px 999px 0 0; }
-.cover__slab--quarter { border-top-left-radius: 100%; }
-.cover__slab--split {
-  border-radius: 50%;
-  background: linear-gradient(90deg, var(--cover-deep) 50%, #D6AB52 50%);
-}
-.cover__slab--square { inset: 12%; rotate: 12deg; }
-
-.cover[data-mirror="true"] .cover__slab--quarter { border-top-left-radius: 0; border-top-right-radius: 100%; }
+.cover__slab > svg { width: 100%; height: 100%; }
 
 /* The name: fitted to the cover's width by script, one line per block. */
 .cover__name {
@@ -2625,12 +2960,10 @@ textarea.field__input { min-height: 8.5rem; resize: vertical; }
 
 /* The brand's split full stop, in colours that show on every cover. */
 .cover__dot {
-  display: inline-block;
+  --led: var(--cover-second, #D6AB52);
   width: 0.19em;
   height: 0.19em;
   margin-left: 0.05em;
-  border-radius: 50%;
-  background: linear-gradient(90deg, var(--cover-ink) 50%, var(--cover-second, #D6AB52) 50%);
 }
 
 .cover__foot {
@@ -2854,7 +3187,7 @@ button.print__img:focus-visible img { transform: scale(1.03); }
   font-size: 0.6rem;
 }
 
-.sheet__select { width: 0.45rem; height: 0.45rem; border-radius: 50%; }
+.sheet__select { width: 0.45rem; height: 0.45rem; }
 
 /* -- Dossier ------------------------------------------------------------------- */
 
@@ -2926,9 +3259,21 @@ button.print__img:focus-visible img { transform: scale(1.03); }
 
 .rail__list-wrap { position: relative; }
 
+/* The contents as a bus: a trace down the left with a pad per chapter. */
+.rail__list-wrap::before {
+  content: "";
+  position: absolute;
+  left: calc(0.3rem - 1px);
+  top: 1.25rem;
+  bottom: 1.25rem;
+  width: 2px;
+  background: var(--line-strong);
+}
+
 .rail__list { margin: 0; padding: 0; list-style: none; }
 
 .rail__link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.9rem;
@@ -2940,23 +3285,35 @@ button.print__img:focus-visible img { transform: scale(1.03); }
   transition: color 0.4s ease;
 }
 
+.rail__link::before {
+  content: "";
+  position: absolute;
+  left: 0.05rem;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: -0.25rem;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
 .rail__link:hover,
 .rail__link[aria-current="true"] { color: var(--fg); }
 
 .rail__n { color: var(--subtle); }
 
-/* The project's shape slides to the chapter being read. */
+/* The project's LED slides down the bus to the chapter being read. */
 .rail__marker {
   position: absolute;
-  top: 0.8rem;
+  z-index: 1;
+  top: 0.95rem;
   left: 0;
-  width: 0.9rem;
-  height: 0.9rem;
+  width: 0.6rem;
+  height: 0.6rem;
   transform: translateY(calc(var(--active, 0) * 2.5rem));
   transition: transform 0.7s var(--ease-out);
 }
-
-.rail__marker.sh-half { height: 0.45rem; top: 1.025rem; }
 
 .rail__facts {
   display: grid;
@@ -2996,17 +3353,23 @@ button.print__img:focus-visible img { transform: scale(1.03); }
 
 .rail__private { color: var(--subtle); line-height: 1.7; }
 
-/* Brief: a standfirst with a drop cap set in the project's shape. */
+/* Brief: a standfirst with a drop cap set on a chip in the project's
+   colour, its pins hanging into the margin. */
 .brief::after { content: ""; display: block; clear: both; }
 
 .brief__cap {
+  position: relative;
   float: left;
   display: grid;
   place-items: center;
   width: clamp(4.5rem, 8vw, 6.75rem);
   aspect-ratio: 1;
-  margin: 0.35rem 1.25rem 0.5rem 0;
-  background: var(--cover);
+  margin: 0.35rem 1.9rem 0.5rem 0;
+  border-radius: 7%;
+  background:
+    radial-gradient(circle at 50% 0, rgba(0, 0, 0, 0.22) 0 9%, transparent 9.6%),
+    radial-gradient(circle at 17% 17%, rgba(0, 0, 0, 0.2) 0 4%, transparent 4.6%),
+    var(--cover);
   color: var(--cover-ink);
   font-family: var(--font-display);
   font-size: clamp(3rem, 5.4vw, 4.6rem);
@@ -3014,10 +3377,19 @@ button.print__img:focus-visible img { transform: scale(1.03); }
   line-height: 1;
 }
 
-.brief__cap--half { border-radius: 999px 999px 0 0; padding-top: 0.12em; }
-.brief__cap--quarter { border-top-left-radius: 100%; place-items: end; padding: 0 0.12em 0.02em 0; }
-.brief__cap--split { border-radius: 50%; background: linear-gradient(90deg, #BB613F 50%, #D6AB52 50%); }
-.brief__cap--square { border-radius: 0; }
+/* Four pins a side. */
+.brief__cap::before,
+.brief__cap::after {
+  content: "";
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  width: 13%;
+  background: repeating-linear-gradient(transparent 0 7%, #CFC7B8 7% 18%, transparent 18% 25%);
+}
+
+.brief__cap::before { right: 100%; }
+.brief__cap::after  { left: 100%; }
 
 .brief__stand {
   font-family: var(--font-serif);
@@ -3062,8 +3434,7 @@ button.print__img:focus-visible img { transform: scale(1.03); }
 
 .shipped__n { display: inline-flex; align-items: center; gap: 0.65rem; color: var(--muted); }
 
-.shipped__mark { width: 0.7rem; height: 0.7rem; }
-.shipped__mark.sh-half { height: 0.35rem; }
+.shipped__mark { width: 0.6rem; height: 0.6rem; }
 
 .shipped__text {
   font-family: var(--font-display);

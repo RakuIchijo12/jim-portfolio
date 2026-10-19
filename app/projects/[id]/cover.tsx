@@ -6,20 +6,13 @@ import type { ProjectLook } from "@/app/lib/project-looks";
 import RiseChars from "@/app/components/ui/rise-chars";
 import { ease } from "@/app/components/ui/reveal";
 import { useFitLines } from "@/app/components/ui/use-fit-lines";
+import ProjectGlyph from "@/app/components/ui/project-glyph";
 import { ExternalIcon } from "@/app/components/ui/icons";
 
-const roll = [0.22, 1, 0.36, 1] as const;
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export type CoverPrint = { src: string; caption: string; count: string };
 
-/* The project's shape, tone on tone, as a slab cropped by the cover's edge. */
-const SLAB: Record<ProjectLook["shape"], string> = {
-  half: "cover__slab--half",
-  quarter: "cover__slab--quarter",
-  split: "cover__slab--split",
-  square: "cover__slab--square",
-};
 
 /**
  * The case study cover: the whole first screen in the project's colour, in
@@ -62,7 +55,7 @@ export default function Cover({
   const nameY = useTransform(p, [0, 1], ["0%", "22%"]);
   const folioY = useTransform(p, [0, 1], ["0%", "-30%"]);
 
-  const on = (target: Record<string, number | string>) => (play ? target : undefined);
+  const on = (target: Record<string, number | string | number[]>) => (play ? target : undefined);
   const lines = fit ? fit.lines : [name.toUpperCase()];
   const offsets = lines.map((_, i) => lines.slice(0, i).join("").length);
   const chars = Math.max(...name.split(" ").map((word) => word.length));
@@ -79,12 +72,15 @@ export default function Cover({
   return (
     <section ref={ref} id="cs-cover" className="cover" data-mirror={look.mirror} style={vars}>
       <m.span aria-hidden="true" className="cover__slab-wrap" style={{ rotate: slabRotate, scale: slabScale }}>
+        {/* The project's hardware, tone on tone, cropped by the cover's edge */}
         <m.span
-          className={`cover__slab ${SLAB[look.shape]}`}
-          initial={{ scale: 0, rotate: look.mirror ? 90 : -90 }}
-          animate={on({ scale: 1, rotate: 0 })}
+          className="cover__slab"
+          initial={{ scale: 0.6, opacity: 0, rotate: look.mirror ? 24 : -24 }}
+          animate={on({ scale: 1, opacity: 1, rotate: 0 })}
           transition={{ type: "spring", stiffness: 55, damping: 15, delay: 0.15 }}
-        />
+        >
+          <ProjectGlyph kind={look.glyph} fill="var(--cover-deep)" detail="var(--cover)" accent="var(--cover-deep)" />
+        </m.span>
       </m.span>
 
       <div className="wrap cover__wrap">
@@ -173,11 +169,15 @@ export default function Cover({
                   tilt
                   suffix={
                     i === lines.length - 1 ? (
+                      // The full stop is an LED in the project's second colour.
                       <m.span
-                        className="cover__dot"
-                        initial={{ x: "5em", rotate: 900 }}
-                        animate={on({ x: "0em", rotate: 0 })}
-                        transition={{ duration: 1.6, ease: roll, delay: 0.95 }}
+                        className="cover__dot led"
+                        initial={{ scale: 0, opacity: 0.25 }}
+                        animate={on({ scale: 1, opacity: [0.25, 1, 0.3, 1, 0.55, 1] })}
+                        transition={{
+                          scale: { type: "spring", stiffness: 260, damping: 13, delay: 1.05 },
+                          opacity: { duration: 1.2, delay: 1.3, times: [0, 0.18, 0.32, 0.5, 0.68, 1] },
+                        }}
                       />
                     ) : undefined
                   }

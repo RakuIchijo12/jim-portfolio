@@ -6,18 +6,13 @@ import { lookFor } from "@/app/lib/project-looks";
 import { TransitionLink } from "@/app/components/motion/page-transition";
 import RollText from "@/app/components/ui/roll-text";
 import { useFitLines } from "@/app/components/ui/use-fit-lines";
+import ProjectGlyph from "@/app/components/ui/project-glyph";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/app/components/ui/icons";
 
 type Sibling = { id: string; name: string; category: string; image: string | null };
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-const SLAB = {
-  half: "cover__slab--half",
-  quarter: "cover__slab--quarter",
-  split: "cover__slab--split",
-  square: "cover__slab--square",
-} as const;
 
 /**
  * The page ends on the next project's cover, in miniature: its colour, its
@@ -56,7 +51,9 @@ export default function NextCover({
       style={{ "--cover": look.color, "--cover-ink": look.ink, "--tilt": `${tilt}deg` } as React.CSSProperties}
     >
       <m.span aria-hidden="true" className="cover__slab-wrap" style={{ rotate: slabRotate }}>
-        <span className={`cover__slab ${SLAB[look.shape]}`} />
+        <span className="cover__slab">
+          <ProjectGlyph kind={look.glyph} fill="var(--cover-deep)" detail="var(--cover)" accent="var(--cover-deep)" />
+        </span>
       </m.span>
 
       <div className="wrap next-cover__wrap">

@@ -45,14 +45,20 @@ const v = {
   },
 } satisfies Record<string, Variants>;
 
-/** A wave of 12-unit wavelength, from x 122 to 206, at height y. */
-const wavePath = (y: number) => `M122 ${y} q 3.5 -4 7 0 t 7 0 t 7 0 t 7 0 t 7 0 t 7 0 t 7 0 t 7 0 t 7 0 t 7 0 t 7 0 t 7 0`;
+/** A clock signal of 12-unit period from x 122 to 206, centred on height y:
+    the cancellation lines are square waves, since this is the off-the-clock stamp. */
+const wavePath = (y: number) => {
+  let d = `M122 ${y + 3}`;
+  for (let x = 122; x < 206; x += 12) d += ` H${x + 3} V${y - 3} H${x + 9} V${y + 3}`;
+  return `${d} H206`;
+};
 
 /**
  * The off-duty portrait as a postage stamp: the whole photo in a perforated
- * stamp with a printed country line and value, a second stamp from the same
- * sheet tucked behind, and a postmark with wavy cancellation lines stamped
- * on the corner. Everything plays once on arrival and then holds still.
+ * stamp with a printed country line and value, a circuit-board stamp from
+ * the same sheet tucked behind, and a postmark whose cancellation lines are
+ * clock signals, stamped on the corner. Everything plays once on arrival and
+ * then holds still.
  */
 export default function AboutStamp({ className = "" }: { className?: string }) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
@@ -71,7 +77,30 @@ export default function AboutStamp({ className = "" }: { className?: string }) {
         <m.div className="stamp-fig__back" variants={v.back} aria-hidden="true">
           <div className="stamp-fig__back-pose">
             <div className="stamp stamp--back">
-              <span className="stamp--back__sun" />
+              {/* A circuit-board stamp: gold traces, vias and a chip on solder mask */}
+              <svg className="stamp--back__pcb" viewBox="0 0 100 160" preserveAspectRatio="xMinYMin slice" aria-hidden="true">
+                <g fill="none" stroke="#D6AB52" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 22 V31 L13 35 V60" />
+                  <path d="M5 30 V42 L8.5 45.5 V70" />
+                  <path d="M7 152 H38 L42 148 H82" />
+                  <path d="M4 141 H24 L28 145 H52" />
+                </g>
+                <rect x="3" y="7" width="10" height="12" rx="1" fill="#14120F" />
+                <g fill="#D6AB52">
+                  {[8.5, 11.5, 14.5, 17.5].map((y) => (
+                    <rect key={y} x="12.4" y={y - 0.6} width="2.2" height="1.2" rx="0.3" />
+                  ))}
+                </g>
+                {[
+                  [9, 22],
+                  [5, 30],
+                  [7, 152],
+                  [4, 141],
+                  [82, 148],
+                ].map(([x, y]) => (
+                  <circle key={`${x}-${y}`} cx={x} cy={y} r="2" fill="#21423F" stroke="#D6AB52" strokeWidth="1.1" />
+                ))}
+              </svg>
               <span className="stamp--back__label">Pilipinas 2026</span>
             </div>
           </div>
@@ -148,8 +177,9 @@ export default function AboutStamp({ className = "" }: { className?: string }) {
                     d={wavePath(y)}
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2.6"
+                    strokeWidth="2.2"
                     strokeLinecap="round"
+                    strokeLinejoin="round"
                     variants={v.wave}
                   />
                 ))}

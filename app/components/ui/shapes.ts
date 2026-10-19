@@ -1,16 +1,7 @@
-/** The three Bauhaus primitives used as markers across the site. */
-export type ShapeName = "circle" | "square" | "tri";
+/**
+ * The three parts that sit inline in running copy, written as [led],
+ * [chip] and [gate] tokens. Each grows in with the words around it.
+ */
+export type InlineGlyph = "led" | "chip" | "gate";
 
-export const SHAPE_CYCLE: ShapeName[] = ["circle", "square", "tri"];
-
-export const SHAPE_CLASS: Record<ShapeName, string> = {
-  circle: "sh-circle",
-  square: "",
-  tri: "sh-tri",
-};
-
-export const SHAPE_COLOR: Record<ShapeName, string> = {
-  circle: "var(--brand-terra)",
-  square: "var(--ochre)",
-  tri: "var(--olive)",
-};
+export const INLINE_GLYPHS: InlineGlyph[] = ["led", "chip", "gate"];

@@ -6,13 +6,21 @@ import { SectionMeta } from "@/app/components/ui/section-head";
 import CountUp from "@/app/components/ui/count-up";
 import { ease, Reveal, riseChild, staggerParent } from "@/app/components/ui/reveal";
 import ScrollLit from "@/app/components/ui/scroll-lit";
-import { SHAPE_CLASS, SHAPE_COLOR, SHAPE_CYCLE } from "@/app/components/ui/shapes";
+import { Chip, Ecg, Gate } from "@/app/components/ui/circuit";
 import AboutStamp from "@/app/components/about-stamp";
 
 const MANIFESTO =
-  "Engineering software for institutions that cannot afford to *fail.* [circle] " +
-  "I build hospital systems, ERP platforms [square] and the everyday tools operations " +
-  "teams depend on, made to be reliable, readable and quietly [tri] *beautiful.*";
+  "Engineering software for institutions that cannot afford to *fail.* [led] " +
+  "I build hospital systems, ERP platforms [chip] and the everyday tools operations " +
+  "teams depend on, made to be reliable, readable and quietly [gate] *beautiful.*";
+
+/* Each card's part: a heartbeat for the hospital work, a chip for the
+   enterprise tools, a gate for the engineering degree. */
+const PLATE_ICONS = [
+  <Ecg key="ecg" className="plate__icon plate__icon--ecg" />,
+  <Chip key="chip" pins={4} body="var(--ochre)" pin="var(--fg)" mark="rgba(20, 18, 15, 0.5)" className="plate__icon plate__icon--chip" />,
+  <Gate key="gate" kind="and" body="var(--olive)" lead="var(--olive)" className="plate__icon plate__icon--gate" />,
+];
 
 function Gauge({
   value,
@@ -52,7 +60,6 @@ function Gauge({
   );
 }
 
-const PLATE_SHAPES = SHAPE_CYCLE;
 const GAUGE_COLORS = ["var(--brand-terra)", "var(--ochre)", "var(--olive)"];
 
 export default function AboutSection() {
@@ -103,11 +110,9 @@ export default function AboutSection() {
               {aboutCards.map((card, i) => (
                 <m.li key={card.title} variants={riseChild} className="plate">
                   <div className="plate__top">
-                    <span
-                      aria-hidden="true"
-                      className={`plate__shape plate__shape--${PLATE_SHAPES[i]} ${SHAPE_CLASS[PLATE_SHAPES[i]]}`}
-                      style={{ background: SHAPE_COLOR[PLATE_SHAPES[i]] }}
-                    />
+                    <span aria-hidden="true" className="plate__part">
+                      {PLATE_ICONS[i % PLATE_ICONS.length]}
+                    </span>
                     <span className="t-label text-subtle">{String(i + 1).padStart(2, "0")}</span>
                   </div>
                   <p className="t-label text-accent">{card.title}</p>

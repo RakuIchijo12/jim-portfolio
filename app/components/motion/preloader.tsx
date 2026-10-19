@@ -4,6 +4,10 @@ import { m } from "framer-motion";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { introStore } from "./intro";
 import { useLenis } from "./smooth-scroll";
+import { Chip, Gate } from "@/app/components/ui/circuit";
+
+/* Power-on self test: the line under the counter as the boot runs. */
+const POST = ["Checking memory", "Loading modules", "Booting portfolio"];
 
 const lift = [0.76, 0, 0.24, 1] as const;
 const COLS = [0, 1, 2, 3, 4];
@@ -14,9 +18,10 @@ const seenOnClient = () => document.documentElement.classList.contains("intro-se
 const pop = { type: "spring", stiffness: 260, damping: 17 } as const;
 
 /**
- * First visit of the session: a counter runs to 100 while three Bauhaus
- * primitives pop in, then an ink layer and a terracotta layer lift away in
- * staggered columns to uncover the hero. The boot script in the layout hides
+ * First visit of the session, as a boot screen: a counter runs to 100 while
+ * an LED, a chip and a gate pop in and the power-on self test reads out,
+ * then an ink layer and a terracotta layer lift away in staggered columns to
+ * uncover the hero. The boot script in the layout hides
  * this before hydration when it has already played, or when the visitor asks
  * for reduced motion.
  */
@@ -24,6 +29,7 @@ export default function Preloader() {
   const seen = useSyncExternalStore(noop, seenOnClient, () => false);
   const [phase, setPhase] = useState<"count" | "exit" | "done">("count");
   const countRef = useRef<HTMLSpanElement>(null);
+  const postRef = useRef<HTMLSpanElement>(null);
   const lenis = useLenis();
 
   useEffect(() => {
@@ -60,6 +66,9 @@ export default function Preloader() {
     const tick = (now: number) => {
       const t = Math.min((now - start) / COUNT_MS, 1);
       const eased = 1 - Math.pow(1 - t, 3);
+      if (postRef.current) {
+        postRef.current.textContent = POST[Math.min(POST.length - 1, Math.floor(eased * POST.length))];
+      }
       if (countRef.current) {
         countRef.current.textContent = String(Math.round(eased * 100)).padStart(3, "0");
       }
@@ -140,37 +149,44 @@ export default function Preloader() {
         transition={{ duration: 0.35, ease: lift }}
       >
         <div className="t-label flex items-start justify-between gap-6">
-          <span>Jimuel Dave Rodado</span>
+          <span>
+            JDR-BIOS v26.10<span className="hidden sm:inline"> / Jimuel Dave Rodado</span>
+          </span>
           <span>Portfolio &copy;2026</span>
         </div>
 
+        {/* The three primitives, wired up: an LED, a chip and a gate */}
         <div className="preloader__shapes">
           <m.span
-            className="sh sh-circle"
-            style={{ background: "var(--brand-terra)" }}
+            className="preloader__part"
             initial={{ scale: 0, rotate: -90 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ ...pop, delay: 0.1 }}
-          />
+          >
+            <span className="led led--blink preloader__led" style={{ "--led": "#D0714D" } as React.CSSProperties} />
+          </m.span>
           <m.span
-            className="sh"
-            style={{ background: "#D6AB52" }}
+            className="preloader__part"
             initial={{ scale: 0, rotate: 90 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ ...pop, delay: 0.28 }}
-          />
+          >
+            <Chip pins={5} body="#D6AB52" pin="#F0E9DC" mark="rgba(20, 18, 15, 0.5)" label="JDR" />
+          </m.span>
           <m.span
-            className="sh sh-tri"
-            style={{ background: "#A3936A" }}
+            className="preloader__part"
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ ...pop, delay: 0.46 }}
-          />
+          >
+            <Gate kind="not" body="#A3936A" lead="#A3936A" hole="#11100E" />
+          </m.span>
         </div>
 
         <div className="flex items-end justify-between gap-6">
-          <p className="t-label max-w-[15rem] opacity-70">
-            Software engineer, Davao City. Building calm software for busy institutions.
+          <p className="t-label max-w-[15rem]">
+            <span className="opacity-70">POST /</span> <span ref={postRef}>{POST[0]}</span>
+            <span className="preloader__caret" aria-hidden="true" />
           </p>
           <span ref={countRef} className="preloader__count">
             000
