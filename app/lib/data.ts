@@ -322,9 +322,11 @@ export const experience = [
     current: false,
     stack: ["Angular", "TypeScript", "NestJS", "Node.js", "HTML", "CSS", "Git"],
     points: [
-      "Developed full-stack web application features using Angular 16, NestJS, TypeScript, and RESTful APIs.",
-      "Built an Automated Magnetic Lock Administration Website for managing access control operations through a centralized interface.",
-      "Implemented responsive frontend components and backend services while collaborating through code reviews and version-control workflows.",
+      "Developed full-stack web applications using Angular 16 and NestJS, delivering features within a fast-paced 2-month contract engagement.",
+      "Built and delivered an Automated Magnetic Lock Admin Website, providing administrators with a centralized interface for managing access control systems.",
+      "Implemented responsive frontend interfaces with Angular components and RESTful backend APIs with NestJS, ensuring seamless client-server integration.",
+      "Completed structured onboarding in full-stack development practices, quickly ramping up on the company's tech stack and coding standards.",
+      "Collaborated with the development team through code reviews and version control workflows to deliver features aligned with project requirements.",
     ],
   },
   {
@@ -334,11 +336,13 @@ export const experience = [
     type: "Internship · On-site",
     location: "Davao, Philippines",
     current: false,
-    stack: ["NestJS", "Node.js", "Angular", "TypeScript", "PostgreSQL"],
+    stack: ["NestJS", "Node.js", "Angular", "TypeScript", "PostgreSQL", "HTML", "CSS"],
     points: [
-      "Developed backend and API features for an automated magnetic lock security system using NestJS and PostgreSQL.",
-      "Integrated web software with Raspberry Pi hardware to support real-time device communication and remote lock control.",
-      "Worked across backend, database, and Angular frontend layers while testing and debugging production-oriented features.",
+      "Developed the backend of an Automated Magnetic Lock Admin Website using NestJS, building RESTful APIs to manage access control operations.",
+      "Integrated the web application with physical door lock hardware via Raspberry Pi 4, enabling real-time device communication and remote lock control.",
+      "Designed database models and API endpoints to handle user access records, device status, and administrative functions.",
+      "Worked across the stack with Angular 16 on the frontend to connect UI features with backend services.",
+      "Gained hands-on experience in IoT integration, bridging web software with embedded hardware in a production-oriented project.",
     ],
   },
 ] as const;
