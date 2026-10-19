@@ -1163,31 +1163,61 @@ html.has-cursor [data-cursor] { cursor: none; }
   }
 }
 
-/* The off-duty portrait: the whole photo at its own 2:3 ratio and at a
-   regular portrait size, crop marks just outside the corners, the badge on
-   one corner. The frame matches the photo exactly, so nothing is cropped. */
-.about-fig {
+/* The off-duty portrait as a postage stamp. The photo is the same size as
+   the hero portrait (the same height formula, same 2:3 shape) and is never
+   cropped; the stamp's paper, perforations and printing sit around it. */
+.stamp-fig {
+  --fh: min(57vh, 40rem);
+  --pw: calc(var(--fh) * 0.6655);
+  --r: 5px;
+  --pad: calc(var(--r) * 2 + 12px);
+  --w: calc(var(--pw) + var(--pad) * 2);
   position: relative;
-  width: min(calc(100% - 36px), 17rem);
-  margin: 18px auto;
+  width: var(--w);
+  margin: 28px auto 18px;
 }
 
-@media (min-width: 640px) {
-  .about-fig { width: 19rem; }
+@media (max-width: 1023px) {
+  .stamp-fig { --fh: min(84vw, 34rem, 56svh); }
 }
 
 @media (min-width: 1024px) {
-  .about-fig { width: clamp(18rem, 23vw, 23rem); margin: 18px; }
+  .stamp-fig { margin: 28px clamp(2.5rem, 5vw, 5rem) 18px 28px; }
 }
 
-.about-fig__frame {
+.stamp-fig__stage { position: relative; }
+
+/* Perforated paper: holes centred on every edge, solid inside. */
+.stamp {
   position: relative;
+  padding: var(--pad);
+  background: #FFFDF8;
+  color: #14120F;
+  mask:
+    radial-gradient(var(--r), #0000 97%, #000) round calc(var(--r) * -1.5) calc(var(--r) * -1.5) / calc(var(--r) * 3) calc(var(--r) * 3),
+    linear-gradient(#000 0 0) no-repeat 50% / calc(100% - var(--r) * 3) calc(100% - var(--r) * 3);
+}
+
+.dark .stamp { background: #EFE8DA; }
+
+/* The printed frame line around the picture and the text. */
+.stamp::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--pad) - 7px);
+  border: 1px solid rgba(20, 18, 15, 0.28);
+  pointer-events: none;
+}
+
+.stamp__window {
+  position: relative;
+  width: var(--pw);
   aspect-ratio: 768 / 1154;
   overflow: hidden;
-  background: var(--surface);
+  background: #2A2420;
 }
 
-.about-fig__frame img {
+.stamp__window img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1195,24 +1225,213 @@ html.has-cursor [data-cursor] { cursor: none; }
   object-fit: cover;
 }
 
-.about-fig figcaption {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1rem;
-  color: var(--muted);
+.stamp__window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px rgba(20, 18, 15, 0.35);
+  pointer-events: none;
 }
 
-.about-fig__badge {
+.stamp__curtain {
   position: absolute;
-  right: -2rem;
-  top: -2rem;
+  inset: 0;
+  z-index: 1;
+  background: var(--brand-terra);
+}
+
+.stamp__band {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: calc(var(--pw) * 0.045);
+}
+
+.stamp__country {
+  display: grid;
+  gap: calc(var(--pw) * 0.014);
+  font-family: var(--font-display);
+  font-size: calc(var(--pw) * 0.056);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.stamp__series {
+  color: rgba(20, 18, 15, 0.62);
+  font-family: var(--font-mono);
+  font-size: max(0.46rem, calc(var(--pw) * 0.024));
+  font-weight: 500;
+  letter-spacing: 0.14em;
+}
+
+.stamp__value {
+  display: inline-flex;
+  align-items: flex-start;
+  font-family: var(--font-display);
+  font-size: calc(var(--pw) * 0.15);
+  font-weight: 800;
+  line-height: 0.76;
+  letter-spacing: -0.045em;
+}
+
+/* The peso sign, drawn as a P with two bars so it never falls back to
+   another font. */
+.stamp__peso {
+  position: relative;
+  display: inline-block;
+  margin-right: 0.05em;
+  font-size: 0.56em;
+  line-height: 1;
+}
+
+.stamp__peso::before,
+.stamp__peso::after {
+  content: "";
+  position: absolute;
+  left: -0.14em;
+  width: 0.78em;
+  height: 0.075em;
+  background: currentColor;
+}
+
+.stamp__peso::before { top: 0.27em; }
+.stamp__peso::after  { top: 0.43em; }
+
+/* The main stamp holds still at rest: no tilt, so it costs nothing to keep
+   sticky while the text beside it scrolls. */
+.stamp-fig__main { position: relative; z-index: 1; }
+
+.stamp-fig__lift { transition: transform 0.9s var(--ease-back); }
+
+.stamp-fig__shadow {
+  filter: drop-shadow(0 18px 22px rgba(20, 18, 15, 0.26)) drop-shadow(0 2px 3px rgba(20, 18, 15, 0.16));
+}
+
+.dark .stamp-fig__shadow {
+  filter: drop-shadow(0 20px 26px rgba(0, 0, 0, 0.55)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+/* A second stamp from the same sheet, peeking out down and to the left. */
+.stamp-fig__back {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.stamp-fig__back-pose {
+  width: 100%;
+  height: 100%;
+  transform: translate(-7%, 4%) rotate(-5deg);
+  transition: transform 0.9s var(--ease-back);
+}
+
+.stamp--back {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #BB613F;
+}
+
+.dark .stamp--back { background: #BB613F; }
+
+.stamp--back::before { border-color: rgba(240, 233, 220, 0.5); }
+
+.stamp--back__sun {
+  position: absolute;
+  left: -14%;
+  top: -9%;
+  width: 40%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #D6AB52;
+}
+
+.stamp--back__label {
+  position: absolute;
+  left: calc(var(--pad) - 4px);
+  top: 18%;
+  color: #F0E9DC;
+  font-family: var(--font-display);
+  font-size: calc(var(--pw) * 0.031);
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* Postmark: a terracotta date ring stamped over the top right corner, with
+   wavy cancellation lines running off the stamp. Terracotta reads on the
+   paper and on either page ground. */
+.stamp-fig__mark {
+  position: absolute;
+  left: 79.6%;
+  top: calc(var(--w) * -0.154);
   z-index: 2;
-  width: 6.25rem;
+  width: 47.3%;
+  color: var(--brand-terra);
+  pointer-events: none;
+}
+
+.postmark {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  transform: rotate(-12deg);
+  transform-origin: 30% 50%;
+  transition: transform 0.9s var(--ease-back);
 }
 
 @media (max-width: 639px) {
-  .about-fig__badge { right: -1.25rem; top: -1.5rem; width: 5.25rem; }
+  .stamp-fig__mark { left: 81.2%; top: calc(var(--w) * -0.138); width: 42.4%; }
+}
+
+.postmark__ring { transform-box: fill-box; transform-origin: center; }
+
+.postmark__text {
+  fill: currentColor;
+  font-family: var(--font-mono);
+  font-size: 9.2px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.postmark__small {
+  fill: currentColor;
+  font-family: var(--font-mono);
+  font-size: 7.4px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.postmark__big {
+  fill: currentColor;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stamp-fig__caption {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3rem;
+  color: var(--muted);
+}
+
+@media (hover: hover) {
+  .stamp-fig:hover .stamp-fig__lift { transform: translateY(-8px) rotate(-1.2deg); }
+  .stamp-fig:hover .stamp-fig__back-pose { transform: translate(-9%, 2%) rotate(-8deg); }
+  .stamp-fig:hover .postmark { transform: rotate(-4deg) translateY(-4px); }
 }
 
 .stats {

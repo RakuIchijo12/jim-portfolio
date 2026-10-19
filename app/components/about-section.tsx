@@ -1,17 +1,13 @@
 "use client";
 
-import { useRef } from "react";
 import { m } from "framer-motion";
 import { aboutBio, aboutCards, heroStats, labNotes } from "@/app/lib/data";
 import { SectionMeta } from "@/app/components/ui/section-head";
 import CountUp from "@/app/components/ui/count-up";
-import RotatingBadge from "@/app/components/ui/rotating-badge";
 import { ease, Reveal, riseChild, staggerParent } from "@/app/components/ui/reveal";
 import ScrollLit from "@/app/components/ui/scroll-lit";
 import { SHAPE_CLASS, SHAPE_COLOR, SHAPE_CYCLE } from "@/app/components/ui/shapes";
-import { useOffscreenPause } from "@/app/components/ui/use-offscreen";
-
-const sweep = [0.76, 0, 0.24, 1] as const;
+import AboutStamp from "@/app/components/about-stamp";
 
 const MANIFESTO =
   "Engineering software for institutions that cannot afford to *fail.* [circle] " +
@@ -60,9 +56,6 @@ const PLATE_SHAPES = SHAPE_CYCLE;
 const GAUGE_COLORS = ["var(--brand-terra)", "var(--ochre)", "var(--olive)"];
 
 export default function AboutSection() {
-  const figRef = useRef<HTMLElement>(null);
-  useOffscreenPause(figRef);
-
   return (
     <section id="about" className="section">
       <div className="wrap">
@@ -71,60 +64,8 @@ export default function AboutSection() {
         <ScrollLit text={MANIFESTO} className="manifesto t-pretty" />
 
         <div className="about-grid">
-          {/* Figure: the off-duty portrait, whole at its own 2:3 ratio, framed with crop marks */}
-          <m.figure
-            ref={figRef}
-            className="about-fig lg:sticky lg:top-28"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 1.2, ease }}
-          >
-            <span aria-hidden="true" className="crop crop--tl" />
-            <span aria-hidden="true" className="crop crop--tr" />
-            <span aria-hidden="true" className="crop crop--bl" />
-            <span aria-hidden="true" className="crop crop--br" />
-
-            <div className="about-fig__frame">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/jim-cafe-portrait-optimized.webp"
-                alt="Jimuel Dave Rodado smiling with arms folded at a garden cafe at night"
-                width={768}
-                height={1154}
-                loading="lazy"
-                decoding="async"
-              />
-              <m.span
-                aria-hidden="true"
-                className="absolute inset-0"
-                style={{ background: "var(--brand-terra)", originY: 0 }}
-                initial={{ scaleY: 1 }}
-                whileInView={{ scaleY: 0 }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 1.3, ease: sweep, delay: 0.15 }}
-              />
-            </div>
-
-            <figcaption className="t-label">
-              <span>Fig. 02</span>
-              <span>
-                Off the clock<span className="hidden sm:inline">, Davao City</span>
-              </span>
-            </figcaption>
-
-            <m.div
-              className="about-fig__badge"
-              initial={{ scale: 0, rotate: -90 }}
-              whileInView={{ scale: 1, rotate: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 120, damping: 14, delay: 0.5 }}
-            >
-              <RotatingBadge text={"Software engineer ✦ Computer engineer ✦ "}>
-                <span className="sh sh-split h-5 w-5" />
-              </RotatingBadge>
-            </m.div>
-          </m.figure>
+          {/* The off-duty portrait as a postage stamp, the same size as the hero portrait */}
+          <AboutStamp className="lg:sticky lg:top-28" />
 
           {/* Body */}
           <div className="space-y-14">
