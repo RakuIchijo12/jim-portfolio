@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0.7" y2="1">
+      <stop offset="0" stop-color="#34302A"/>
+      <stop offset="0.55" stop-color="#1A1714"/>
+      <stop offset="1" stop-color="#0C0B09"/>
+    </linearGradient>
+    <radialGradient id="led" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFE3D2"/>
+      <stop offset="0.35" stop-color="#E8855D"/>
+      <stop offset="1" stop-color="#8A3E22"/>
+    </radialGradient>
+    <filter id="drop" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0.4" dy="1.4" stdDeviation="1.1" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <g filter="url(#drop)">
+    <path d="M3 2 V23.5 L8.6 18.4 L12.3 26.8 L16.2 25.1 L12.6 16.9 H20 Z"
+          fill="url(#body)" stroke="#F4EEE2" stroke-width="1.6" stroke-linejoin="round" paint-order="stroke"/>
+  </g>
+  <path d="M4.4 5.2 V19.4" stroke="#fff" stroke-opacity="0.22" stroke-width="0.9" stroke-linecap="round"/>
+  <circle cx="7.3" cy="14.4" r="2.4" fill="#D0714D" opacity="0.3"/>
+  <circle cx="7.3" cy="14.4" r="1.55" fill="url(#led)"/>
+  <circle cx="6.85" cy="13.9" r="0.5" fill="#fff" opacity="0.85"/>
+</svg>

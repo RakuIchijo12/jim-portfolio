@@ -59,7 +59,7 @@ export default function RotatingBadge({
   }
 
   return (
-    <div className={`badge ${className}`} aria-hidden="true" style={{ cursor: "default" }}>
+    <div className={`badge ${className}`} aria-hidden="true" style={{ cursor: "var(--cur-arrow)" }}>
       {inner}
     </div>
   );

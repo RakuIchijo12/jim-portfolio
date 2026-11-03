@@ -60,14 +60,17 @@ function SevenSeg({ p }: P) {
   const segs = Object.keys(SEGMENTS) as Segment[];
   return (
     <>
-      <svg className="spec-seg" viewBox="0 0 126 100" aria-hidden="true">
-        {segs.map((s) => (
-          <Seg key={`t-${s}`} value={value} place={10} seg={s} x={2} />
-        ))}
-        {segs.map((s) => (
-          <Seg key={`o-${s}`} value={value} place={1} seg={s} x={66} />
-        ))}
-      </svg>
+      {/* The display module: a black housing, red filter glass, the digits. */}
+      <div className="spec-seg-box">
+        <svg className="spec-seg" viewBox="0 0 126 100" aria-hidden="true">
+          {segs.map((s) => (
+            <Seg key={`t-${s}`} value={value} place={10} seg={s} x={2} />
+          ))}
+          {segs.map((s) => (
+            <Seg key={`o-${s}`} value={value} place={1} seg={s} x={66} />
+          ))}
+        </svg>
+      </div>
       <span className="frieze__tag">DS1 / 7-segment</span>
     </>
   );
@@ -107,7 +110,7 @@ function Scope({ p }: P) {
       <div className="spec-scope">
         <m.svg className="spec-scope__wave" viewBox="0 0 160 36" preserveAspectRatio="none" style={{ x }} aria-hidden="true">
           {/* Phosphor bloom under the trace */}
-          <path d={wave} fill="none" stroke="currentColor" strokeWidth="9" strokeOpacity="0.16" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+          <path d={wave} fill="none" stroke="currentColor" strokeWidth="9" strokeOpacity="0.24" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
           <path d={wave} fill="none" stroke="currentColor" strokeWidth="2.6" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
         </m.svg>
       </div>
@@ -184,9 +187,17 @@ function Net({ p }: P) {
   return (
     <>
       <svg className="spec-net" viewBox="0 0 100 100" aria-hidden="true">
-        <path d={d} fill="none" stroke="#D6AB52" strokeWidth="3.4" strokeLinejoin="round" strokeLinecap="round" />
+        <g fill="none" strokeLinejoin="round" strokeLinecap="round">
+          <path d={d} stroke="#000" strokeOpacity="0.5" strokeWidth="3.8" transform="translate(0.6 0.9)" />
+          <path d={d} stroke="#D6AB52" strokeWidth="3.4" />
+          <path d={d} stroke="#F6DE9C" strokeOpacity="0.8" strokeWidth="1" transform="translate(0 -0.8)" />
+        </g>
         {[NET[0], NET[NET.length - 1]].map(([px, py]) => (
-          <circle key={px} cx={px} cy={py} r="5.2" fill="var(--ink)" stroke="#D6AB52" strokeWidth="2.6" />
+          <g key={px}>
+            <circle cx={px} cy={py} r="6.5" fill="#D6AB52" />
+            <circle cx={px} cy={py} r="6.5" fill="url(#m-dome)" />
+            <circle cx={px} cy={py} r="3" fill="var(--ink)" />
+          </g>
         ))}
       </svg>
       <m.span className="spec-net__pulse led" style={{ x, y }} />

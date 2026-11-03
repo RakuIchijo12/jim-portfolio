@@ -87,6 +87,42 @@ function TechDots({ items }: { items: readonly string[] }) {
   );
 }
 
+/** What the address bar shows: the host, plus the path for a GitHub link. */
+function displayUrl(link: string) {
+  if (!link) return "localhost:8000";
+  try {
+    const url = new URL(link);
+    const host = url.host.replace(/^www\./, "");
+    const path = url.pathname.replace(/\/$/, "");
+    return host === "github.com" ? `${host}${path}` : host;
+  } catch {
+    return link;
+  }
+}
+
+/**
+ * Window chrome around a screenshot, so each project reads as a site open
+ * in a browser: three lights in the palette, the padlock and the address.
+ */
+function BrowserBar({ link }: { link: string }) {
+  return (
+    <span className="browser" aria-hidden="true">
+      <span className="browser__lights">
+        <i />
+        <i />
+        <i />
+      </span>
+      <span className="browser__url">
+        <svg viewBox="0 0 12 14" className="browser__lock">
+          <path d="M3.2 6 V4.2 a2.8 2.8 0 0 1 5.6 0 V6" fill="none" stroke="currentColor" strokeWidth="1.4" />
+          <rect x="1.5" y="6" width="9" height="7" rx="1.6" fill="currentColor" />
+        </svg>
+        <span className="truncate">{displayUrl(link)}</span>
+      </span>
+    </span>
+  );
+}
+
 /** Screenshot, or for the private ERP the cover photo under a scrim. */
 function Media({ work, imgStyle }: { work: Work; imgStyle?: { x: MotionValue<string> } }) {
   if (work.image) {
@@ -157,7 +193,10 @@ function Panel({ work, index, progress }: { work: Work; index: number; progress:
           <ProjectGlyph kind={look.look.glyph} fill={look.look.color} detail="var(--bg)" accent={look.look.second} />
         </m.span>
         <span className="work__frame">
-          <Media work={work} imgStyle={{ x: imgX }} />
+          <BrowserBar link={work.link} />
+          <span className="work__screen">
+            <Media work={work} imgStyle={{ x: imgX }} />
+          </span>
         </span>
       </TransitionLink>
 
@@ -315,24 +354,27 @@ function Card({ work, index }: { work: Work; index: number }) {
         className="work-card__media block"
         aria-label={`Open the ${work.name} case study`}
       >
-        <m.span
-          className="absolute inset-0 block"
-          initial={{ scale: 1.25 }}
-          whileInView={{ scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 1.5, ease }}
-        >
-          <Media work={work} />
-        </m.span>
-        <m.span
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{ background: lookFor(work.id).color, originY: 0 }}
-          initial={{ scaleY: 1 }}
-          whileInView={{ scaleY: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 1.1, ease: sweep }}
-        />
+        <BrowserBar link={work.link} />
+        <span className="work-card__screen">
+          <m.span
+            className="absolute inset-0 block"
+            initial={{ scale: 1.25 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 1.5, ease }}
+          >
+            <Media work={work} />
+          </m.span>
+          <m.span
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{ background: lookFor(work.id).color, originY: 0 }}
+            initial={{ scaleY: 1 }}
+            whileInView={{ scaleY: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 1.1, ease: sweep }}
+          />
+        </span>
       </TransitionLink>
 
       <h3 className="work__name mt-6">{work.name}</h3>

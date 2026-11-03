@@ -102,6 +102,13 @@
 
   --nav-h:  4.5rem;
   --gutter: clamp(1rem, 4vw, 3rem);
+
+  /* The pointer: a dark arrow with a cream rim and a terracotta power LED;
+     over anything clickable it turns terracotta and the LED lights. Native
+     cursor images, so they track the mouse with no lag. The keyword after
+     each is the fallback where SVG cursors are not supported. */
+  --cur-arrow: url("/cursors/arrow.svg") 3 2, auto;
+  --cur-link:  url("/cursors/link.svg") 3 2, pointer;
 }
 
 @theme inline {
@@ -163,6 +170,19 @@
 
   a { color: inherit; text-decoration: none; }
   button, input, textarea, select { font: inherit; color: inherit; }
+
+  html { cursor: var(--cur-arrow); }
+
+  a[href], button, [role="button"], summary, select, label[for],
+  input[type="checkbox"], input[type="radio"], input[type="submit"], input[type="button"] {
+    cursor: var(--cur-link);
+  }
+
+  input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"]),
+  textarea,
+  [contenteditable="true"] { cursor: text; }
+
+  :disabled { cursor: not-allowed; }
 
   :focus-visible {
     outline: 2px solid var(--accent);
@@ -333,10 +353,21 @@ html.has-cursor [data-cursor] { cursor: none; }
    PARTS: the CSS half of the component library in ui/circuit.tsx
    ========================================================================== */
 
-/* LED: a flat lens in --led with a hard glint and a soft glow. Both scale
-   with the lens, so one part serves as a full stop or a status light. */
+/* LED: a domed lens in --led. A hot, paler core where the die sits, the
+   colour saturating toward a darker rim, a glint on the glass and a soft
+   glow around it. Every layer is in percent of the lens, so one part
+   serves as a full stop or a status light. */
 .led {
   --led: var(--brand-terra);
+  --led-lit:
+    radial-gradient(circle at 50% 54%,
+      color-mix(in srgb, var(--led) 22%, #fff) 0 9%,
+      color-mix(in srgb, var(--led) 70%, #fff) 22%,
+      transparent 48%),
+    radial-gradient(circle at 50% 46%,
+      var(--led) 0 52%,
+      color-mix(in srgb, var(--led) 72%, #000) 82%,
+      color-mix(in srgb, var(--led) 45%, #000) 100%);
   position: relative;
   isolation: isolate;
   display: inline-block;
@@ -344,33 +375,43 @@ html.has-cursor [data-cursor] { cursor: none; }
   width: 0.7rem;
   height: 0.7rem;
   border-radius: 50%;
-  background: var(--led);
+  background: var(--led-lit);
 }
 
+/* The glint: a soft-edged reflection of the room on the dome. */
 .led::before {
   content: "";
   position: absolute;
   z-index: 1;
-  left: 21%;
-  top: 17%;
-  width: 30%;
+  left: 18%;
+  top: 13%;
+  width: 36%;
   height: 30%;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.35) 55%, transparent);
+  transform: rotate(-24deg);
 }
 
 .led::after,
 .led__lit::after {
   content: "";
   position: absolute;
-  inset: -85%;
+  inset: -90%;
   border-radius: 50%;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--led) 48%, transparent), transparent);
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--led) 55%, transparent),
+    color-mix(in srgb, var(--led) 18%, transparent) 45%,
+    transparent);
   pointer-events: none;
 }
 
-/* Off: the lens without the light. */
-.led--off { background: color-mix(in srgb, var(--led) 30%, #2A2622); }
+/* Off: the tinted lens without the light, the glint dimmer. */
+.led--off {
+  background: radial-gradient(circle at 50% 46%,
+    color-mix(in srgb, var(--led) 34%, #2A2622) 0 55%,
+    color-mix(in srgb, var(--led) 16%, #0D0C0A) 100%);
+}
+.led--off::before { opacity: 0.55; }
 .led--off::after { content: none; }
 
 /* The light a motion value fades in over an off LED. */
@@ -378,7 +419,7 @@ html.has-cursor [data-cursor] { cursor: none; }
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: var(--led);
+  background: var(--led-lit);
 }
 
 /* Drive activity: two quick blinks every few seconds. */
@@ -473,11 +514,13 @@ html.has-cursor [data-cursor] { cursor: none; }
   letter-spacing: 0.12em;
   text-transform: uppercase;
   white-space: nowrap;
-  cursor: pointer;
+  cursor: var(--cur-link);
   transition:
     color 0.5s var(--ease-out),
     border-color 0.5s var(--ease-out),
-    background-color 0.5s var(--ease-out);
+    background-color 0.5s var(--ease-out),
+    box-shadow 0.25s var(--ease-out),
+    transform 0.25s var(--ease-out);
 }
 
 /* The fill rises from below, like ink up a nib. */
@@ -492,26 +535,71 @@ html.has-cursor [data-cursor] { cursor: none; }
   transition: transform 0.6s var(--ease-out);
 }
 
+/* The light on the cap, over the fill and under the label: a lit top edge,
+   a soft fall-off and the shaded lip at the bottom. Same negative layer as
+   the fill, later in the tree, so it paints above it. */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 48%, rgba(0, 0, 0, 0.1));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+}
+
 .btn:hover::before,
 .btn:focus-visible::before { transform: translateY(0); }
+
+/* Pressed: the cap travels down a pixel and its shadow tightens. */
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+  transition-duration: 0.08s;
+}
 
 .btn-solid {
   background: var(--fg);
   color: var(--bg);
   --btn-fill: var(--accent);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.3),
+    0 6px 14px -6px rgba(0, 0, 0, 0.55);
 }
 
 .btn-solid:hover,
-.btn-solid:focus-visible { color: var(--on-accent); }
+.btn-solid:focus-visible {
+  color: var(--on-accent);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.3),
+    0 12px 22px -10px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.btn-solid:active:not(:disabled) { box-shadow: 0 0 1px rgba(0, 0, 0, 0.4); }
 
 .btn-line {
   border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--fg) 3%, transparent);
   color: var(--fg);
   --btn-fill: var(--fg);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.btn-line::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 55%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .btn-line:hover,
-.btn-line:focus-visible { color: var(--bg); border-color: var(--fg); }
+.btn-line:focus-visible {
+  color: var(--bg);
+  border-color: var(--fg);
+  box-shadow: 0 10px 20px -12px rgba(0, 0, 0, 0.6);
+}
+
+.btn-line:active:not(:disabled) { box-shadow: none; }
 
 .btn-sm { height: 2.6rem; padding: 0 1.15rem; font-size: 0.6875rem; }
 
@@ -541,23 +629,41 @@ html.has-cursor [data-cursor] { cursor: none; }
   flex: none;
   border: 1px solid var(--line-strong);
   border-radius: 50%;
-  background: transparent;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.08)),
+    color-mix(in srgb, var(--fg) 3%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.2);
   color: var(--fg);
-  cursor: pointer;
+  cursor: var(--cur-link);
   transition:
     background-color 0.45s var(--ease-out),
     color 0.45s var(--ease-out),
-    border-color 0.45s var(--ease-out);
+    border-color 0.45s var(--ease-out),
+    transform 0.2s var(--ease-out),
+    box-shadow 0.2s var(--ease-out);
 }
 
 .icon-btn:hover:not(:disabled),
 .icon-btn:focus-visible {
-  background: var(--fg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.12)),
+    var(--fg);
   border-color: var(--fg);
   color: var(--bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 8px 16px -8px rgba(0, 0, 0, 0.6);
 }
 
-.icon-btn:disabled { opacity: 0.3; cursor: default; }
+.icon-btn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition-duration: 0.08s;
+}
+
+.icon-btn:disabled { opacity: 0.3; cursor: var(--cur-arrow); }
 
 /* ==========================================================================
    NAVIGATION
@@ -598,7 +704,7 @@ html.has-cursor [data-cursor] { cursor: none; }
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  cursor: pointer;
+  cursor: var(--cur-link);
   transition: color 0.4s ease;
 }
 
@@ -636,8 +742,10 @@ html.has-cursor [data-cursor] { cursor: none; }
   height: 18px;
   border-radius: 2px;
   background:
-    radial-gradient(circle at 4.5px 4.5px, var(--bg) 0 1.6px, transparent 2.1px),
+    radial-gradient(circle at 4.5px 4.5px, color-mix(in srgb, var(--fg) 70%, #000) 0 1.6px, transparent 2.1px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.28)),
     var(--fg);
+  box-shadow: 1px 1.5px 2px rgba(0, 0, 0, 0.35);
   transition: transform 0.9s var(--ease-back);
 }
 
@@ -716,7 +824,7 @@ html.has-cursor [data-cursor] { cursor: none; }
   background: none;
   color: var(--fg);
   text-align: left;
-  cursor: pointer;
+  cursor: var(--cur-link);
 }
 
 .menu-sheet__word {
@@ -741,6 +849,11 @@ html.has-cursor [data-cursor] { cursor: none; }
   flex: none;
   border-radius: 50%;
   background: var(--accent);
+  /* A tiny lens: lit at the top, a darker rim. Shadows, not a background
+     image, so an inline background colour keeps the shading. */
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.3);
 }
 
 .status-dot::after {
@@ -949,6 +1062,9 @@ html.has-cursor [data-cursor] { cursor: none; }
   inset: 0;
   z-index: 1;
   pointer-events: none;
+  /* The board is a big painted SVG that rides the scroll: keep it on its
+     own layer so it is drawn once and only moved. */
+  will-change: transform;
 }
 
 .pcb__board {
@@ -960,12 +1076,41 @@ html.has-cursor [data-cursor] { cursor: none; }
   overflow: visible;
 }
 
+/* Solder mask over the substrate: a green-black board pulled from the
+   palette's teal on ink, a white-mask board on paper. */
+.pcb__mask { fill: color-mix(in srgb, #fff 62%, var(--surface)); }
+.dark .pcb__mask { fill: color-mix(in srgb, var(--teal) 30%, #0F110F); }
+
+/* Drill holes go through the board, so they show the page behind. */
+.pcb__drill {
+  fill: var(--bg);
+  stroke: rgba(0, 0, 0, 0.45);
+  stroke-width: 0.3;
+}
+
+.pcb__keepout {
+  stroke: var(--fg);
+  stroke-opacity: 0.16;
+  stroke-width: 0.3;
+  stroke-dasharray: 1.4 1.2;
+}
+
+/* Silkscreen ink: printed on the mask, so it sits a little soft. */
 .pcb__silk {
-  fill: var(--muted);
+  fill: var(--fg);
+  opacity: 0.6;
   font-family: var(--font-mono);
   font-size: 2.6px;
   font-weight: 600;
   letter-spacing: 0.12em;
+}
+
+/* The value code laser-printed on a resistor's body. */
+.pcb__code {
+  fill: rgba(240, 233, 220, 0.85);
+  font-family: var(--font-mono);
+  font-size: 1.7px;
+  font-weight: 600;
 }
 
 /* Signal pulses: a lit bead runs a trace into the frame, on a loop. The
@@ -998,19 +1143,19 @@ html.has-cursor [data-cursor] { cursor: none; }
 }
 
 @keyframes pcb-l2 {
-  0%          { opacity: 0; transform: translate(-41cqw, 62cqh); }
+  0%          { opacity: 0; transform: translate(-39cqw, 62cqh); }
   4%          { opacity: 1; }
-  16.8%       { transform: translate(-27cqw, 62cqh); }
-  29.8%       { transform: translate(-21cqw, 56cqh); }
-  55.6%       { opacity: 1; }
-  58.6%, 100% { opacity: 0; transform: translate(3cqw, 56cqh); }
+  14.4%       { transform: translate(-27cqw, 62cqh); }
+  27.4%       { transform: translate(-21cqw, 56cqh); }
+  53.2%       { opacity: 1; }
+  56.2%, 100% { opacity: 0; transform: translate(3cqw, 56cqh); }
 }
 
 @keyframes pcb-r2 {
-  0%        { opacity: 0; transform: translate(117cqw, 46cqh); }
-  3%        { opacity: 1; }
-  21%       { opacity: 1; }
-  24%, 100% { opacity: 0; transform: translate(97cqw, 46cqh); }
+  0%          { opacity: 0; transform: translate(115cqw, 46cqh); }
+  3%          { opacity: 1; }
+  18.6%       { opacity: 1; }
+  21.6%, 100% { opacity: 0; transform: translate(97cqw, 46cqh); }
 }
 
 /* U1 on the frame's right edge, its left pins touching the frame. */
@@ -1058,6 +1203,11 @@ html.has-cursor [data-cursor] { cursor: none; }
   border-radius: 50% 50% 0 0 / 33.27% 33.27% 0 0;
   /* The studio backdrop, so the arch is never empty while the photo loads. */
   background: #514E2E;
+  /* Seated on the board: a contact shadow and a wider, softer one. */
+  box-shadow:
+    0 0.6cqw 1cqw rgba(0, 0, 0, 0.35),
+    0 3cqw 6cqw -2cqw rgba(0, 0, 0, 0.55);
+  will-change: transform;
 }
 
 .poster__frame img {
@@ -1181,7 +1331,7 @@ html.has-cursor [data-cursor] { cursor: none; }
   border-radius: 50%;
   background: var(--bg);
   color: var(--fg);
-  cursor: pointer;
+  cursor: var(--cur-link);
 }
 
 .badge__ring {
@@ -1207,7 +1357,14 @@ html.has-cursor [data-cursor] { cursor: none; }
   width: 40%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: var(--fg);
+  /* A domed push button: lit from the top left, a dark rim, seated in a shadow. */
+  background:
+    radial-gradient(circle at 38% 30%, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 55%),
+    radial-gradient(circle, transparent 62%, rgba(0, 0, 0, 0.28)),
+    var(--fg);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--fg) 12%, var(--bg)),
+    0 4px 10px -2px rgba(0, 0, 0, 0.5);
   color: var(--bg);
   transition: transform 0.7s var(--ease-back), background-color 0.4s ease;
 }
@@ -1215,7 +1372,10 @@ html.has-cursor [data-cursor] { cursor: none; }
 .badge:hover .badge__core,
 .badge:focus-visible .badge__core {
   transform: scale(1.14);
-  background: var(--accent);
+  background:
+    radial-gradient(circle at 38% 30%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 55%),
+    radial-gradient(circle, transparent 62%, rgba(0, 0, 0, 0.25)),
+    var(--accent);
   color: var(--on-accent);
 }
 
@@ -1590,7 +1750,9 @@ html.has-cursor [data-cursor] { cursor: none; }
   gap: 0.75rem;
   min-height: 15.5rem;
   padding: 1.5rem;
-  background: var(--bg);
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0.08)),
+    var(--bg);
 }
 
 .plate__top {
@@ -1646,6 +1808,25 @@ html.has-cursor [data-cursor] { cursor: none; }
   position: relative;
   width: min(100%, 8rem);
   aspect-ratio: 1;
+  /* A panel meter: a recessed face inside a raised bezel ring. */
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 32%, color-mix(in srgb, var(--fg) 8%, var(--bg)), var(--bg) 72%);
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--fg) 9%, var(--bg)),
+    0 0 0 7px var(--line),
+    0 -1px 0 6px rgba(255, 255, 255, 0.05),
+    inset 0 3px 8px rgba(0, 0, 0, 0.45),
+    0 12px 22px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* The meter glass: one soft glare across the top. */
+.gauge__dial::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02) 42%, transparent 43%);
+  pointer-events: none;
 }
 
 .gauge__dial svg { width: 100%; height: 100%; transform: rotate(-90deg); }
@@ -1721,7 +1902,8 @@ html.has-cursor [data-cursor] { cursor: none; }
   font-variant-numeric: tabular-nums;
 }
 
-/* 1. Binary counter: eight LEDs on a strip. */
+/* 1. Binary counter: eight LEDs on a strip of black board, each seated in
+   a plated pad. */
 .spec-counter {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -1729,17 +1911,62 @@ html.has-cursor [data-cursor] { cursor: none; }
   width: 82cqw;
   padding: 3.6cqw 3.2cqw;
   border-radius: 1.6cqw;
-  background: rgba(0, 0, 0, 0.26);
+  background: linear-gradient(180deg, #1C1A17, #0F0E0C);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0.8cqw 1.6cqw rgba(0, 0, 0, 0.45);
 }
 
-.spec-counter .led { width: 100%; height: auto; aspect-ratio: 1; }
+.spec-counter .led {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  outline: 0.5cqw solid rgba(214, 171, 82, 0.35);
+  outline-offset: 0.4cqw;
+}
 
-/* 2. Seven-segment display, slanted like the real thing. */
+/* 2. Seven-segment display: a black moulded housing with red filter glass,
+   digits slanted like the real thing, lit segments glowing through. */
+.spec-seg-box {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 78cqw;
+  padding: 7cqw 0;
+  border-radius: 2cqw;
+  background:
+    radial-gradient(120% 90% at 50% 40%, #2A0F09, #120806 70%);
+  box-shadow:
+    0 0 0 1.6cqw #1B1916,
+    0 0 0 1.9cqw rgba(255, 255, 255, 0.08),
+    0 1.6cqw 3cqw rgba(0, 0, 0, 0.6),
+    inset 0 0 4cqw rgba(0, 0, 0, 0.8);
+}
+
+/* The glass: one glare band across the top left. */
+.spec-seg-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 38%, transparent 39%);
+  pointer-events: none;
+}
+
 .spec-seg {
   width: 64cqw;
   height: auto;
-  fill: #E8693F;
+  fill: #FF7A4A;
   transform: skewX(-7deg);
+}
+
+/* The glow through the filter glass, as a soft halo stroked under each
+   segment: no blur filter, so a digit change repaints cheaply. */
+.spec-seg path {
+  stroke: rgba(255, 106, 58, 0.32);
+  stroke-width: 5;
+  stroke-linejoin: round;
+  paint-order: stroke;
 }
 
 /* 3. AND gate with an LED on each lead. */
@@ -1771,6 +1998,22 @@ html.has-cursor [data-cursor] { cursor: none; }
     repeating-linear-gradient(90deg, rgba(233, 192, 104, 0.09) 0 1px, transparent 1px 12.5%);
 }
 
+/* The CRT: a dark bezel lip, the tube's falling-off corners and the
+   reflection on its curved glass, over the graticule and the trace. */
+.spec-scope::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.02) 34%, transparent 35%),
+    radial-gradient(130% 120% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.6));
+  box-shadow:
+    inset 0 0 0 1.4cqw #070C0A,
+    inset 0 0 0 1.7cqw rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
 .spec-scope__wave {
   position: absolute;
   left: 0;
@@ -1778,6 +2021,8 @@ html.has-cursor [data-cursor] { cursor: none; }
   width: 200%;
   height: 32%;
   overflow: visible;
+  /* Its own layer, so the trace is drawn once and the scroll only moves it. */
+  will-change: transform;
 }
 
 /* 5. The 74HC08 itself. */
@@ -1820,24 +2065,33 @@ html.has-cursor [data-cursor] { cursor: none; }
     #F0E9DC;
 }
 
-/* The crimp under the top of the can. */
+/* Over the sleeve: the crimp under the top of the can, the rounded top
+   catching the light, and the can's roundness (dark edges, a hot line a
+   third of the way in). After the children, so it shades the stripe and
+   the charge too. */
 .spec-cap__body::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 10%;
-  height: 2.6%;
-  background: rgba(0, 0, 0, 0.4);
+  inset: 0;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)) 0 10% / 100% 2.6% no-repeat,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 5%),
+    linear-gradient(90deg,
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.06) 18%,
+      rgba(255, 255, 255, 0.34) 31%,
+      rgba(255, 255, 255, 0.06) 42%,
+      rgba(0, 0, 0, 0.12) 74%,
+      rgba(0, 0, 0, 0.55));
 }
 
-/* Legs: the longer one is the anode. */
+/* Tinned legs, round in section: the longer one is the anode. */
 .spec-cap__legs {
   width: 50%;
   height: 15cqh;
   background:
-    linear-gradient(#CFC7B8, #CFC7B8) 0 0 / 2.6cqw 100% no-repeat,
-    linear-gradient(#CFC7B8, #CFC7B8) 100% 0 / 2.6cqw 76% no-repeat;
+    linear-gradient(90deg, #8E877A, #F4F0E8 45%, #9C9485) 0 0 / 2.6cqw 100% no-repeat,
+    linear-gradient(90deg, #8E877A, #F4F0E8 45%, #9C9485) 100% 0 / 2.6cqw 76% no-repeat;
 }
 
 /* 7. Case fan: the frame holds still, the blades spin with the scroll. */
@@ -1968,6 +2222,17 @@ html.has-cursor [data-cursor] { cursor: none; }
   list-style: none;
 }
 
+/* Each tile is a printed panel under one light: a faint lift at the top
+   left, a little falloff toward the bottom right. */
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0.1));
+  pointer-events: none;
+}
+
 .tile__deco {
   position: absolute;
   z-index: -1;
@@ -1994,16 +2259,31 @@ html.has-cursor [data-cursor] { cursor: none; }
   border: 1px solid var(--line);
   border-radius: 999px;
   /* Opaque, so the corner shapes tuck behind the chips like stickers. */
-  background: color-mix(in srgb, var(--bg) var(--chip-mix, 92%), #fff);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 60%),
+    color-mix(in srgb, var(--bg) var(--chip-mix, 92%), #fff);
+  /* A raised key: lit top edge, a shaded lip and a small cast shadow. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 2px 4px -1px rgba(0, 0, 0, 0.28);
   font-size: 0.8125rem;
   font-weight: 500;
   white-space: nowrap;
   transition:
     transform 0.5s var(--ease-out),
-    border-color 0.4s ease;
+    border-color 0.4s ease,
+    box-shadow 0.5s var(--ease-out);
 }
 
-.chip:hover { transform: translateY(-3px); border-color: var(--fg); }
+.chip:hover {
+  transform: translateY(-3px);
+  border-color: var(--fg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 10px 16px -8px rgba(0, 0, 0, 0.45);
+}
 
 .chip__icon {
   display: grid;
@@ -2013,7 +2293,10 @@ html.has-cursor [data-cursor] { cursor: none; }
   flex: none;
   overflow: hidden;
   border-radius: 50%;
-  background: #FAF6EE;
+  background: radial-gradient(circle at 40% 30%, #FFFFFF, #F3EDE2 60%, #E2DACB);
+  box-shadow:
+    inset 0 -1px 1px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.25);
   transition: transform 0.7s var(--ease-back);
 }
 
@@ -2121,9 +2404,87 @@ html.has-cursor [data-cursor] { cursor: none; }
 .work__frame {
   position: absolute;
   inset: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.6rem 0.6rem 0.25rem 0.25rem;
   background: var(--surface);
+  /* A window resting on the wall: a tight contact shadow and a long soft
+     one. Square to the page, so the pinned track still scrolls smoothly. */
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 24px 40px -24px rgba(0, 0, 0, 0.85);
 }
+
+.work__screen {
+  position: relative;
+  display: block;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Browser chrome: the title bar over each project's screenshot.
+   -------------------------------------------------------------------------- */
+
+.browser {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.9rem;
+  height: 2.1rem;
+  padding: 0 0.8rem;
+  background: linear-gradient(180deg, #2A2723, #1E1C19);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 1px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Three lights, each a small domed lens in the palette. */
+.browser__lights { display: flex; flex: none; gap: 0.4rem; }
+
+.browser__lights i {
+  width: 0.62rem;
+  height: 0.62rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 38% 30%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 45%),
+    var(--light, #BB613F);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(0, 0, 0, 0.45),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.browser__lights i:nth-child(2) { --light: #C99A3E; }
+.browser__lights i:nth-child(3) { --light: #92825A; }
+
+.browser__url {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  max-width: min(22rem, 70%);
+  height: 1.35rem;
+  margin-inline: auto;
+  padding: 0 0.85rem;
+  border-radius: 999px;
+  background: #13120F;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.06);
+  color: rgba(239, 232, 218, 0.72);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  /* Balance the lights on the left so the bar centres on the window. */
+  transform: translateX(-1.6rem);
+}
+
+.browser__lock { width: 0.55rem; height: auto; flex: none; color: #9F978A; }
 
 .work__frame img {
   position: absolute;
@@ -2190,7 +2551,10 @@ html.has-cursor [data-cursor] { cursor: none; }
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background: #FAF6EE;
+  background: radial-gradient(circle at 40% 30%, #FFFFFF, #F3EDE2 60%, #E2DACB);
+  box-shadow:
+    inset 0 -1px 1px rgba(0, 0, 0, 0.14),
+    0 2px 4px -1px rgba(0, 0, 0, 0.45);
   transition: transform 0.6s var(--ease-back);
 }
 
@@ -2233,9 +2597,20 @@ html.has-cursor [data-cursor] { cursor: none; }
 
 .work-card__media {
   position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.55rem 0.55rem 0.25rem 0.25rem;
+  background: var(--surface);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 22px 36px -22px rgba(0, 0, 0, 0.85);
+}
+
+.work-card__screen {
+  position: relative;
+  display: block;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: var(--surface);
 }
 
 .work-card__media img {
@@ -2296,7 +2671,7 @@ html.has-cursor [data-cursor] { cursor: none; }
   background: none;
   color: var(--fg);
   text-align: left;
-  cursor: pointer;
+  cursor: var(--cur-link);
   transition:
     color 0.5s var(--ease-out),
     padding 0.7s var(--ease-out);
@@ -2518,7 +2893,13 @@ html.has-cursor [data-cursor] { cursor: none; }
 .contact__card {
   position: relative;
   padding: clamp(1.5rem, 3vw, 2.75rem);
-  box-shadow: 0 50px 90px -45px rgba(20, 18, 15, 0.65);
+  /* A sheet of card stock lying on the poster: lit along its top edge, a
+     tight contact shadow, then the long soft one. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 1px 2px rgba(20, 18, 15, 0.22),
+    0 10px 20px -12px rgba(20, 18, 15, 0.45),
+    0 50px 90px -45px rgba(20, 18, 15, 0.65);
 }
 
 .contact__badge {
@@ -2692,6 +3073,21 @@ textarea.field__input { min-height: 8.5rem; resize: vertical; }
   border-radius: 50%;
   transform: translate(-50%, -50%);
   overflow: hidden;
+}
+
+/* Four short ticks on the compass points, like the marks on a probe's
+   reticle. Centred with the translate property, so the rotate Framer
+   writes to transform composes with it. */
+.cursor__ticks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  translate: -50% -50%;
+  background:
+    linear-gradient(#fff, #fff) 50% 0 / 1.5px 6px no-repeat,
+    linear-gradient(#fff, #fff) 50% 100% / 1.5px 6px no-repeat,
+    linear-gradient(#fff, #fff) 0 50% / 6px 1.5px no-repeat,
+    linear-gradient(#fff, #fff) 100% 50% / 6px 1.5px no-repeat;
 }
 
 .cursor__label {
@@ -3093,7 +3489,7 @@ button.print__img:focus-visible img { transform: scale(1.03); }
   transition: opacity 0.9s ease;
 }
 
-.private-print__img { cursor: default; }
+.private-print__img { cursor: var(--cur-arrow); }
 
 .private-print__sticker {
   position: absolute;
@@ -3577,7 +3973,7 @@ button.print__img:focus-visible img { transform: scale(1.03); }
   border-radius: 50%;
   background: rgba(20, 18, 15, 0.6);
   color: var(--paper);
-  cursor: pointer;
+  cursor: var(--cur-link);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 

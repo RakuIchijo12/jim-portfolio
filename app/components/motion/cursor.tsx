@@ -107,6 +107,9 @@ function Follower() {
 
   const isLabel = mode.kind === "label";
   const size = SIZE[mode.kind];
+  /* Probe ticks around the ring: a reticle at rest, turned 45 degrees and
+     opened out over a link, gone for labels and text fields. */
+  const ticks = mode.kind === "idle" || mode.kind === "link";
 
   return (
     <m.div
@@ -117,6 +120,17 @@ function Follower() {
       transition={{ type: "spring", stiffness: 500, damping: 28 }}
       aria-hidden="true"
     >
+      <m.div
+        className="cursor__ticks"
+        initial={false}
+        animate={{
+          width: size + 16,
+          height: size + 16,
+          opacity: ticks ? 1 : 0,
+          rotate: mode.kind === "link" ? 45 : 0,
+        }}
+        transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.6 }}
+      />
       <m.div
         className="cursor__blob"
         initial={false}

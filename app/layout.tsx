@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Inter, Jost, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/app/providers";
+import MaterialDefs from "@/app/components/ui/material-defs";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -90,6 +91,7 @@ export default function RootLayout({
         <noscript dangerouslySetInnerHTML={{ __html: "<style>.preloader{display:none!important}</style>" }} />
       </head>
       <body>
+        <MaterialDefs />
         <Providers>{children}</Providers>
         {/* Printed-paper grain over everything. Pointer-events none, and
             hidden when the visitor asks for reduced motion. */}
