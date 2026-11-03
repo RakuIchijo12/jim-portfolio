@@ -91,8 +91,8 @@ export default function ProjectView({
   const look = lookFor(project.id);
   const shots = project.images;
   const count = shots.length;
-  const cover = "cover" in project && project.cover ? project.cover : null;
-  const home = project.link ? siteLabel(project.link) : "Private deployment";
+  const cover = "cover" in project && typeof project.cover === "string" && project.cover ? project.cover : null;
+  const home = project.link ? siteLabel(project.link) : "Internal deployment";
 
   const print: CoverPrint | null = count
     ? { src: shots[0].src, caption: `Fig. 01 / ${screenLabel(shots[0].alt)}`, count: `01/${pad(count)}` }

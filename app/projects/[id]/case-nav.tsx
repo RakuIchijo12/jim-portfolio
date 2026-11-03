@@ -101,7 +101,7 @@ export default function CaseNav({
               <ExternalIcon />
             </a>
           ) : (
-            <span className="t-label hidden text-subtle sm:inline">Private client system</span>
+            <span className="t-label hidden text-subtle sm:inline">Internal client system</span>
           )}
         </div>
       </m.div>

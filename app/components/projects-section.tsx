@@ -44,7 +44,7 @@ const works: Work[] = projects.map((p) => ({
   overview: p.overview,
   technologies: p.technologies,
   image: p.images[0]?.src ?? null,
-  cover: "cover" in p ? p.cover : null,
+  cover: "cover" in p && typeof p.cover === "string" ? p.cover : null,
   link: p.link,
 }));
 
@@ -138,7 +138,7 @@ function Panel({ work, index, progress }: { work: Work; index: number; progress:
         </span>
         <span className="inline-flex items-center gap-2">
           <span aria-hidden="true" className="status-dot" style={{ background: look.look.color }} />
-          {work.link ? "Live" : "Private"}
+          {work.link ? "Live" : "Internal"}
         </span>
       </div>
 
@@ -306,7 +306,7 @@ function Card({ work, index }: { work: Work; index: number }) {
         <span>
           PL. {pad(index + 1)} / {work.category}
         </span>
-        <span>{work.link ? "Live" : "Private"}</span>
+        <span>{work.link ? "Live" : "Internal"}</span>
       </div>
 
       <TransitionLink

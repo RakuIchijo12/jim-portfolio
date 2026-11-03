@@ -105,7 +105,7 @@ export default function Contents({
           <ExternalIcon />
         </a>
       ) : (
-        <p className="rail__private t-label">Source and deployment are private to the client.</p>
+        <p className="rail__private t-label">Deployed internally for the client&apos;s staff.</p>
       )}
     </div>
   );

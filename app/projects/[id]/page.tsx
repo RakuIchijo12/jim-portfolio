@@ -38,7 +38,7 @@ export default async function ProjectCaseStudyPage(
       name: p.name,
       category: p.category,
       // The lead print on the next project's cover preview.
-      image: p.images[0]?.src ?? ("cover" in p && p.cover ? p.cover : null),
+      image: p.images[0]?.src ?? ("cover" in p && typeof p.cover === "string" && p.cover ? p.cover : null),
     };
   };
 
