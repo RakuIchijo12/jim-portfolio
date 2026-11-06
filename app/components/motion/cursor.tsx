@@ -40,7 +40,11 @@ function resolve(target: EventTarget | null): Mode {
   return { kind: "link" };
 }
 
-const SIZE = { hidden: 0, idle: 26, link: 48, label: 84, text: 6 } as const;
+/* Side of the bracket frame around the hotspot, per mode. */
+const SIZE = { hidden: 12, idle: 20, link: 34, label: 26, text: 12 } as const;
+
+/* The glyph after each tag's verb, like a hint in a command line. */
+const GLYPH: Record<string, string> = { open: "↗", view: "↗", zoom: "+", next: "→", prev: "←" };
 
 /** Mouse-only follower. Touch devices and reduced motion never mount it. */
 export default function Cursor() {
@@ -105,57 +109,50 @@ function Follower() {
 
   const isLabel = mode.kind === "label";
   const size = SIZE[mode.kind];
-  /* Probe ticks around the ring: a reticle at rest, turned 45 degrees and
-     opened out over a link, gone for labels and text fields. */
-  const ticks = mode.kind === "idle" || mode.kind === "link";
+  /* Viewfinder brackets around the hotspot: quiet at rest, opened out and
+     amber over a link, tight over media while the tag names the action,
+     gone over text fields where the I-beam takes over. */
+  const framed = mode.kind === "idle" || mode.kind === "link" || isLabel;
+  const verb = (mode.label ?? "").toLowerCase();
+  const tagStyle = {
+    ...(mode.bg ? { "--tag-bg": mode.bg } : {}),
+    ...(mode.fg ? { "--tag-fg": mode.fg } : {}),
+  } as React.CSSProperties;
 
   return (
     <m.div
       className="cursor"
       data-mode={mode.kind}
       style={{ x: sx, y: sy }}
-      animate={{ scale: pressed ? 0.82 : 1 }}
+      animate={{ scale: pressed ? 0.8 : 1 }}
       transition={{ type: "spring", stiffness: 500, damping: 28 }}
       aria-hidden="true"
     >
       <m.div
-        className="cursor__ticks"
+        className="cursor__frame"
         initial={false}
-        animate={{
-          width: size + 14,
-          height: size + 14,
-          opacity: ticks ? 1 : 0,
-          rotate: mode.kind === "link" ? 45 : 0,
-        }}
-        transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.6 }}
+        animate={{ width: size, height: size, opacity: framed ? 1 : 0 }}
+        transition={{ type: "spring", stiffness: 420, damping: 32, mass: 0.5 }}
       />
-      <m.div
-        className="cursor__blob"
-        initial={false}
-        style={isLabel && mode.bg ? ({ "--cursor-label-bg": mode.bg } as React.CSSProperties) : undefined}
-        animate={{
-          width: size,
-          height: size,
-          opacity: mode.kind === "hidden" ? 0 : 1,
-        }}
-        transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.6 }}
-      >
-        <AnimatePresence>
-          {isLabel && (
-            <m.span
-              key={mode.label}
-              className="cursor__label"
-              style={mode.fg ? { color: mode.fg } : undefined}
-              initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.6 }}
-              transition={{ duration: 0.25 }}
-            >
-              {mode.label}
-            </m.span>
-          )}
-        </AnimatePresence>
-      </m.div>
+      {/* Over media the native pointer is hidden, so a pixel marks the spot. */}
+      <span className="cursor__dot" />
+      <AnimatePresence>
+        {isLabel && (
+          <m.span
+            key={verb}
+            className="cursor__tag"
+            style={tagStyle}
+            initial={{ opacity: 0, x: -6, scale: 0.92 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -4, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <span className="cursor__prompt">$</span>
+            {verb}
+            {GLYPH[verb] && <span className="cursor__glyph">{GLYPH[verb]}</span>}
+          </m.span>
+        )}
+      </AnimatePresence>
     </m.div>
   );
 }
