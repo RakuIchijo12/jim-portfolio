@@ -72,10 +72,6 @@ export default function SiteFooter() {
             </ul>
           </div>
         </div>
-
-        <p className="footer__word" aria-hidden="true">
-          RODADO<span className="footer__cursor" />
-        </p>
       </div>
 
       <div className="statusbar">
