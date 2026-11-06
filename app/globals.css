@@ -96,12 +96,13 @@
   --r:      12px;
   --r-lg:   16px;
 
-  /* The pointer: a dark arrow with a light rim and an amber power LED;
-     over anything clickable it turns amber and the LED lights. Native
-     cursor images, so they track the mouse with no lag. The keyword after
-     each is the fallback where SVG cursors are not supported. */
-  --cur-arrow: url("/cursors/arrow.svg") 3 2, auto;
-  --cur-link:  url("/cursors/link.svg") 3 2, pointer;
+  /* The pointer is a logic probe: its needle tip is the hotspot. It reads
+     LOW (dark body, amber status LED) over the page and HIGH (amber body,
+     LED lit) over anything clickable. Native cursor images, so they track
+     the mouse with no lag. The keyword after each is the fallback where SVG
+     cursors are not supported. */
+  --cur-arrow: url("/cursors/probe.svg") 2 2, auto;
+  --cur-link:  url("/cursors/probe-high.svg") 2 2, pointer;
 }
 
 @theme inline {
