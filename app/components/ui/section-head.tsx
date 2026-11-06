@@ -3,86 +3,89 @@
 import { m } from "framer-motion";
 import { RevealWords, ease } from "@/app/components/ui/reveal";
 
-/** "(02)  Toolbox  ------------  +" : numbered like the folios of a printed book. */
+/**
+ * The line that opens a section, like a path in a terminal prompt:
+ * "01 / ~/about", with a rule that draws out to the edge.
+ */
 export function SectionMeta({
   index,
-  label,
+  path,
   end,
   className = "",
 }: {
   index: string;
-  label: string;
+  path: string;
   end?: React.ReactNode;
   className?: string;
 }) {
   return (
-    <div className={`shead__meta t-label ${className}`}>
-      <span className="shead__idx">({index})</span>
-      <span>{label}</span>
+    <div className={`smeta ${className}`}>
+      <span className="smeta__n">{index}</span>
+      <span className="smeta__path">
+        <span aria-hidden="true" className="smeta__tilde">~/</span>
+        {path}
+      </span>
       <m.span
         aria-hidden="true"
-        className="shead__rule"
+        className="smeta__rule"
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, amount: 1 }}
-        transition={{ duration: 1.4, ease }}
+        transition={{ duration: 1.1, ease }}
       />
-      {end ?? <span aria-hidden="true" className="reg" />}
+      {end && <span className="smeta__end">{end}</span>}
     </div>
   );
 }
 
-/**
- * The shared masthead for each section: folio line, a display heading whose
- * words rise into view (asterisks mark the italic emphasis), an optional
- * lead, and an optional slot on the right for counters.
- */
+/** Meta line, a large title whose words rise in, a lead and an aside. */
 export default function SectionHead({
   index,
-  label,
+  path,
   title,
   lead,
   aside,
-  className = "",
+  end,
 }: {
   index: string;
-  label: string;
+  path: string;
   title: string;
-  lead?: React.ReactNode;
+  lead?: string;
   aside?: React.ReactNode;
-  className?: string;
+  end?: React.ReactNode;
 }) {
   return (
-    <div className={`shead ${className}`}>
-      <SectionMeta index={index} label={label} />
-
+    <header className="shead">
+      <SectionMeta index={index} path={path} end={end} />
       <div className="shead__row">
-        <h2 className="t-h2 t-balance max-w-[17ch]">
-          <RevealWords text={title} />
-        </h2>
+        <div className="shead__main">
+          <h2 className="t-h2 t-balance">
+            <RevealWords text={title} />
+          </h2>
+          {lead && (
+            <m.p
+              className="shead__lead t-pretty"
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.9, ease, delay: 0.15 }}
+            >
+              {lead}
+            </m.p>
+          )}
+        </div>
         {aside && (
           <m.div
-            initial={{ opacity: 0, y: 24 }}
+            className="shead__aside"
+            initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 1, ease, delay: 0.25 }}
+            transition={{ duration: 0.9, ease, delay: 0.25 }}
           >
             {aside}
           </m.div>
         )}
       </div>
-
-      {lead && (
-        <m.p
-          className="t-lead shead__lead t-pretty"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 1, ease, delay: 0.3 }}
-        >
-          {lead}
-        </m.p>
-      )}
-    </div>
+    </header>
   );
 }

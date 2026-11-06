@@ -9,22 +9,23 @@ import { scrollToTarget } from "./smooth-scroll";
 type Phase = "idle" | "cover" | "reveal";
 
 const sweep = [0.76, 0, 0.24, 1] as const;
-const COLS = [0, 1, 2, 3, 4];
 
 const NavigateContext = createContext<(href: string, label?: string) => void>(() => {});
 
 export const usePageTransition = () => useContext(NavigateContext);
 
 /**
- * Route changes play behind a curtain: five columns rise to cover the page,
- * the route changes underneath, and the columns lift away once the new page
- * has rendered. Same-page hash links just scroll.
+ * Route changes play behind one panel: it rises to cover the page with a
+ * shell line naming the destination, the route changes underneath, and the
+ * panel lifts away once the new page has rendered. Same-page hash links
+ * just scroll.
  */
 export function PageTransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [phase, setPhase] = useState<Phase>("idle");
   const [label, setLabel] = useState("");
+  const [dest, setDest] = useState("");
   const target = useRef<string | null>(null);
   const origin = useRef(pathname);
 
@@ -42,19 +43,20 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       target.current = href;
       origin.current = window.location.pathname;
       setLabel(nextLabel);
+      setDest(url.pathname === "/" ? `~${url.hash ? `/${url.hash.slice(1)}` : ""}` : `~${url.pathname}`);
       setPhase("cover");
     },
     [router],
   );
 
-  // The new route has rendered: lift the curtain on the next frame.
+  // The new route has rendered: lift the panel on the next frame.
   useEffect(() => {
     if (phase !== "cover" || pathname === origin.current) return;
     const id = requestAnimationFrame(() => setPhase("reveal"));
     return () => cancelAnimationFrame(id);
   }, [pathname, phase]);
 
-  // Never leave the curtain down if a navigation stalls.
+  // Never leave the panel down if a navigation stalls.
   useEffect(() => {
     if (phase !== "cover") return;
     const id = window.setTimeout(() => setPhase("reveal"), 5000);
@@ -75,32 +77,29 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       {children}
 
       <div className="curtain" data-active={phase !== "idle"} aria-hidden="true">
-        <div className="curtain__cols">
-          {COLS.map((i) => {
-            const last = i === COLS.length - 1;
-            return (
-              <m.span
-                key={i}
-                className="curtain__col"
-                style={{ transformOrigin: revealing ? "50% 0%" : "50% 100%" }}
-                initial={false}
-                animate={{ scaleY: covering ? 1 : 0 }}
-                transition={{ duration: covering ? 0.55 : 0.7, ease: sweep, delay: i * 0.05 }}
-                onAnimationComplete={
-                  last ? (covering ? onCovered : revealing ? onRevealed : undefined) : undefined
-                }
-              />
-            );
-          })}
-        </div>
-        <m.p
-          className="curtain__label"
+        <m.span
+          className="curtain__panel"
+          style={{ transformOrigin: revealing ? "50% 0%" : "50% 100%" }}
           initial={false}
-          animate={covering ? { opacity: 1, y: 0 } : { opacity: 0, y: -24 }}
-          transition={{ duration: 0.45, ease: sweep, delay: covering ? 0.32 : 0 }}
+          animate={{ scaleY: covering ? 1 : 0 }}
+          transition={{ duration: covering ? 0.5 : 0.6, ease: sweep }}
+          onAnimationComplete={covering ? onCovered : revealing ? onRevealed : undefined}
+        />
+        <m.div
+          className="curtain__line"
+          initial={false}
+          animate={covering ? { opacity: 1, y: 0 } : { opacity: 0, y: -16 }}
+          transition={{ duration: 0.35, ease: sweep, delay: covering ? 0.25 : 0 }}
         >
-          {label}
-        </m.p>
+          <p>
+            <span className="curtain__prompt">jimuel@portfolio</span>
+            <span className="curtain__dim">:</span>
+            <span className="curtain__path">~</span>
+            <span className="curtain__dim">$</span> cd {dest}
+          </p>
+          {label && <p className="curtain__label">Loading {label}</p>}
+          <span className="curtain__bar" />
+        </m.div>
       </div>
     </NavigateContext.Provider>
   );
@@ -108,11 +107,11 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
 
 type TransitionLinkProps = Omit<React.ComponentProps<typeof Link>, "href"> & {
   href: string;
-  /** Shown on the curtain while the route changes. */
+  /** Shown on the panel while the route changes. */
   label?: string;
 };
 
-/** A Link that plays the curtain. Modified clicks still open new tabs. */
+/** A Link that plays the panel. Modified clicks still open new tabs. */
 export function TransitionLink({ href, label, onClick, children, ...rest }: TransitionLinkProps) {
   const navigate = usePageTransition();
 

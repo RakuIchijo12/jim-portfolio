@@ -3,12 +3,11 @@
 import { m, type Variants } from "framer-motion";
 import { stackGroups, totalTechnologies } from "@/app/lib/data";
 import SectionHead from "@/app/components/ui/section-head";
-import CountUp from "@/app/components/ui/count-up";
 import { ease } from "@/app/components/ui/reveal";
-import { DramStick, Gate, LcdModule, NeuralNet, SchCircuit, ServerRack } from "@/app/components/ui/circuit";
+import { TechIcon } from "@/app/components/ui/tech";
+import { GroupGlyph, type GroupId } from "@/app/components/ui/glyphs";
 
 type Group = (typeof stackGroups)[number];
-type GroupId = Group["id"];
 
 const AI_ICON_PATHS: Record<string, string> = {
   claude: "/ai-icons/claude-color.png",
@@ -20,173 +19,94 @@ function iconSrc(icon: string, ai?: boolean) {
   return ai ? (AI_ICON_PATHS[icon] ?? `/stack-icons/${icon}.png`) : `/stack-icons/${icon}.png`;
 }
 
-/* Each tile is a small poster with a piece of hardware tucked into the
-   corner: the part that does that kind of work. */
-const META: Record<
-  GroupId,
-  { label: string; blurb: string; fill?: "ochre" | "teal" | "terra"; deco: React.ReactNode }
-> = {
-  frontend: {
-    label: "Frontend",
-    blurb: "Interfaces, design systems, and the browser runtime.",
-    deco: (
-      <span
-        className="tile__deco -bottom-5 -right-6 w-52 sm:w-60"
-        style={{ "--glyph-hole": "var(--bg)" } as React.CSSProperties}
-      >
-        <LcdModule />
-      </span>
-    ),
-  },
-  backend: {
-    label: "Backend",
-    blurb: "Frameworks and services that run the server side.",
-    fill: "ochre",
-    deco: (
-      <span className="tile__deco -bottom-14 -right-4 w-44">
-        <ServerRack body="var(--ink)" unit="var(--bg)" led="#BB613F" />
-      </span>
-    ),
-  },
-  database: {
-    label: "Database",
-    blurb: "Storage, querying, and managed data platforms.",
-    fill: "teal",
-    deco: (
-      <span className="tile__deco tile__deco--tilt bottom-1 -right-14 w-64">
-        <DramStick board="var(--paper)" chip="var(--ink)" gold="#D6AB52" />
-      </span>
-    ),
-  },
-  languages: {
-    label: "Languages",
-    blurb: "The core languages everything else is written in.",
-    deco: (
-      <span className="tile__deco -bottom-14 -right-8 w-56 lg:w-64">
-        <Gate kind="xor" body="var(--olive)" lead="var(--olive)" />
-      </span>
-    ),
-  },
-  ai: {
-    label: "AI Tools",
-    blurb: "Assistants and models woven into the daily workflow.",
-    fill: "terra",
-    deco: (
-      <span className="tile__deco -bottom-8 -right-6 w-44" style={{ "--glyph-hole": "var(--bg)" } as React.CSSProperties}>
-        <NeuralNet node="var(--ink)" edge="var(--ink)" />
-      </span>
-    ),
-  },
-  tools: {
-    label: "Other Tools",
-    blurb: "Version control, containers, editors, and delivery.",
-    deco: (
-      <span className="tile__deco bottom-6 right-8 hidden w-80 md:block" style={{ color: "var(--fg)" }}>
-        <SchCircuit led="var(--brand-terra)" />
-      </span>
-    ),
-  },
+/* Each group is a module on the board: a path, a layer and a short note. */
+const META: Record<GroupId, { layer: string; blurb: string }> = {
+  frontend: { layer: "client", blurb: "Interfaces, design systems and the browser runtime." },
+  backend: { layer: "server", blurb: "Frameworks and services that run the server side." },
+  database: { layer: "storage", blurb: "Storage, querying and managed data platforms." },
+  languages: { layer: "compiler", blurb: "The core languages everything else is written in." },
+  ai: { layer: "assist", blurb: "Assistants and models woven into the daily workflow." },
+  tools: { layer: "devops", blurb: "Version control, containers, editors and delivery." },
 };
 
-const tileContent: Variants = {
+const grid: Variants = {
   hidden: {},
-  shown: { transition: { staggerChildren: 0.035, delayChildren: 0.15 } },
+  shown: { transition: { staggerChildren: 0.07 } },
 };
 
-const rise: Variants = {
-  hidden: { opacity: 0, y: 26 },
-  shown: { opacity: 1, y: 0, transition: { duration: 0.9, ease } },
+const card: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.8, ease } },
 };
 
-const chip: Variants = {
-  hidden: { opacity: 0, y: 16, scale: 0.9 },
-  shown: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease } },
-};
-
-function Tile({ group }: { group: Group }) {
+function Module({ group }: { group: Group }) {
   const meta = META[group.id];
-
   return (
-    <m.article
-      className={`tile tile--${group.id}${meta.fill ? ` tile--fill-${meta.fill}` : ""}`}
-      variants={tileContent}
-      initial="hidden"
-      whileInView="shown"
-      viewport={{ once: true, amount: 0.3 }}
-    >
-      <m.header className="tile__head" variants={rise}>
-        <h3 className="tile__name">{meta.label}</h3>
-        <span className="tile__count">({String(group.items.length).padStart(2, "0")})</span>
-      </m.header>
-      <m.p className="tile__blurb" variants={rise}>
-        {meta.blurb}
-      </m.p>
-
-      <m.ul className="tile__chips" variants={tileContent}>
+    <m.article className={`mod mod--${group.id}`} variants={card}>
+      <span aria-hidden="true" className="mod__pins" />
+      <header className="mod__head">
+        <span className="mod__icon">
+          <GroupGlyph id={group.id} />
+        </span>
+        <div className="min-w-0">
+          <h3 className="mod__name">{group.label}</h3>
+          <p className="mod__path">
+            ./{group.id} <span className="mod__layer">{meta.layer}</span>
+          </p>
+        </div>
+        <span className="mod__count" aria-label={`${group.items.length} technologies`}>
+          {String(group.items.length).padStart(2, "0")}
+        </span>
+      </header>
+      <p className="mod__blurb">{meta.blurb}</p>
+      <ul className="techs" data-size="md">
         {group.items.map((item) => (
-          <m.li key={item.name} variants={chip}>
-            <span className="chip">
-              <span className="chip__icon">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  alt=""
-                  aria-hidden="true"
-                  src={iconSrc(item.icon, "ai" in item ? item.ai : false)}
-                  width={40}
-                  height={40}
-                  className={"bleed" in item && item.bleed ? "is-bleed" : undefined}
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                />
-              </span>
-              {item.name}
-            </span>
-          </m.li>
+          <li key={item.name} className="tech">
+            <TechIcon name={item.name} src={iconSrc(item.icon, "ai" in item ? item.ai : false)} />
+            {item.name}
+          </li>
         ))}
-      </m.ul>
-
-      <span aria-hidden="true">{meta.deco}</span>
+      </ul>
     </m.article>
-  );
-}
-
-function Counter({ value, label }: { value: number; label: string }) {
-  return (
-    <div>
-      <CountUp
-        value={value}
-        className="block font-display text-5xl font-bold leading-none tracking-tight sm:text-6xl"
-        style={{ fontVariantNumeric: "tabular-nums" }}
-      />
-      <p className="t-label mt-2 text-muted">{label}</p>
-    </div>
   );
 }
 
 export default function StackSection() {
   return (
-    <section id="stack" className="section">
+    <section id="stack" className="section section--alt defer-render">
       <div className="wrap">
         <SectionHead
           index="02"
-          label="Toolbox"
+          path="stack"
           title="Tools I *build* with."
           lead="A working toolkit spanning frontend, backend, data and AI tooling, chosen for reliability first."
           aside={
-            <div className="flex items-end gap-8">
-              <Counter value={totalTechnologies} label="Technologies" />
-              <span aria-hidden="true" className="h-14 w-px self-center bg-line" />
-              <Counter value={stackGroups.length} label="Disciplines" />
+            <div className="npm">
+              <p>
+                <span className="text-accent">$</span> npm ls --depth=0
+              </p>
+              <p className="npm__out">
+                <span className="npm__tree">└─</span> <b>{totalTechnologies}</b> packages in{" "}
+                <b>{stackGroups.length}</b> groups
+              </p>
+              <p className="npm__out">
+                <span className="npm__tree">&nbsp;&nbsp;</span> found <b>0</b> vulnerabilities
+              </p>
             </div>
           }
         />
 
-        <div className="bento">
+        <m.div
+          className="board"
+          variants={grid}
+          initial="hidden"
+          whileInView="shown"
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {stackGroups.map((group) => (
-            <Tile key={group.id} group={group} />
+            <Module key={group.id} group={group} />
           ))}
-        </div>
+        </m.div>
       </div>
     </section>
   );

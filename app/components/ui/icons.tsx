@@ -37,7 +37,9 @@ const stroke = {
   viewBox: "0 0 24 24",
 } as const;
 
-export function MailIcon({ className = "h-4 w-4" }: { className?: string }) {
+type IconProps = { className?: string };
+
+export function MailIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
       <rect x="3" y="5" width="18" height="14" rx="2" />
@@ -46,7 +48,7 @@ export function MailIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-export function PhoneIcon({ className = "h-4 w-4" }: { className?: string }) {
+export function PhoneIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.13 12.62 19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.63 2.6a2 2 0 0 1-.45 2.11L8 9.72A16 16 0 0 0 14.29 16l1.29-1.29a2 2 0 0 1 2.11-.45c.83.3 1.7.51 2.6.63A2 2 0 0 1 22 16.92Z" />
@@ -54,7 +56,7 @@ export function PhoneIcon({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-export function LocationIcon({ className = "h-4 w-4" }: { className?: string }) {
+export function LocationIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
       <path d="M12 21s7-5.33 7-12A7 7 0 0 0 5 9c0 6.67 7 12 7 12Z" />
@@ -63,7 +65,7 @@ export function LocationIcon({ className = "h-4 w-4" }: { className?: string }) 
   );
 }
 
-export function ArrowRightIcon({ className = "h-4 w-4" }: { className?: string }) {
+export function ArrowRightIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
       <path d="M5 12h14" />
@@ -72,7 +74,7 @@ export function ArrowRightIcon({ className = "h-4 w-4" }: { className?: string }
   );
 }
 
-export function ArrowLeftIcon({ className = "h-4 w-4" }: { className?: string }) {
+export function ArrowLeftIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
       <path d="m12 19-7-7 7-7" />
@@ -81,7 +83,7 @@ export function ArrowLeftIcon({ className = "h-4 w-4" }: { className?: string })
   );
 }
 
-export function ArrowDownIcon({ className = "h-4 w-4" }: { className?: string }) {
+export function ArrowDownIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
       <path d="M12 5v14" />
@@ -90,15 +92,39 @@ export function ArrowDownIcon({ className = "h-4 w-4" }: { className?: string })
   );
 }
 
-export function ChevronIcon({ dir, className = "h-4 w-4" }: { dir: "left" | "right"; className?: string }) {
+export function ArrowUpIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
-      {dir === "left" ? <path d="m14 6-6 6 6 6" /> : <path d="m10 6 6 6-6 6" />}
+      <path d="M12 19V5" />
+      <path d="m7 10 5-5 5 5" />
     </svg>
   );
 }
 
-export function DocumentIcon({ className = "h-4 w-4" }: { className?: string }) {
+export function ArrowUpRightIcon({ className = "h-3.5 w-3.5" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <path d="M7 17 17 7" />
+      <path d="M8 7h9v9" />
+    </svg>
+  );
+}
+
+export function ChevronIcon({ dir, className = "h-4 w-4" }: { dir: "left" | "right" | "down"; className?: string }) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      {dir === "left" ? (
+        <path d="m14 6-6 6 6 6" />
+      ) : dir === "right" ? (
+        <path d="m10 6 6 6-6 6" />
+      ) : (
+        <path d="m6 9 6 6 6-6" />
+      )}
+    </svg>
+  );
+}
+
+export function DocumentIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
       <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z" />
@@ -107,12 +133,109 @@ export function DocumentIcon({ className = "h-4 w-4" }: { className?: string }) 
   );
 }
 
-export function ExternalIcon({ className = "h-3.5 w-3.5" }: { className?: string }) {
+export function ExternalIcon({ className = "h-3.5 w-3.5" }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} {...stroke}>
       <path d="M15 3h6v6" />
       <path d="M10 14 21 3" />
       <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+    </svg>
+  );
+}
+
+export function SearchIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
+}
+
+export function SunIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+  );
+}
+
+export function MoonIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z" />
+    </svg>
+  );
+}
+
+export function CopyIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <rect x="9" y="9" width="12" height="12" rx="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+export function CheckIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <path d="m4.5 12.5 5 5 10-11" />
+    </svg>
+  );
+}
+
+export function MenuIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <path d="M4 7h16M4 12h16M4 17h10" />
+    </svg>
+  );
+}
+
+export function CloseIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}
+
+export function TerminalIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <path d="m5 8 4 4-4 4" />
+      <path d="M12 17h7" />
+    </svg>
+  );
+}
+
+export function BranchIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <circle cx="6" cy="5" r="2" />
+      <circle cx="6" cy="19" r="2" />
+      <circle cx="18" cy="7" r="2" />
+      <path d="M6 7v10" />
+      <path d="M18 9c0 5-6 4-11.2 8.4" />
+    </svg>
+  );
+}
+
+export function HashIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16" />
+    </svg>
+  );
+}
+
+export function SparkIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...stroke}>
+      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.5 2.5M15.2 15.2l2.5 2.5M6.3 17.7l2.5-2.5M15.2 8.8l2.5-2.5" />
     </svg>
   );
 }

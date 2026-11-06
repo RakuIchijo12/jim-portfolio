@@ -5,68 +5,55 @@ import type { projects } from "@/app/lib/data";
 import { lookFor } from "@/app/lib/project-looks";
 import { useIntroDone } from "@/app/components/motion/intro";
 import { TransitionLink } from "@/app/components/motion/page-transition";
-import { ease, Reveal, RevealWords } from "@/app/components/ui/reveal";
-import { ArrowRightIcon } from "@/app/components/ui/icons";
+import { ease, Reveal } from "@/app/components/ui/reveal";
+import { TechList } from "@/app/components/ui/tech";
+import RollText from "@/app/components/ui/roll-text";
+import { ArrowRightIcon, CheckIcon } from "@/app/components/ui/icons";
+import { Flow } from "@/app/components/projects-section";
 import CaseNav from "./case-nav";
-import Cover, { type CoverPrint } from "./cover";
-import Contents, { type Chapter, type Fact } from "./contents";
-import Screens, { screenLabel } from "./screens";
+import Cover, { type Fact } from "./cover";
+import Contents, { type Chapter } from "./contents";
+import Screens from "./screens";
 import NextCover from "./next-cover";
 
 type Project = (typeof projects)[number];
-type Sibling = {
+export type Sibling = {
   id: string;
   name: string;
   category: string;
   image: string | null;
-} | null;
-
-const pad = (n: number) => String(n).padStart(2, "0");
-
-/** "https://github.com/RakuIchijo12" -> "github.com/RakuIchijo12". */
-function siteLabel(link: string) {
-  try {
-    const url = new URL(link);
-    return url.host + (url.pathname === "/" ? "" : url.pathname);
-  } catch {
-    return link;
-  }
-}
+};
 
 const list: Variants = {
   hidden: {},
-  shown: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
+  shown: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
 };
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 26 },
-  shown: { opacity: 1, y: 0, transition: { duration: 0.9, ease } },
+  hidden: { opacity: 0, y: 16 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
 };
 
-/** A chapter opens on an outlined numeral, its title, and a rule that draws. */
-function ChapterHead({ n, title }: { n: number; title: string }) {
+/** A chapter opens like a markdown heading: "## Overview", and a rule. */
+function DocHead({ n, title }: { n: number; title: string }) {
   return (
-    <header className="chapter__head">
-      <m.span
-        aria-hidden="true"
-        className="chapter__n"
-        initial={{ opacity: 0, x: -24 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.8 }}
-        transition={{ duration: 1, ease }}
-      >
-        {pad(n)}
-      </m.span>
-      <h2 className="chapter__title">
-        <RevealWords text={title} amount={0.8} />
+    <header className="doc__head">
+      <h2 className="doc__title">
+        <span aria-hidden="true" className="doc__hash">
+          ##
+        </span>
+        {title}
       </h2>
+      <span aria-hidden="true" className="doc__n">
+        {String(n).padStart(2, "0")}
+      </span>
       <m.span
         aria-hidden="true"
-        className="chapter__rule"
+        className="doc__rule"
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, amount: 1 }}
-        transition={{ duration: 1.3, ease, delay: 0.1 }}
+        transition={{ duration: 1.1, ease }}
       />
     </header>
   );
@@ -74,177 +61,129 @@ function ChapterHead({ n, title }: { n: number; title: string }) {
 
 export default function ProjectView({
   project,
-  techIconMap,
   index,
   total,
   prev,
   next,
 }: {
   project: Project;
-  techIconMap: Record<string, string>;
   index: number;
   total: number;
-  prev: Sibling;
-  next: Sibling;
+  prev: Sibling | null;
+  next: Sibling | null;
 }) {
   const play = useIntroDone();
   const look = lookFor(project.id);
   const shots = project.images;
   const count = shots.length;
-  const cover = "cover" in project && typeof project.cover === "string" && project.cover ? project.cover : null;
-  const home = project.link ? siteLabel(project.link) : "Internal deployment";
-
-  const print: CoverPrint | null = count
-    ? { src: shots[0].src, caption: `Fig. 01 / ${screenLabel(shots[0].alt)}`, count: `01/${pad(count)}` }
-    : cover
-      ? { src: cover, caption: "Fig. 01 / Cover artwork", count: "Private" }
-      : null;
 
   const chapters: Chapter[] = [
-    { id: "cs-brief", title: "Brief" },
-    { id: "cs-screens", title: count ? "Screens" : "Artwork" },
-    { id: "cs-shipped", title: "Shipped" },
-    { id: "cs-stack", title: "Built with" },
+    { id: "cs-overview", title: "Overview" },
+    ...(look.flow.length ? [{ id: "cs-architecture", title: "Architecture" }] : []),
+    { id: "cs-screens", title: "Screens" },
+    { id: "cs-features", title: "Features" },
+    { id: "cs-stack", title: "Stack" },
   ];
+  const n = (id: string) => chapters.findIndex((c) => c.id === id) + 1;
 
   const facts: Fact[] = [
-    { k: "Category", text: project.category },
-    { k: "Stack", n: project.technologies.length, unit: "technologies" },
-    { k: "Features", n: project.features.length, unit: "shipped" },
-    count ? { k: "Screens", n: count, unit: "captured" } : { k: "Access", text: "Private client system" },
+    { k: "Technologies", n: project.technologies.length },
+    { k: "Features", n: project.features.length },
+    { k: "Screens", n: count },
+    { k: "Pipeline stages", n: look.flow.length || 1 },
   ];
-
-  const overview = project.overview;
-  const initial = overview.charAt(0);
-  const rest = overview.slice(1);
 
   return (
     <>
-      <CaseNav
-        name={project.name}
-        plate={index}
-        total={total}
-        link={project.link}
-        linkLabel={project.linkLabel}
-        tone={{ bg: look.color, ink: look.ink }}
-      />
+      <CaseNav id={project.id} link={project.link} linkLabel={project.linkLabel} />
 
-      <main className="cs">
+      <main className="cs" style={{ "--proj": look.accent } as React.CSSProperties}>
         <Cover
+          id={project.id}
           name={project.name}
           tagline={project.tagline}
           category={project.category}
           plate={index}
           total={total}
           link={project.link}
-          home={home}
+          linkLabel={project.linkLabel}
           look={look}
-          print={print}
+          facts={facts}
+          lead={shots.find((shot) => !/logo/i.test(shot.alt)) ?? shots[0] ?? null}
           play={play}
         />
 
-        <div className="wrap dossier" style={{ "--project": look.color } as React.CSSProperties}>
-          <aside className="dossier__rail">
-            <Contents chapters={chapters} facts={facts} look={look} link={project.link} linkLabel={project.linkLabel} />
+        <div className="wrap docs">
+          <aside className="docs__rail">
+            <Contents chapters={chapters} file="README.md" link={project.link} linkLabel={project.linkLabel} />
           </aside>
 
-          <div className="dossier__main">
-            {/* ── 01 Brief: a standfirst whose first letter is printed on a chip ── */}
-            <section id="cs-brief" className="chapter">
-              <ChapterHead n={1} title="Brief" />
-              <p className="sr-only">{overview}</p>
-              <div className="brief" aria-hidden="true">
-                <m.span
-                  className="brief__cap"
-                  style={{ "--cover": look.color, "--cover-ink": look.ink } as React.CSSProperties}
-                  initial={{ scale: 0, rotate: -40 }}
-                  whileInView={{ scale: 1, rotate: 0 }}
-                  viewport={{ once: true, amount: 0.6 }}
-                  transition={{ type: "spring", stiffness: 120, damping: 14 }}
-                >
-                  {initial}
-                </m.span>
-                <RevealWords text={rest} stagger={0.012} amount={0.15} className="brief__stand" />
-              </div>
-              <div className="brief__cols">
+          <div className="docs__main">
+            <section id="cs-overview" className="doc">
+              <DocHead n={n("cs-overview")} title="Overview" />
+              <Reveal y={20}>
+                <p className="doc__lead t-pretty">{project.overview}</p>
+              </Reveal>
+              <div className="doc__cols">
                 {project.details.map((detail, i) => (
-                  <Reveal key={detail.slice(0, 24)} delay={i * 0.1}>
-                    <p className="t-lead t-pretty">{detail}</p>
+                  <Reveal key={detail.slice(0, 24)} delay={i * 0.08} y={20}>
+                    <p className="doc__p t-pretty">{detail}</p>
                   </Reveal>
                 ))}
               </div>
             </section>
 
-            {/* ── 02 Screens: prints that stack, then the contact sheet ── */}
-            <section id="cs-screens" className="chapter">
-              <ChapterHead n={2} title={count ? "Screens" : "Artwork"} />
-              <Screens shots={shots} look={look} cover={cover} category={project.category} />
+            {look.flow.length > 0 && (
+              <section id="cs-architecture" className="doc">
+                <DocHead n={n("cs-architecture")} title="Architecture" />
+                <p className="doc__note">Source to screen, in the order the data travels.</p>
+                <Reveal y={20}>
+                  <Flow id={project.id} />
+                </Reveal>
+              </section>
+            )}
+
+            <section id="cs-screens" className="doc defer-render">
+              <DocHead n={n("cs-screens")} title="Screens" />
+              <Screens shots={shots} />
             </section>
 
-            {/* ── 03 Shipped: an index of features ── */}
-            <section id="cs-shipped" className="chapter">
-              <ChapterHead n={3} title="Shipped" />
-              <m.ol
-                className="shipped"
+            <section id="cs-features" className="doc defer-render">
+              <DocHead n={n("cs-features")} title="Features" />
+              <m.ul
+                className="checks"
                 variants={list}
                 initial="hidden"
                 whileInView="shown"
                 viewport={{ once: true, amount: 0.15 }}
               >
-                {project.features.map((feature, i) => (
-                  <m.li key={feature} variants={item} className="shipped__item">
-                    <span aria-hidden="true" className="shipped__n t-label">
-                      <span className="led shipped__mark" style={{ "--led": look.color } as React.CSSProperties} />
-                      {pad(i + 1)}
+                {project.features.map((feature) => (
+                  <m.li key={feature} variants={item} className="checks__item">
+                    <span aria-hidden="true" className="checks__box">
+                      <CheckIcon className="h-3 w-3" />
                     </span>
-                    <p className="shipped__text t-pretty">{feature}</p>
+                    <span className="t-pretty">{feature}</span>
                   </m.li>
                 ))}
-              </m.ol>
+              </m.ul>
             </section>
 
-            {/* ── 04 Built with: a colophon ── */}
-            <section id="cs-stack" className="chapter">
-              <ChapterHead n={4} title="Built with" />
-              <m.ul
-                className="colophon"
-                variants={list}
-                initial="hidden"
-                whileInView="shown"
-                viewport={{ once: true, amount: 0.2 }}
-              >
-                {project.technologies.map((tech, i) => {
-                  const icon = techIconMap[tech];
-                  return (
-                    <m.li key={tech} variants={item} className="colophon__row">
-                      <span className="chip__icon">
-                        {icon ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img alt="" aria-hidden="true" src={`/stack-icons/${icon}`} loading="lazy" decoding="async" />
-                        ) : (
-                          <span className="tech-dot__txt">{tech.slice(0, 2)}</span>
-                        )}
-                      </span>
-                      <span className="colophon__name">{tech}</span>
-                      <span aria-hidden="true" className="colophon__leader" />
-                      <span className="t-label colophon__n">{pad(i + 1)}</span>
-                    </m.li>
-                  );
-                })}
-              </m.ul>
+            <section id="cs-stack" className="doc defer-render">
+              <DocHead n={n("cs-stack")} title="Stack" />
+              <TechList items={project.technologies} className="doc__stack" />
 
-              <Reveal className="colophon__foot" delay={0.1}>
-                <p className="t-lead">Want something built with this kind of care?</p>
-                <TransitionLink href="/#contact" label="Let's talk" className="btn btn-line roll-host">
-                  Discuss a project like this
-                  <ArrowRightIcon className="btn__arrow h-3.5 w-3.5" />
+              <Reveal className="doc__cta" y={20}>
+                <p>Want something built with this kind of care?</p>
+                <TransitionLink href="/#contact" label="Contact" className="btn btn--primary roll-host">
+                  <RollText text="Discuss a project like this" />
+                  <ArrowRightIcon className="btn__arrow h-4 w-4" />
                 </TransitionLink>
               </Reveal>
             </section>
           </div>
         </div>
 
-        {next && <NextCover next={next} prev={prev} plate={(index % total) + 1} total={total} />}
+        <NextCover prev={prev} next={next} />
       </main>
     </>
   );

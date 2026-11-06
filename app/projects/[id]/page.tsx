@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { projects } from "@/app/lib/data";
-import ProjectView from "./project-gallery";
+import ProjectView, { type Sibling } from "./project-gallery";
 import SiteFooter from "@/app/components/site-footer";
-import { TECH_ICON_MAP } from "@/app/lib/tech-icons";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ id: p.id }));
@@ -31,14 +30,13 @@ export default async function ProjectCaseStudyPage(
   const project = projects[index];
 
   /** Wrap around so the case studies read as a continuous set. */
-  const sibling = (i: number) => {
+  const sibling = (i: number): Sibling => {
     const p = projects[(i + projects.length) % projects.length];
     return {
       id: p.id,
       name: p.name,
       category: p.category,
-      // The lead print on the next project's cover preview.
-      image: p.images[0]?.src ?? ("cover" in p && typeof p.cover === "string" && p.cover ? p.cover : null),
+      image: (p.images.find((image) => !/logo/i.test(image.alt)) ?? p.images[0])?.src ?? null,
     };
   };
 
@@ -46,7 +44,6 @@ export default async function ProjectCaseStudyPage(
     <>
       <ProjectView
         project={project}
-        techIconMap={TECH_ICON_MAP}
         index={index + 1}
         total={projects.length}
         prev={projects.length > 1 ? sibling(index - 1) : null}

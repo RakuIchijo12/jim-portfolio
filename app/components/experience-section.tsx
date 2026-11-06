@@ -3,136 +3,136 @@
 import { useState } from "react";
 import { m, type Variants } from "framer-motion";
 import { experience } from "@/app/lib/data";
-import { TECH_ICON_MAP } from "@/app/lib/tech-icons";
+import { shortHash } from "@/app/lib/project-looks";
 import SectionHead from "@/app/components/ui/section-head";
-import CountUp from "@/app/components/ui/count-up";
+import { TechList } from "@/app/components/ui/tech";
 import { ease } from "@/app/components/ui/reveal";
+import { BranchIcon } from "@/app/components/ui/icons";
 
 const list: Variants = {
   hidden: {},
-  shown: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
+  shown: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
 };
 
-const row: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  shown: { opacity: 1, y: 0, transition: { duration: 1, ease } },
+const entry: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.85, ease } },
 };
 
-const pad = (n: number) => String(n).padStart(2, "0");
+/** "Full-time · On-site" -> "full-time". */
+const kind = (type: string) => type.split("·")[0].trim().toLowerCase();
 
+/**
+ * The work history as `git log --graph`: one commit per role, newest on
+ * top, HEAD on the current job. Each commit opens into its diff: what the
+ * role added, and the stack it ran on.
+ */
 export default function ExperienceSection() {
   // The current role starts open; the rest wait for a click.
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="experience" className="section">
+    <section id="experience" className="section section--alt defer-render">
       <div className="wrap">
         <SectionHead
           index="04"
-          label="Experience"
+          path="experience"
           title="A record of software that serves *real institutions.*"
           lead="Healthcare systems, ERP platforms, APIs and workflows built for reliability."
           aside={
-            <div>
-              <CountUp
-                value={experience.length}
-                className="block font-display text-5xl font-bold leading-none tracking-tight sm:text-6xl"
-              />
-              <p className="t-label mt-2 text-muted">Roles</p>
-            </div>
+            <p className="gitcmd">
+              <BranchIcon className="h-4 w-4 text-accent" />
+              <span>
+                git log --graph
+                <br />
+                <span className="text-subtle">
+                  {experience.length} commits on <b className="text-fg">main</b>
+                </span>
+              </span>
+            </p>
           }
         />
 
         <m.ol
-          className="xp"
+          className="log"
           variants={list}
           initial="hidden"
           whileInView="shown"
-          viewport={{ once: true, amount: 0.15 }}
+          viewport={{ once: true, amount: 0.1 }}
         >
           {experience.map((job, i) => {
             const isOpen = open === i;
-            const panelId = `xp-panel-${i}`;
+            const panelId = `log-panel-${i}`;
+            const hash = shortHash(`${job.company}${job.period}${job.role}`);
             return (
-              <m.li key={`${job.company}-${job.period}`} className="xp__item" data-open={isOpen} variants={row}>
+              <m.li
+                key={`${job.company}-${job.period}`}
+                className="log__item"
+                data-open={isOpen}
+                data-current={job.current}
+                variants={entry}
+              >
+                <span aria-hidden="true" className="log__node" />
                 <h3 className="m-0">
                   <button
                     type="button"
-                    className="xp__head"
+                    className="log__head"
                     aria-expanded={isOpen}
                     aria-controls={panelId}
                     onClick={() => setOpen(isOpen ? null : i)}
                   >
-                    <span aria-hidden="true" className="xp__fill" />
-                    <span className="xp__idx t-label">({pad(i + 1)})</span>
-                    <span className="xp__role">
-                      {job.role}
+                    <span className="log__line1">
+                      <span className="log__hash">{hash}</span>
                       {job.current && (
-                        <span className="xp__now">
-                          <span aria-hidden="true" className="status-dot" />
-                          Now
+                        <span className="log__ref">
+                          HEAD <span aria-hidden="true">&rarr;</span> main
                         </span>
                       )}
+                      <span className="log__tag">{kind(job.type)}</span>
+                      <span className="log__period">{job.period}</span>
                     </span>
-                    <span className="xp__company">{job.company}</span>
-                    <span className="xp__period t-label">{job.period}</span>
-                    <span aria-hidden="true" className="xp__toggle">
+                    <span className="log__role">{job.role}</span>
+                    <span className="log__company">
+                      <span className="text-subtle">@</span> {job.company}
+                    </span>
+                    <span aria-hidden="true" className="log__toggle">
                       <span />
                       <span />
                     </span>
                   </button>
                 </h3>
 
-                <div id={panelId} className="xp__panel" inert={!isOpen}>
-                  <div className="xp__panel-inner">
-                    <div className="xp__body">
-                      <ul className="xp__points">
+                <div id={panelId} className="log__panel" inert={!isOpen}>
+                  <div className="log__panel-in">
+                    <div className="log__diff">
+                      <p className="log__diffhead">
+                        <span>
+                          {job.type} / {job.location}
+                        </span>
+                        <span className="log__stat">
+                          <b>+{job.points.length}</b> contributions
+                        </span>
+                      </p>
+                      <ul className="log__points">
                         {job.points.map((point) => (
                           <li key={point.slice(0, 32)} className="t-pretty">
                             {point}
                           </li>
                         ))}
                       </ul>
-
-                      <div className="xp__side">
-                        <p className="t-label text-muted">
-                          {job.type} &middot; {job.location}
-                        </p>
-                        {job.stack.length > 0 && (
-                          <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
-                            {job.stack.map((tech) => {
-                              const file = TECH_ICON_MAP[tech];
-                              return (
-                                <li key={tech} className="tech-pill">
-                                  <span className="tech-pill__icon">
-                                    {file ? (
-                                      // eslint-disable-next-line @next/next/no-img-element
-                                      <img
-                                        alt=""
-                                        aria-hidden="true"
-                                        src={`/stack-icons/${file}`}
-                                        width={16}
-                                        height={16}
-                                        loading="lazy"
-                                        decoding="async"
-                                      />
-                                    ) : (
-                                      <span className="tech-dot__txt">{tech.slice(0, 2)}</span>
-                                    )}
-                                  </span>
-                                  {tech}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        )}
-                      </div>
                     </div>
+                    {job.stack.length > 0 && <TechList items={job.stack} size="sm" className="log__stack" />}
                   </div>
                 </div>
               </m.li>
             );
           })}
+          <li aria-hidden="true" className="log__root">
+            <span className="log__node log__node--root" />
+            <span>
+              initial commit <span className="text-subtle">/ BS Computer Engineering, University of Mindanao</span>
+            </span>
+          </li>
         </m.ol>
       </div>
     </section>

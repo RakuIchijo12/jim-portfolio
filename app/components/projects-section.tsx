@@ -1,427 +1,150 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { m, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { m } from "framer-motion";
 import { projects } from "@/app/lib/data";
-import { TECH_ICON_MAP } from "@/app/lib/tech-icons";
 import { lookFor } from "@/app/lib/project-looks";
-import ProjectGlyph from "@/app/components/ui/project-glyph";
-import { Chip, Led } from "@/app/components/ui/circuit";
 import { TransitionLink } from "@/app/components/motion/page-transition";
-import { scrollToTarget } from "@/app/components/motion/smooth-scroll";
-import { SectionMeta } from "@/app/components/ui/section-head";
-import { ease, RevealWords } from "@/app/components/ui/reveal";
+import SectionHead from "@/app/components/ui/section-head";
+import { BrowserBar } from "@/app/components/ui/window";
+import { TechList } from "@/app/components/ui/tech";
+import { ease } from "@/app/components/ui/reveal";
 import RollText from "@/app/components/ui/roll-text";
-import { ArrowRightIcon, ExternalIcon } from "@/app/components/ui/icons";
-
-const sweep = [0.76, 0, 0.24, 1] as const;
-
-/* Panel widths in vw. The pinned wall's scroll length is derived from these
-   in CSS, so it is right before any script runs. */
-const INTRO = 44;
-const PANEL = 74;
-const OUTRO = 42;
-const N = projects.length;
-const TRAVEL = INTRO + N * PANEL + OUTRO - 100;
-
-type Work = {
-  id: string;
-  name: string;
-  category: string;
-  tagline: string;
-  overview: string;
-  technologies: readonly string[];
-  image: string | null;
-  cover: string | null;
-  link: string;
-};
-
-const works: Work[] = projects.map((p) => ({
-  id: p.id,
-  name: p.name,
-  category: p.category,
-  tagline: p.tagline,
-  overview: p.overview,
-  technologies: p.technologies,
-  image: p.images[0]?.src ?? null,
-  cover: "cover" in p && typeof p.cover === "string" ? p.cover : null,
-  link: p.link,
-}));
-
-/* Where each project's hardware peeks out of its screenshot on the wall:
-   into the gutter between plates, never over the labels above or the type
-   below. Neighbours share a gutter, so one sits high and the other low.
-   Colour and part come from the shared project looks. */
-const PLACEMENT: Record<string, { size: string; pos: React.CSSProperties }> = {
-  obsentry: { size: "w-[17%]", pos: { right: "-10%", top: "7%" } },
-  eingress: { size: "w-[17%]", pos: { left: "-10%", top: "57%" } },
-  "velora-motors": { size: "w-[16%]", pos: { right: "-9.5%", top: "4%" } },
-  "marrea-erp": { size: "w-[16%]", pos: { left: "-9.5%", top: "56%" } },
-};
-
-function wallLook(id: string) {
-  const look = lookFor(id);
-  const place = PLACEMENT[id] ?? { size: "w-[16%]", pos: { right: "-9%", top: "30%" } };
-  return { look, size: place.size, pos: place.pos };
-}
+import { ArrowRightIcon, ArrowUpRightIcon } from "@/app/components/ui/icons";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-function TechDots({ items }: { items: readonly string[] }) {
+type Project = (typeof projects)[number];
+
+/** Source to screen, as a row of stages joined by traces. */
+export function Flow({ id, compact = false }: { id: string; compact?: boolean }) {
+  const flow = lookFor(id).flow;
+  if (!flow.length) return null;
   return (
-    <ul className="work__tech">
-      {items.slice(0, 8).map((tech) => {
-        const file = TECH_ICON_MAP[tech];
-        return (
-          <li key={tech} className="tech-dot" title={tech}>
-            {file ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img alt={tech} src={`/stack-icons/${file}`} width={18} height={18} loading="lazy" decoding="async" />
-            ) : (
-              <span className="tech-dot__txt">{tech.slice(0, 3)}</span>
-            )}
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-/** What the address bar shows: the host, plus the path for a GitHub link. */
-function displayUrl(link: string) {
-  if (!link) return "localhost:8000";
-  try {
-    const url = new URL(link);
-    const host = url.host.replace(/^www\./, "");
-    const path = url.pathname.replace(/\/$/, "");
-    return host === "github.com" ? `${host}${path}` : host;
-  } catch {
-    return link;
-  }
-}
-
-/**
- * Window chrome around a screenshot, so each project reads as a site open
- * in a browser: three lights in the palette, the padlock and the address.
- */
-function BrowserBar({ link }: { link: string }) {
-  return (
-    <span className="browser" aria-hidden="true">
-      <span className="browser__lights">
-        <i />
-        <i />
-        <i />
-      </span>
-      <span className="browser__url">
-        <svg viewBox="0 0 12 14" className="browser__lock">
-          <path d="M3.2 6 V4.2 a2.8 2.8 0 0 1 5.6 0 V6" fill="none" stroke="currentColor" strokeWidth="1.4" />
-          <rect x="1.5" y="6" width="9" height="7" rx="1.6" fill="currentColor" />
-        </svg>
-        <span className="truncate">{displayUrl(link)}</span>
-      </span>
-    </span>
-  );
-}
-
-/** Screenshot, or for the private ERP the cover photo under a scrim. */
-function Media({ work, imgStyle }: { work: Work; imgStyle?: { x: MotionValue<string> } }) {
-  if (work.image) {
-    return (
-       
-      <m.img
-        src={work.image}
-        alt={`${work.name}: ${work.category}`}
-        loading="lazy"
-        decoding="async"
-        style={imgStyle}
-      />
-    );
-  }
-  return (
-    <span className="private-art">
-      {work.cover && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={work.cover} alt="" loading="lazy" decoding="async" />
-      )}
-      <span className="relative grid place-items-center gap-3 text-center">
-        <span className="flex items-center gap-2">
-          <Chip pins={4} body="var(--fg)" mark="var(--bg)" className="w-12" />
-          <Led color="#D0714D" blink />
-        </span>
-        <span className="t-label">Private client system</span>
-      </span>
-    </span>
-  );
-}
-
-/* ── Desktop: the pinned wall ─────────────────────────────────────────── */
-
-function Panel({ work, index, progress }: { work: Work; index: number; progress: MotionValue<number> }) {
-  const left = INTRO + index * PANEL;
-  const start = Math.max(0, (left - 100) / TRAVEL);
-  const end = Math.min(1, (left + PANEL) / TRAVEL);
-
-  const imgX = useTransform(progress, [start, end], ["4%", "-4%"]);
-  const shapeRotate = useTransform(progress, [start, end], [-18, 18]);
-  const shapeY = useTransform(progress, [start, end], ["14%", "-14%"]);
-  const look = wallLook(work.id);
-
-  return (
-    <article className="work" aria-labelledby={`work-${work.id}`}>
-      <div className="work__meta t-label">
-        <span>
-          PL. {pad(index + 1)} / {work.category}
-        </span>
-        <span className="inline-flex items-center gap-2">
-          <span aria-hidden="true" className="status-dot" style={{ background: look.look.color }} />
-          {work.link ? "Live" : "Internal"}
-        </span>
-      </div>
-
-      <TransitionLink
-        href={`/projects/${work.id}`}
-        label={work.name}
-        className="work__media block"
-        data-cursor="View"
-        aria-label={`Open the ${work.name} case study`}
-      >
-        <m.span
-          aria-hidden="true"
-          className={`work__shape ${look.size}`}
-          style={{ ...look.pos, rotate: shapeRotate, y: shapeY }}
-        >
-          <ProjectGlyph kind={look.look.glyph} fill={look.look.color} detail="var(--bg)" accent={look.look.second} />
-        </m.span>
-        <span className="work__frame">
-          <BrowserBar link={work.link} />
-          <span className="work__screen">
-            <Media work={work} imgStyle={{ x: imgX }} />
-          </span>
-        </span>
-      </TransitionLink>
-
-      <div className="work__row">
-        <div>
-          <h3 id={`work-${work.id}`} className="work__name t-balance">
-            {work.name}
-          </h3>
-          <p className="work__tagline t-pretty">{work.tagline}</p>
-        </div>
-        <div>
-          <p className="work__overview line-clamp-3">{work.overview}</p>
-          <TechDots items={work.technologies} />
-          <div className="mt-5 flex flex-wrap gap-2.5">
-            <TransitionLink
-              href={`/projects/${work.id}`}
-              label={work.name}
-              className="btn btn-line btn-sm roll-host"
-            >
-              <RollText text="Case study" />
-              <ArrowRightIcon className="btn__arrow h-3.5 w-3.5" />
-            </TransitionLink>
-            {work.link && (
-              <a href={work.link} target="_blank" rel="noreferrer" className="btn btn-line btn-sm roll-host">
-                <RollText text="Visit" />
-                <ExternalIcon />
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function Wall() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["0vw", `-${TRAVEL}vw`]);
-  const [stage, setStage] = useState<number>(-1);
-
-  /* Which plate sits under the middle of the screen: -1 intro, N outro. */
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const center = v * TRAVEL + 50;
-    const next =
-      center < INTRO ? -1 : center >= INTRO + N * PANEL ? N : Math.floor((center - INTRO) / PANEL);
-    setStage(next);
-  });
-
-  const vars = {
-    "--intro-w": `${INTRO}vw`,
-    "--panel-w": `${PANEL}vw`,
-    "--outro-w": `${OUTRO}vw`,
-    "--travel": `${TRAVEL}vw`,
-  } as React.CSSProperties;
-
-  const current = stage >= 0 && stage < N ? works[stage] : null;
-
-  return (
-    <div ref={ref} className="works__pin hidden lg:block" style={vars}>
-      <div className="works__sticky">
-        <m.div className="works__track" style={{ x }}>
-          <div className="works__intro">
-            <SectionMeta index="03" label="Selected works" />
-            <h2 className="works__big">
-              <RevealWords text="Selected" amount={0.6} />
-              <em>
-                <RevealWords text="works" delay={0.12} amount={0.6} />
-              </em>
-            </h2>
-            <m.p
-              className="t-lead t-pretty mt-8 max-w-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.6 }}
-              transition={{ duration: 1, ease, delay: 0.3 }}
-            >
-              IoT systems, real-time dashboards and full-stack platforms, shipped for real users.
-            </m.p>
-            <p className="t-label mt-10 flex items-center gap-3 text-muted">
-              <span className="works__count">({pad(N)})</span> Keep scrolling
-              <span aria-hidden="true" className="works__hint-arrow">
-                <ArrowRightIcon className="h-4 w-4" />
-              </span>
-            </p>
-          </div>
-
-          {works.map((work, i) => (
-            <Panel key={work.id} work={work} index={i} progress={scrollYProgress} />
-          ))}
-
-          <div className="works__outro">
-            <p className="t-label text-muted">End of the selection</p>
-            <p className="works__big mt-6" style={{ fontSize: "clamp(3rem, 6.2vw, 6.75rem)" }}>
-              More in <em>the archive</em>
-            </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <a
-                href="https://github.com/RakuIchijo12"
-                target="_blank"
-                rel="noreferrer"
-                className="btn btn-solid roll-host"
-              >
-                <RollText text="GitHub" />
-                <ExternalIcon />
-              </a>
-              <button type="button" className="btn btn-line roll-host" onClick={() => scrollToTarget("#contact")}>
-                <RollText text="Let's talk" />
-              </button>
-            </div>
-          </div>
-        </m.div>
-
-        <div className="works__hud t-label" aria-hidden="true">
-          <span className="inline-flex items-center gap-3">
-            <span className="text-accent">
-              {current ? `PL. ${pad(stage + 1)}` : stage < 0 ? "PL. 00" : "FIN."}
+    <ol className="flow" data-compact={compact} aria-label="Data flow">
+      {flow.map((node, i) => (
+        <li key={node.label} className="flow__node" style={{ "--i": i } as React.CSSProperties}>
+          <span className="flow__box">
+            <span className="flow__layer">
+              <span className="flow__n">{pad(i + 1)}</span> {node.layer}
             </span>
-            <span>/ {pad(N)}</span>
-            <span className="hidden xl:inline">{current ? current.name : "Selected works"}</span>
+            <span className="flow__label">{node.label}</span>
           </span>
-          <span className="inline-flex items-center gap-3">
-            {Array.from({ length: N }, (_, i) => (
-              <span
-                key={i}
-                className="block h-1.5 w-1.5 rounded-full transition-transform duration-500"
-                style={{
-                  background: i === stage ? "var(--accent)" : "var(--line-strong)",
-                  transform: i === stage ? "scale(1.6)" : "scale(1)",
-                }}
-              />
-            ))}
-          </span>
-        </div>
-      </div>
-    </div>
+          {i < flow.length - 1 && <span aria-hidden="true" className="flow__arrow" />}
+        </li>
+      ))}
+    </ol>
   );
 }
 
-/* ── Phones and tablets: a plain list ─────────────────────────────────── */
+function ProjectRow({ project, index }: { project: Project; index: number }) {
+  const look = lookFor(project.id);
+  // A real screen leads, not a logo card.
+  const shot = project.images.find((image) => !/logo/i.test(image.alt)) ?? project.images[0];
+  const live = Boolean(project.link) && project.linkLabel !== "GitHub";
 
-function Card({ work, index }: { work: Work; index: number }) {
   return (
-    <article className="work-card">
-      <div className="work__meta t-label">
-        <span>
-          PL. {pad(index + 1)} / {work.category}
-        </span>
-        <span>{work.link ? "Live" : "Internal"}</span>
-      </div>
-
+    <m.article
+      className="proj"
+      data-flip={index % 2 === 1}
+      style={{ "--proj": look.accent } as React.CSSProperties}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.9, ease }}
+      aria-labelledby={`proj-${project.id}`}
+    >
       <TransitionLink
-        href={`/projects/${work.id}`}
-        label={work.name}
-        className="work-card__media block"
-        aria-label={`Open the ${work.name} case study`}
+        href={`/projects/${project.id}`}
+        label={project.name}
+        className="proj__media"
+        data-cursor="Open"
+        aria-label={`Open the ${project.name} case study`}
       >
-        <BrowserBar link={work.link} />
-        <span className="work-card__screen">
-          <m.span
-            className="absolute inset-0 block"
-            initial={{ scale: 1.25 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 1.5, ease }}
-          >
-            <Media work={work} />
-          </m.span>
-          <m.span
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{ background: lookFor(work.id).color, originY: 0 }}
-            initial={{ scaleY: 1 }}
-            whileInView={{ scaleY: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 1.1, ease: sweep }}
-          />
+        <span className="win win--shot">
+          <BrowserBar link={project.link} />
+          <span className="proj__screen">
+            {shot && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={shot.src} alt={shot.alt} loading="lazy" decoding="async" />
+            )}
+          </span>
+        </span>
+        <span aria-hidden="true" className="proj__part">
+          {look.part}
         </span>
       </TransitionLink>
 
-      <h3 className="work__name mt-6">{work.name}</h3>
-      <p className="work__tagline t-pretty">{work.tagline}</p>
-      <p className="work__overview mt-4 line-clamp-4">{work.overview}</p>
-      <TechDots items={work.technologies} />
-      <TransitionLink
-        href={`/projects/${work.id}`}
-        label={work.name}
-        className="btn btn-line btn-sm roll-host mt-6"
-      >
-        <RollText text="Case study" />
-        <ArrowRightIcon className="btn__arrow h-3.5 w-3.5" />
-      </TransitionLink>
-    </article>
-  );
-}
-
-function List() {
-  return (
-    <div className="section lg:hidden">
-      <div className="wrap">
-        <SectionMeta index="03" label="Selected works" />
-        <h2 className="works__big">
-          <RevealWords text="Selected" />
-          <em>
-            <RevealWords text="works" delay={0.1} />
-          </em>
-        </h2>
-        <p className="t-lead t-pretty mt-6 max-w-md">
-          IoT systems, real-time dashboards and full-stack platforms, shipped for real users.
+      <div className="proj__info">
+        <p className="proj__meta">
+          <span className="proj__n">{pad(index + 1)}</span>
+          <span className="proj__cat">{project.category}</span>
+          <span className="proj__status" data-live={live}>
+            <span aria-hidden="true" className="proj__dot" />
+            {live ? "Live" : "Source"}
+          </span>
         </p>
-        <div className="mt-10">
-          {works.map((work, i) => (
-            <Card key={work.id} work={work} index={i} />
-          ))}
+        <h3 id={`proj-${project.id}`} className="proj__name t-balance">
+          {project.name}
+        </h3>
+        <p className="proj__tagline t-pretty">{project.tagline}</p>
+        <p className="proj__overview line-clamp-3">{project.overview}</p>
+
+        <Flow id={project.id} compact />
+
+        <TechList items={project.technologies.slice(0, 7)} size="sm" className="proj__tech" />
+
+        <div className="proj__actions">
+          <TransitionLink href={`/projects/${project.id}`} label={project.name} className="btn btn--primary btn--sm roll-host">
+            <RollText text="Case study" />
+            <ArrowRightIcon className="btn__arrow h-3.5 w-3.5" />
+          </TransitionLink>
+          {project.link && (
+            <a href={project.link} target="_blank" rel="noreferrer" className="btn btn--ghost btn--sm roll-host">
+              <RollText text={project.linkLabel} />
+              <ArrowUpRightIcon />
+            </a>
+          )}
         </div>
       </div>
-    </div>
+    </m.article>
   );
 }
 
 export default function ProjectsSection() {
   return (
-    <section id="projects" className="works scheme-ink">
-      <Wall />
-      <List />
+    <section id="projects" className="section defer-render">
+      <div className="wrap">
+        <SectionHead
+          index="03"
+          path="projects"
+          title="Selected *projects.*"
+          lead="IoT systems, real-time dashboards and full-stack platforms, shipped for real users."
+          aside={
+            <p className="repo-count">
+              <span className="repo-count__n">{pad(projects.length)}</span>
+              <span>
+                repositories
+                <br />
+                <span className="text-subtle">each with a case study</span>
+              </span>
+            </p>
+          }
+        />
+
+        <div className="projs">
+          {projects.map((project, i) => (
+            <ProjectRow key={project.id} project={project} index={i} />
+          ))}
+        </div>
+
+        <div className="projs__more">
+          <p>More experiments and source code live on GitHub.</p>
+          <a href="https://github.com/RakuIchijo12" target="_blank" rel="noreferrer" className="btn btn--ghost roll-host">
+            <RollText text="github.com/RakuIchijo12" />
+            <ArrowUpRightIcon />
+          </a>
+        </div>
+      </div>
     </section>
   );
 }

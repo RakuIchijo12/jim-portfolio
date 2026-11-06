@@ -1,142 +1,236 @@
 "use client";
 
-import { m } from "framer-motion";
-import { aboutBio, aboutCards, heroStats, labNotes } from "@/app/lib/data";
-import { SectionMeta } from "@/app/components/ui/section-head";
-import CountUp from "@/app/components/ui/count-up";
-import { ease, Reveal, riseChild, staggerParent } from "@/app/components/ui/reveal";
-import ScrollLit from "@/app/components/ui/scroll-lit";
-import { Chip, Ecg, Gate } from "@/app/components/ui/circuit";
-import AboutStamp from "@/app/components/about-stamp";
+import { m, type Variants } from "framer-motion";
+import { aboutBio, aboutCards, experience, labNotes, totalTechnologies } from "@/app/lib/data";
+import SectionHead from "@/app/components/ui/section-head";
+import { Window } from "@/app/components/ui/window";
+import { ease, Reveal } from "@/app/components/ui/reveal";
+import { Barcode, EmvChip, LogoMark } from "@/app/components/ui/glyphs";
 
-const MANIFESTO =
-  "Engineering software for institutions that cannot afford to *fail.* [led] " +
-  "I build hospital systems, ERP platforms [chip] and the everyday tools operations " +
-  "teams depend on, made to be reliable, readable and quietly [gate] *beautiful.*";
+const DOMAINS = ["healthcare/", "erp/", "crm/", "hr-payroll/", "dashboards/", "iot/"];
 
-/* Each card's part: a heartbeat for the hospital work, a chip for the
-   enterprise tools, a gate for the engineering degree. */
-const PLATE_ICONS = [
-  <Ecg key="ecg" className="plate__icon plate__icon--ecg" />,
-  <Chip key="chip" pins={4} body="var(--ochre)" pin="var(--fg)" mark="rgba(20, 18, 15, 0.5)" className="plate__icon plate__icon--chip" />,
-  <Gate key="gate" kind="and" body="var(--olive)" lead="var(--olive)" className="plate__icon plate__icon--gate" />,
-];
+/* Terminal output prints a line at a time once it scrolls into view. */
+const printer: Variants = {
+  hidden: {},
+  shown: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+};
 
-function Gauge({
-  value,
-  label,
-  color,
-  delay,
-}: {
-  value: number;
-  label: string;
-  color: string;
-  delay: number;
-}) {
+const printed: Variants = {
+  hidden: { opacity: 0 },
+  shown: { opacity: 1, transition: { duration: 0.25 } },
+};
+
+function Prompt({ cmd }: { cmd: string }) {
   return (
-    <div className="gauge">
-      <div className="gauge__dial">
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <circle cx="50" cy="50" r="44" fill="none" stroke="var(--line)" strokeWidth="1.5" />
-          <m.circle
-            cx="50"
-            cy="50"
-            r="44"
-            fill="none"
-            stroke={color}
-            strokeWidth="5"
-            initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: value / 100 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 1.8, ease, delay }}
-          />
-        </svg>
-        <span className="gauge__n">
-          <CountUp value={value} suffix="%" duration={1800} />
-        </span>
+    <m.p variants={printed} className="term__cmd">
+      <span className="term__user">jimuel@davao</span>
+      <span className="term__dim">:</span>
+      <span className="term__path">~</span>
+      <span className="term__dim">$</span> {cmd}
+    </m.p>
+  );
+}
+
+function Terminal() {
+  return (
+    <Window title="jimuel@davao: ~ (zsh)" extra={<span className="term__size">120 &times; 32</span>} className="term">
+      <m.div variants={printer} initial="hidden" whileInView="shown" viewport={{ once: true, amount: 0.25 }}>
+        <Prompt cmd="whoami" />
+        <m.p variants={printed} className="term__out term__out--strong">
+          Jimuel Dave Rodado
+        </m.p>
+        <m.p variants={printed} className="term__out">
+          Software Engineer <span className="term__dim">/</span> BS Computer Engineering, University of Mindanao
+        </m.p>
+
+        <Prompt cmd="cat about.md" />
+        {aboutBio.map((paragraph) => (
+          <m.p key={paragraph.slice(0, 24)} variants={printed} className="term__out term__para t-pretty">
+            {paragraph}
+          </m.p>
+        ))}
+
+        <Prompt cmd="ls ./domains" />
+        <m.p variants={printed} className="term__out term__ls">
+          {DOMAINS.map((dir) => (
+            <span key={dir}>{dir}</span>
+          ))}
+        </m.p>
+
+        <Prompt cmd="uptime" />
+        <m.p variants={printed} className="term__out">
+          up <span className="term__hi">2+ years</span>, {experience.length} roles, {totalTechnologies} tools
+          loaded, load average: healthcare, erp, iot
+        </m.p>
+
+        <m.p variants={printed} className="term__cmd">
+          <span className="term__user">jimuel@davao</span>
+          <span className="term__dim">:</span>
+          <span className="term__path">~</span>
+          <span className="term__dim">$</span> <span aria-hidden="true" className="term__caret" />
+        </m.p>
+      </m.div>
+    </Window>
+  );
+}
+
+/* The off-duty photo on an access badge: whole, at its own 2:3 ratio. */
+function Badge() {
+  return (
+    <Reveal className="badge-wrap" y={28}>
+      <figure className="badge">
+        <span aria-hidden="true" className="badge__clip" />
+        <div className="badge__card">
+          <div className="badge__head">
+            <LogoMark className="badge__mark" />
+            <span className="badge__org">
+              Access pass
+              <span>Engineering</span>
+            </span>
+            <span aria-hidden="true" className="badge__nfc">
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
+
+          <div className="badge__photo">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/jim-cafe-portrait-optimized.webp"
+              width={768}
+              height={1154}
+              alt="Jimuel Dave Rodado smiling with his arms crossed at a garden cafe in Davao City"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+
+          <div className="badge__body">
+            <p className="badge__name">Jimuel Dave Rodado</p>
+            <p className="badge__role">Software Engineer</p>
+            <div className="badge__row">
+              <EmvChip className="badge__chip" />
+              <dl className="badge__meta">
+                <div>
+                  <dt>ID</dt>
+                  <dd>JDR-2026</dd>
+                </div>
+                <div>
+                  <dt>Base</dt>
+                  <dd>Davao City</dd>
+                </div>
+              </dl>
+            </div>
+            <Barcode value="JDR2026" className="badge__code" />
+          </div>
+        </div>
+        <figcaption className="badge__cap">Fig. 02 / Off the clock, Davao City</figcaption>
+      </figure>
+    </Reveal>
+  );
+}
+
+const rows: Variants = {
+  hidden: {},
+  shown: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+};
+
+const row: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
+};
+
+/* The three facts as a component datasheet. */
+function Datasheet() {
+  return (
+    <div className="sheet">
+      <div className="sheet__head">
+        <span>Datasheet</span>
+        <span className="sheet__part">JDR-2026 / rev. B</span>
       </div>
-      <span className="t-label text-muted">{label}</span>
+      <m.dl className="sheet__rows" variants={rows} initial="hidden" whileInView="shown" viewport={{ once: true, amount: 0.3 }}>
+        {aboutCards.map((card, i) => (
+          <m.div key={card.title} className="sheet__row" variants={row}>
+            <dt className="sheet__k">
+              <span className="sheet__pin">P{i + 1}</span>
+              {card.title}
+            </dt>
+            <dd className="sheet__v">
+              <span className="sheet__value">{card.value}</span>
+              <span className="sheet__copy t-pretty">{card.copy}</span>
+            </dd>
+          </m.div>
+        ))}
+      </m.dl>
     </div>
   );
 }
 
-const GAUGE_COLORS = ["var(--brand-terra)", "var(--ochre)", "var(--olive)"];
+/* The work approach as a passing test run. */
+function TestRun() {
+  return (
+    <Window title="npm test" className="tests" extra={<span className="tests__ok">passing</span>}>
+      <p className="tests__cmd">
+        <span className="text-accent">$</span> npm test <span className="term__dim">-- --profile=jimuel</span>
+      </p>
+      {/* The list is what scrolls into view; a bar at scaleX(0) has no area
+          for an observer to see. */}
+      <m.ul className="tests__list" initial="hidden" whileInView="shown" viewport={{ once: true, amount: 0.5 }}>
+        {labNotes.map((note, i) => (
+          <li key={note.label} className="tests__item">
+            <span className="tests__pass">PASS</span>
+            <span className="tests__name">{note.label.toLowerCase()}</span>
+            <span className="tests__bar">
+              <m.span
+                className="tests__fill"
+                variants={{
+                  hidden: { scaleX: 0 },
+                  shown: {
+                    scaleX: note.value / 100,
+                    transition: { duration: 1.3, ease, delay: 0.15 + i * 0.15 },
+                  },
+                }}
+              />
+            </span>
+            <span className="tests__n">{note.display}</span>
+          </li>
+        ))}
+      </m.ul>
+      <p className="tests__sum">
+        Tests: <b>{labNotes.length} passed</b>, {labNotes.length} total
+        <span className="term__dim"> / </span>
+        Time: 2+ yrs
+      </p>
+    </Window>
+  );
+}
 
 export default function AboutSection() {
   return (
-    <section id="about" className="section">
+    <section id="about" className="section defer-render">
       <div className="wrap">
-        <SectionMeta index="01" label="About" />
+        <SectionHead
+          index="01"
+          path="about"
+          title="Engineering software for institutions that cannot afford to *fail.*"
+          lead="A software engineer trained as a computer engineer: comfortable from the database schema up to the interface, and down to the hardware when a project needs it."
+        />
 
-        <ScrollLit text={MANIFESTO} className="manifesto t-pretty" />
+        <div className="about">
+          <Reveal className="about__term" y={28}>
+            <Terminal />
+          </Reveal>
+          <Badge />
+        </div>
 
-        <div className="about-grid">
-          {/* The off-duty portrait as a postage stamp, the same size as the hero portrait */}
-          <AboutStamp className="lg:sticky lg:top-28" />
-
-          {/* Body */}
-          <div className="space-y-14">
-            <div className="grid gap-5 md:grid-cols-2">
-              {aboutBio.map((paragraph, i) => (
-                <Reveal key={paragraph.slice(0, 24)} delay={i * 0.1}>
-                  <p className="t-lead t-pretty">{paragraph}</p>
-                </Reveal>
-              ))}
-            </div>
-
-            <Reveal>
-              <dl className="stats">
-                {heroStats.map((stat) => (
-                  <div key={stat.label} className="stat">
-                    <dt className="sr-only">{stat.label}</dt>
-                    <dd className="m-0">
-                      <CountUp value={stat.n} suffix={stat.suffix} className="stat__n" />
-                      <span aria-hidden="true" className="stat__l t-label">
-                        {stat.label}
-                      </span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </Reveal>
-
-            <m.ul
-              className="plates"
-              variants={staggerParent}
-              initial="hidden"
-              whileInView="shown"
-              viewport={{ once: true, amount: 0.25 }}
-            >
-              {aboutCards.map((card, i) => (
-                <m.li key={card.title} variants={riseChild} className="plate">
-                  <div className="plate__top">
-                    <span aria-hidden="true" className="plate__part">
-                      {PLATE_ICONS[i % PLATE_ICONS.length]}
-                    </span>
-                    <span className="t-label text-subtle">{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                  <p className="t-label text-accent">{card.title}</p>
-                  <h3 className="plate__title">{card.value}</h3>
-                  <p className="plate__copy t-pretty">{card.copy}</p>
-                </m.li>
-              ))}
-            </m.ul>
-
-            <div>
-              <SectionMeta index="01.1" label="Work approach" className="mb-8" />
-              <div className="gauges">
-                {labNotes.map((note, i) => (
-                  <Gauge
-                    key={note.label}
-                    value={note.value}
-                    label={note.label}
-                    color={GAUGE_COLORS[i % GAUGE_COLORS.length]}
-                    delay={0.15 + i * 0.15}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
+        <div className="about__specs">
+          <Reveal y={24}>
+            <Datasheet />
+          </Reveal>
+          <Reveal y={24} delay={0.1}>
+            <TestRun />
+          </Reveal>
         </div>
       </div>
     </section>

@@ -1,22 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Jimuel Dave Rodado">
   <defs>
     <radialGradient id="jdr-glow">
-      <stop offset="0" stop-color="#E0663F" stop-opacity=".6"/>
-      <stop offset="1" stop-color="#E0663F" stop-opacity="0"/>
+      <stop offset="0" stop-color="#FF8A3D" stop-opacity=".6"/>
+      <stop offset="1" stop-color="#FF8A3D" stop-opacity="0"/>
     </radialGradient>
   </defs>
 
-  <rect width="64" height="64" rx="14" fill="#14120F"/>
+  <rect width="64" height="64" rx="14" fill="#0B0C0E"/>
 
   <!-- A seven-segment J, slanted like a real display: b, c, d and e lit,
        the unlit segments still faintly visible -->
   <g transform="translate(6.35 0) skewX(-8)">
-    <g fill="#F0E9DC" fill-opacity=".085">
+    <g fill="#ECEEF1" fill-opacity=".085">
       <path d="M18.1 10.3 L21.4 7 H33.1 L36.4 10.3 L33.1 13.6 H21.4 Z"/>
       <path d="M16.8 11.6 L20.1 14.9 V27.4 L16.8 30.7 L13.5 27.4 V14.9 Z"/>
       <path d="M18.1 32 L21.4 28.7 H33.1 L36.4 32 L33.1 35.3 H21.4 Z"/>
     </g>
-    <g fill="#F0E9DC">
+    <g fill="#ECEEF1">
       <path d="M37.7 11.6 L41 14.9 V27.4 L37.7 30.7 L34.4 27.4 V14.9 Z"/>
       <path d="M37.7 33.3 L41 36.6 V49.1 L37.7 52.4 L34.4 49.1 V36.6 Z"/>
       <path d="M18.1 53.7 L21.4 50.4 H33.1 L36.4 53.7 L33.1 57 H21.4 Z"/>
@@ -26,6 +26,6 @@
 
   <!-- The decimal point is the site's power LED -->
   <circle cx="46.9" cy="52.4" r="9.5" fill="url(#jdr-glow)"/>
-  <circle cx="46.9" cy="52.4" r="4.2" fill="#E0663F"/>
+  <circle cx="46.9" cy="52.4" r="4.2" fill="#FF8A3D"/>
   <circle cx="45.7" cy="51.1" r="1.2" fill="#FFFFFF" fill-opacity=".7"/>
 </svg>

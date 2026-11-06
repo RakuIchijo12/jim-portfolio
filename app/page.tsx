@@ -1,7 +1,7 @@
 import NavBar            from "./components/nav-bar";
 import HeroSection       from "./components/hero-section";
-import AboutSection      from "./components/about-section";
 import Frieze            from "./components/frieze";
+import AboutSection      from "./components/about-section";
 import StackSection      from "./components/stack-section";
 import ProjectsSection   from "./components/projects-section";
 import ExperienceSection from "./components/experience-section";
@@ -17,8 +17,8 @@ export default function Home() {
 
       <main>
         <HeroSection />
-        <AboutSection />
         <Frieze />
+        <AboutSection />
         <StackSection />
         <ProjectsSection />
         <ExperienceSection />

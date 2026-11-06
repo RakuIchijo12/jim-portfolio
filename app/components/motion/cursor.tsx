@@ -11,8 +11,6 @@ type Mode = {
   fg?: string;
 };
 
-const LABEL_BG = "rgba(187, 97, 63, 1)";
-
 const QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
 
 function subscribe(onChange: () => void) {
@@ -42,7 +40,7 @@ function resolve(target: EventTarget | null): Mode {
   return { kind: "link" };
 }
 
-const SIZE = { hidden: 0, idle: 30, link: 62, label: 96, text: 8 } as const;
+const SIZE = { hidden: 0, idle: 26, link: 48, label: 84, text: 6 } as const;
 
 /** Mouse-only follower. Touch devices and reduced motion never mount it. */
 export default function Cursor() {
@@ -114,7 +112,7 @@ function Follower() {
   return (
     <m.div
       className="cursor"
-      data-blend={!isLabel}
+      data-mode={mode.kind}
       style={{ x: sx, y: sy }}
       animate={{ scale: pressed ? 0.82 : 1 }}
       transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -124,8 +122,8 @@ function Follower() {
         className="cursor__ticks"
         initial={false}
         animate={{
-          width: size + 16,
-          height: size + 16,
+          width: size + 14,
+          height: size + 14,
           opacity: ticks ? 1 : 0,
           rotate: mode.kind === "link" ? 45 : 0,
         }}
@@ -134,18 +132,11 @@ function Follower() {
       <m.div
         className="cursor__blob"
         initial={false}
+        style={isLabel && mode.bg ? ({ "--cursor-label-bg": mode.bg } as React.CSSProperties) : undefined}
         animate={{
           width: size,
           height: size,
           opacity: mode.kind === "hidden" ? 0 : 1,
-          backgroundColor: isLabel
-            ? (mode.bg ?? LABEL_BG)
-            : mode.kind === "link" || mode.kind === "text"
-              ? "rgba(255, 255, 255, 1)"
-              : "rgba(255, 255, 255, 0)",
-          boxShadow: isLabel
-            ? "inset 0 0 0 0px rgba(255, 255, 255, 0)"
-            : "inset 0 0 0 1.5px rgba(255, 255, 255, 1)",
         }}
         transition={{ type: "spring", stiffness: 380, damping: 30, mass: 0.6 }}
       >

@@ -11,18 +11,23 @@ const ContactForm = dynamic(() => import("./contact-form"), {
 /** Mirrors the real form's metrics so nothing shifts when it hydrates. */
 function ContactFormSkeleton() {
   return (
-    <div aria-hidden="true">
-      <div className="mb-8 flex items-center justify-between">
-        <div className="skeleton h-3 w-32" />
-        <div className="skeleton h-3 w-10" />
+    <div aria-hidden="true" className="win api">
+      <div className="win__bar">
+        <span className="win__lights">
+          <i />
+          <i />
+          <i />
+        </span>
+        <span className="skeleton h-3 w-36" />
       </div>
-      <div className="grid gap-7">
+      <div className="win__body grid gap-5">
+        <div className="skeleton h-4 w-48" />
         <div className="skeleton h-12 w-full" />
         <div className="skeleton h-12 w-full" />
         <div className="skeleton h-36 w-full" />
         <div className="flex items-center justify-between">
           <div className="skeleton h-3 w-28" />
-          <div className="skeleton h-13 w-44 rounded-full" />
+          <div className="skeleton h-11 w-44" />
         </div>
       </div>
     </div>

@@ -4,32 +4,34 @@ import { m } from "framer-motion";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { introStore } from "./intro";
 import { useLenis } from "./smooth-scroll";
-import { Chip, Gate } from "@/app/components/ui/circuit";
+import { projects, totalTechnologies } from "@/app/lib/data";
+import { LogoMark } from "@/app/components/ui/glyphs";
 
-/* Power-on self test: the line under the counter as the boot runs. */
-const POST = ["Checking memory", "Loading modules", "Booting portfolio"];
+/* Power-on self test, one line per stage. They print on a CSS delay. */
+const POST = [
+  "CPU: full-stack engineer, 2+ years",
+  `Memory: ${totalTechnologies} technologies loaded`,
+  `Mounted /projects (${projects.length} shipped)`,
+  "Started portfolio.service",
+];
 
 const lift = [0.76, 0, 0.24, 1] as const;
-const COLS = [0, 1, 2, 3, 4];
-const COUNT_MS = 1300;
+const COUNT_MS = 1050;
 
 const noop = () => () => {};
 const seenOnClient = () => document.documentElement.classList.contains("intro-seen");
-const pop = { type: "spring", stiffness: 260, damping: 17 } as const;
 
 /**
- * First visit of the session, as a boot screen: a counter runs to 100 while
- * an LED, a chip and a gate pop in and the power-on self test reads out,
- * then an ink layer and a terracotta layer lift away in staggered columns to
- * uncover the hero. The boot script in the layout hides
- * this before hydration when it has already played, or when the visitor asks
- * for reduced motion.
+ * First visit of the session, as a boot screen: the self test prints, a
+ * progress bar runs to 100 and the screen slides away to reveal the hero.
+ * The boot script in the layout hides this before hydration when it has
+ * already played this session, or when the visitor asks for reduced motion.
  */
 export default function Preloader() {
   const seen = useSyncExternalStore(noop, seenOnClient, () => false);
   const [phase, setPhase] = useState<"count" | "exit" | "done">("count");
   const countRef = useRef<HTMLSpanElement>(null);
-  const postRef = useRef<HTMLSpanElement>(null);
+  const barRef = useRef<HTMLSpanElement>(null);
   const lenis = useLenis();
 
   useEffect(() => {
@@ -61,17 +63,13 @@ export default function Preloader() {
     const failsafe = window.setTimeout(() => {
       fontsReady = true;
       tryExit();
-    }, 2600);
+    }, 2400);
 
     const tick = (now: number) => {
       const t = Math.min((now - start) / COUNT_MS, 1);
       const eased = 1 - Math.pow(1 - t, 3);
-      if (postRef.current) {
-        postRef.current.textContent = POST[Math.min(POST.length - 1, Math.floor(eased * POST.length))];
-      }
-      if (countRef.current) {
-        countRef.current.textContent = String(Math.round(eased * 100)).padStart(3, "0");
-      }
+      if (countRef.current) countRef.current.textContent = `${Math.round(eased * 100)}%`;
+      if (barRef.current) barRef.current.style.transform = `scaleX(${eased})`;
       if (t < 1) raf = requestAnimationFrame(tick);
       else {
         counted = true;
@@ -112,87 +110,46 @@ export default function Preloader() {
   const exiting = phase === "exit";
 
   return (
-    <div className="preloader" aria-hidden="true">
-      {/* Under layer: terracotta, lifts second. */}
-      <div className="preloader__cols">
-        {COLS.map((i) => (
-          <m.span
-            key={i}
-            className="preloader__col preloader__col--terra"
-            style={{ transformOrigin: "50% 0%" }}
-            initial={false}
-            animate={{ scaleY: exiting ? 0 : 1 }}
-            transition={{ duration: 0.85, ease: lift, delay: exiting ? 0.2 + i * 0.06 : 0 }}
-            onAnimationComplete={exiting && i === COLS.length - 1 ? finish : undefined}
-          />
-        ))}
-      </div>
-
-      {/* Top layer: ink, lifts first. */}
-      <div className="preloader__cols">
-        {COLS.map((i) => (
-          <m.span
-            key={i}
-            className="preloader__col preloader__col--ink"
-            style={{ transformOrigin: "50% 0%" }}
-            initial={false}
-            animate={{ scaleY: exiting ? 0 : 1 }}
-            transition={{ duration: 0.75, ease: lift, delay: exiting ? i * 0.06 : 0 }}
-          />
-        ))}
-      </div>
-
+    <m.div
+      className="boot"
+      aria-hidden="true"
+      initial={false}
+      animate={{ y: exiting ? "-100%" : "0%" }}
+      transition={{ duration: 0.75, ease: lift, delay: exiting ? 0.12 : 0 }}
+      onAnimationComplete={exiting ? finish : undefined}
+    >
       <m.div
-        className="preloader__content"
+        className="boot__screen"
         initial={false}
-        animate={exiting ? { opacity: 0, y: -28 } : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: lift }}
+        animate={exiting ? { opacity: 0, y: -24 } : { opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: lift }}
       >
-        <div className="t-label flex items-start justify-between gap-6">
+        <div className="boot__head">
+          <LogoMark className="boot__mark" />
           <span>
-            JDR-BIOS v26.10<span className="hidden sm:inline"> / Jimuel Dave Rodado</span>
+            JDR-BIOS v26.11
+            <span className="hidden sm:inline"> / Jimuel Dave Rodado</span>
           </span>
-          <span>Portfolio &copy;2026</span>
+          <span className="boot__right">Davao City, PH</span>
         </div>
 
-        {/* The three primitives, wired up: an LED, a chip and a gate */}
-        <div className="preloader__shapes">
-          <m.span
-            className="preloader__part"
-            initial={{ scale: 0, rotate: -90 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ ...pop, delay: 0.1 }}
-          >
-            <span className="led led--blink preloader__led" style={{ "--led": "#D0714D" } as React.CSSProperties} />
-          </m.span>
-          <m.span
-            className="preloader__part"
-            initial={{ scale: 0, rotate: 90 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ ...pop, delay: 0.28 }}
-          >
-            <Chip pins={5} body="#D6AB52" pin="#F0E9DC" mark="rgba(20, 18, 15, 0.5)" label="JDR" />
-          </m.span>
-          <m.span
-            className="preloader__part"
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ ...pop, delay: 0.46 }}
-          >
-            <Gate kind="not" body="#A3936A" lead="#A3936A" hole="#11100E" />
-          </m.span>
-        </div>
+        <ol className="boot__log">
+          {POST.map((line, i) => (
+            <li key={line} style={{ "--i": i } as React.CSSProperties}>
+              <span className="boot__ok">[ OK ]</span> {line}
+            </li>
+          ))}
+        </ol>
 
-        <div className="flex items-end justify-between gap-6">
-          <p className="t-label max-w-[15rem]">
-            <span className="opacity-70">POST /</span> <span ref={postRef}>{POST[0]}</span>
-            <span className="preloader__caret" aria-hidden="true" />
-          </p>
-          <span ref={countRef} className="preloader__count">
-            000
+        <div className="boot__foot">
+          <span className="boot__bar">
+            <span ref={barRef} className="boot__fill" />
+          </span>
+          <span ref={countRef} className="boot__count">
+            0%
           </span>
         </div>
       </m.div>
-    </div>
+    </m.div>
   );
 }

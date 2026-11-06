@@ -1,30 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ProjectLook } from "@/app/lib/project-looks";
-import CountUp from "@/app/components/ui/count-up";
 import RollText from "@/app/components/ui/roll-text";
 import { scrollToTarget } from "@/app/components/motion/smooth-scroll";
-import { ExternalIcon } from "@/app/components/ui/icons";
+import { ArrowUpRightIcon } from "@/app/components/ui/icons";
 
 export type Chapter = { id: string; title: string };
-export type Fact = { k: string; n?: number; unit?: string; text?: string };
 
 /**
- * The dossier's margin: a table of contents that follows the chapter being
- * read, then the project's facts. Sticky beside the text on wide screens; on
- * phones only the facts show, as a grid above the first chapter.
+ * The README's outline in the margin: it follows the chapter being read.
+ * Sticky beside the text on wide screens, hidden on phones where the
+ * chapters simply follow each other.
  */
 export default function Contents({
   chapters,
-  facts,
-  look,
+  file,
   link,
   linkLabel,
 }: {
   chapters: Chapter[];
-  facts: Fact[];
-  look: ProjectLook;
+  file: string;
   link: string;
   linkLabel: string;
 }) {
@@ -49,63 +44,42 @@ export default function Contents({
   }, [chapters]);
 
   return (
-    <div className="rail">
-      <nav aria-label="Case study contents" className="rail__toc">
-        <p className="t-label rail__k">Contents</p>
-        <div className="rail__list-wrap" style={{ "--active": active } as React.CSSProperties}>
-          {/* An LED in the project's colour lights the chapter being read. */}
-          <span
-            aria-hidden="true"
-            className="rail__marker led"
-            style={{ "--led": look.color } as React.CSSProperties}
-          />
-          <ol className="rail__list">
+    <div className="toc">
+      <p className="toc__file">
+        <span aria-hidden="true" className="toc__icon">
+          #
+        </span>
+        {file}
+      </p>
+      <nav aria-label="Case study contents" className="toc__rail" style={{ "--active": active } as React.CSSProperties}>
+        <span aria-hidden="true" className="toc__marker" />
+        <ol className="toc__list">
           {chapters.map((chapter, i) => (
             <li key={chapter.id}>
               <a
                 href={`#${chapter.id}`}
-                className="rail__link roll-host"
+                className="toc__link roll-host"
                 aria-current={active === i ? "true" : undefined}
                 onClick={(event) => {
                   event.preventDefault();
-                  scrollToTarget(`#${chapter.id}`, { offset: -24 });
+                  scrollToTarget(`#${chapter.id}`, { offset: -90 });
                 }}
               >
-                <span className="t-label rail__n">{String(i + 1).padStart(2, "0")}</span>
+                <span className="toc__n">{String(i + 1).padStart(2, "0")}</span>
                 <RollText text={chapter.title} />
               </a>
             </li>
           ))}
-          </ol>
-        </div>
+        </ol>
       </nav>
 
-      <dl className="rail__facts">
-        {facts.map((fact) => (
-          <div key={fact.k} className="rail__fact">
-            <dt className="t-label rail__k">{fact.k}</dt>
-            <dd>
-              {fact.n !== undefined ? (
-                <>
-                  <CountUp value={fact.n} className="rail__n-big" />
-                  <span className="t-label rail__unit">{fact.unit}</span>
-                </>
-              ) : (
-                <span className="rail__text">{fact.text}</span>
-              )}
-            </dd>
-          </div>
-        ))}
-      </dl>
-
       {link ? (
-        <a href={link} target="_blank" rel="noreferrer" className="btn btn-solid roll-host rail__cta">
-          <span aria-hidden="true" className="btn__dot" />
+        <a href={link} target="_blank" rel="noreferrer" className="btn btn--ghost btn--sm roll-host toc__cta">
           <RollText text={linkLabel} />
-          <ExternalIcon />
+          <ArrowUpRightIcon />
         </a>
       ) : (
-        <p className="rail__private t-label">Deployed internally for the client&apos;s staff.</p>
+        <p className="toc__private">Deployed internally for the client&apos;s staff.</p>
       )}
     </div>
   );
